@@ -1461,6 +1461,102 @@
     .always-open-period { font-size: 11px; color: var(--purple); font-weight: 700; margin-bottom: 3px; }
     .always-open-area { font-size: 11px; color: var(--text-mute); }
 
+    /* ══ 連携バッジ ══ */
+    .partner-badge {
+      font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 50px;
+      background: #fef3c7; color: #92400e; border: 1px solid #fbbf24;
+      display: inline-flex; align-items: center; gap: 3px;
+    }
+    /* 非連携バッジ */
+    .ext-badge {
+      font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 50px;
+      background: #f1f5f9; color: #64748b; border: 1px solid #cbd5e1;
+      display: inline-flex; align-items: center; gap: 3px;
+    }
+    /* 連携フォーム */
+    .form-partner-row {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--bg); border-radius: var(--r-md);
+      padding: 12px 14px; margin-bottom: 14px;
+      border: 1.5px solid var(--border);
+    }
+    .form-partner-row input[type="checkbox"] {
+      width: 18px; height: 18px; accent-color: var(--green); flex-shrink: 0; cursor: pointer;
+    }
+    .form-partner-label { font-size: 13px; font-weight: 700; color: var(--text); cursor: pointer; }
+    .form-partner-sub { font-size: 11px; color: var(--text-mute); margin-top: 2px; }
+
+    /* ══ テキスト解析オーバーレイ ══ */
+    .parse-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.65); z-index: 500;
+      display: flex; align-items: flex-end;
+      opacity: 0; pointer-events: none; transition: opacity .2s;
+    }
+    .parse-overlay.open { opacity: 1; pointer-events: all; }
+    .parse-sheet {
+      background: var(--white); width: 100%; max-height: 92vh;
+      border-radius: 24px 24px 0 0; overflow-y: auto;
+      transform: translateY(100%); transition: transform .3s cubic-bezier(.4,0,.2,1);
+      padding-bottom: 40px;
+    }
+    .parse-overlay.open .parse-sheet { transform: translateY(0); }
+    .parse-header {
+      padding: 16px 20px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between; position: relative;
+    }
+    .parse-title { font-size: 17px; font-weight: 900; }
+    .parse-body { padding: 16px 20px; }
+    .parse-hint { font-size: 12px; color: var(--text-sub); line-height: 1.6; margin-bottom: 10px; }
+    .parse-textarea {
+      width: 100%; min-height: 150px; border: 1.5px solid var(--border2);
+      border-radius: var(--r-md); padding: 12px; font-size: 13px;
+      font-family: inherit; line-height: 1.7; resize: vertical; outline: none;
+      color: var(--text); background: var(--bg); margin-bottom: 12px;
+      transition: border-color .15s;
+    }
+    .parse-textarea:focus { border-color: var(--green-mid); background: var(--white); }
+    .btn-parse-run {
+      width: 100%; padding: 13px;
+      background: linear-gradient(135deg, var(--green), var(--green-mid));
+      color: #fff; font-size: 15px; font-weight: 900; border: none;
+      border-radius: var(--r-lg); cursor: pointer; font-family: inherit; margin-bottom: 16px;
+    }
+    .parse-result-box {
+      background: var(--bg); border-radius: var(--r-md); padding: 14px; margin-bottom: 12px;
+    }
+    .parse-result-title {
+      font-size: 11px; font-weight: 700; color: var(--text-mute);
+      letter-spacing: .08em; margin-bottom: 10px;
+    }
+    .parse-row { display: flex; gap: 8px; margin-bottom: 6px; font-size: 13px; align-items: flex-start; }
+    .parse-row-label { font-weight: 700; color: var(--text-sub); min-width: 72px; flex-shrink: 0; font-size: 12px; }
+    .parse-row-value { color: var(--text); line-height: 1.5; }
+    .parse-row-value.missing { color: var(--text-mute); font-style: italic; }
+    .parse-date-list { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
+    .parse-date-pill {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 12px; border-radius: var(--r-md);
+      border: 1.5px solid var(--border2); background: var(--white);
+      cursor: pointer; transition: all .15s;
+    }
+    .parse-date-pill.selected { border-color: var(--green); background: var(--green-light); }
+    .parse-date-pill input { accent-color: var(--green); width: 16px; height: 16px; flex-shrink: 0; cursor: pointer; }
+    .parse-date-pill-label { font-size: 13px; font-weight: 700; color: var(--text); }
+    .btn-apply-parsed {
+      width: 100%; padding: 14px;
+      background: linear-gradient(135deg, var(--green), var(--green-mid));
+      color: #fff; font-size: 15px; font-weight: 900; border: none;
+      border-radius: var(--r-lg); cursor: pointer; font-family: inherit;
+    }
+    /* 解析ボタン（フォーム内） */
+    .btn-parse-open {
+      width: 100%; padding: 11px; margin-bottom: 16px;
+      background: linear-gradient(135deg, #7c3aed, #9333ea);
+      color: #fff; font-size: 14px; font-weight: 700; border: none;
+      border-radius: var(--r-lg); cursor: pointer; font-family: inherit;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+
     /* ══ 管理フォーム 種別トグル ══ */
     .form-toggle-wrap { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
     .form-toggle-btn {
@@ -1681,6 +1777,34 @@
 <!-- FAB -->
 <button class="fab" id="adminFab" onclick="openAdminGate()">⚙️</button>
 
+<!-- テキスト解析オーバーレイ -->
+<div class="parse-overlay" id="parseOverlay">
+  <div class="parse-sheet">
+    <div class="modal-handle"></div>
+    <div class="parse-header">
+      <div class="parse-title">✨ テキストから自動入力</div>
+      <button class="modal-close" onclick="closeParseOverlay()">✕</button>
+    </div>
+    <div class="parse-body">
+      <p class="parse-hint">セレクション・練習会のお知らせ文を貼り付けると、日程・時間・会場・種別を自動で読み取ります。</p>
+      <textarea class="parse-textarea" id="parseInput"
+        placeholder="お知らせ文をここに貼り付けてください&#10;&#10;（例）&#10;2026年6月15日（月）調布市 味の素スタジアム&#10;受付09:30　開始10:00　終了12:00&#10;持ち物：サッカーのできる服装..."></textarea>
+      <button class="btn-parse-run" onclick="executeParse()">🔍 解析する</button>
+
+      <div id="parseResultWrap" class="hidden">
+        <div class="parse-result-box">
+          <div class="parse-result-title">📋 検出した情報</div>
+          <div id="parseResultBody"></div>
+        </div>
+        <div id="parseDateSection"></div>
+        <button class="btn-apply-parsed" id="applyParsedBtn" onclick="applyParsedToForm()">
+          ✅ フォームに反映する
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ADMIN MODAL -->
 <div class="admin-modal-overlay" id="adminOverlay" onclick="closeAdminOnOverlay(event)">
   <div class="admin-modal" id="adminModal">
@@ -1720,6 +1844,11 @@
           <input type="hidden" id="fEventType" value="selection">
           <input type="hidden" id="fScheduleType" value="date">
 
+          <!-- テキスト自動入力ボタン -->
+          <button type="button" class="btn-parse-open" onclick="openParseOverlay()">
+            ✨ テキストから自動入力
+          </button>
+
           <label class="form-label">種別 *</label>
           <div class="form-toggle-wrap" id="fEventTypeToggle">
             <button type="button" class="form-toggle-btn active-selection" data-type="selection" onclick="setFormEventType('selection')">⚽ セレクション</button>
@@ -1731,6 +1860,21 @@
             <button type="button" class="form-toggle-btn active-date" data-stype="date" onclick="setFormScheduleType('date')">📅 確定日程</button>
             <button type="button" class="form-toggle-btn" data-stype="period" onclick="setFormScheduleType('period')">📆 期間指定</button>
             <button type="button" class="form-toggle-btn" data-stype="always" onclick="setFormScheduleType('always')">🔄 常時募集</button>
+          </div>
+
+          <!-- 連携チームフラグ -->
+          <div class="form-partner-row">
+            <input type="checkbox" id="fIsPartner" onchange="togglePartnerMode()">
+            <label for="fIsPartner" style="cursor:pointer;flex:1;">
+              <div class="form-partner-label">🤝 KickOffer連携チーム</div>
+              <div class="form-partner-sub">チェックするとチーム詳細情報が表示されます</div>
+            </label>
+          </div>
+          <div id="partnerTeamRow" class="hidden">
+            <label class="form-label">連携チームを選択</label>
+            <select class="form-select" id="fTeamId" onchange="onTeamSelect()">
+              <option value="">チームを選択してください</option>
+            </select>
           </div>
 
           <label class="form-label">チーム名 *</label>
@@ -2187,7 +2331,7 @@ const TEAM_PROFILES = {
 const SAMPLE_DATA = [
   // ── セレクション：開催予定期間（確定日程が出次第更新） ──
   {
-    id: 'sel-1', teamId: 'T010', eventType: 'selection', isAlwaysOpen: false,
+    id: 'sel-1', teamId: 'T010', eventType: 'selection', isAlwaysOpen: false, isPartner: true,
     teamName: 'ヴァイスブラウミタカ',
     isPeriod: true, periodText: '5月〜2月（通年）',
     date: '2026-05-01', time: null,
@@ -2198,7 +2342,7 @@ const SAMPLE_DATA = [
     tags: ['多摩地域', 'T4リーグ'],
   },
   {
-    id: 'sel-2', teamId: 'T007', eventType: 'selection', isAlwaysOpen: false,
+    id: 'sel-2', teamId: 'T007', eventType: 'selection', isAlwaysOpen: false, isPartner: true,
     teamName: '東京ヴェルディアジュント',
     isPeriod: true, periodText: '6〜8月（変動あり）',
     date: '2026-06-01', time: null,
@@ -2209,7 +2353,7 @@ const SAMPLE_DATA = [
     tags: ['ヴェルディ公認', 'T1リーグ', '調布'],
   },
   {
-    id: 'sel-4', teamId: 'T014', eventType: 'selection', isAlwaysOpen: false,
+    id: 'sel-4', teamId: 'T014', eventType: 'selection', isAlwaysOpen: false, isPartner: true,
     teamName: 'ARTE八王子FC',
     isPeriod: true, periodText: '6〜9月（実施しない可能性あり）',
     date: '2026-06-01', time: null,
@@ -2220,7 +2364,7 @@ const SAMPLE_DATA = [
     tags: ['T3リーグ', '八王子'],
   },
   {
-    id: 'sel-3', teamId: 'T008', eventType: 'selection', isAlwaysOpen: false,
+    id: 'sel-3', teamId: 'T008', eventType: 'selection', isAlwaysOpen: false, isPartner: true,
     teamName: 'C.F プラミーゴ U-15',
     isPeriod: true, periodText: '7月頃',
     date: '2026-07-01', time: null,
@@ -2231,7 +2375,7 @@ const SAMPLE_DATA = [
     tags: ['テクニック重視', 'T3リーグ'],
   },
   {
-    id: 'sel-5', teamId: 'T012', eventType: 'selection', isAlwaysOpen: false,
+    id: 'sel-5', teamId: 'T012', eventType: 'selection', isAlwaysOpen: false, isPartner: true,
     teamName: 'MIP FC',
     isPeriod: true, periodText: '8月末・10月初め（2回実施予定）',
     date: '2026-08-01', time: null,
@@ -2242,7 +2386,7 @@ const SAMPLE_DATA = [
     tags: ['2回実施', 'T3リーグ', '世田谷'],
   },
   {
-    id: 'sel-6', teamId: 'T009', eventType: 'selection', isAlwaysOpen: false,
+    id: 'sel-6', teamId: 'T009', eventType: 'selection', isAlwaysOpen: false, isPartner: true,
     teamName: '調布FC U-15',
     isPeriod: true, periodText: '9〜10月',
     date: '2026-09-01', time: null,
@@ -2254,7 +2398,7 @@ const SAMPLE_DATA = [
   },
   // ── 練習会：常時募集 ──
   {
-    id: 'trial-1', teamId: 'T022', eventType: 'trial', isAlwaysOpen: true,
+    id: 'trial-1', teamId: 'T022', eventType: 'trial', isAlwaysOpen: true, isPartner: true,
     teamName: 'ACエチェレンテ',
     isPeriod: true, periodText: '随時参加受付中',
     date: '2026-05-01', time: null,
@@ -2265,7 +2409,7 @@ const SAMPLE_DATA = [
     tags: ['常時募集', '練馬区', '新設チーム'],
   },
   {
-    id: 'trial-2', teamId: 'T020', eventType: 'trial', isAlwaysOpen: true,
+    id: 'trial-2', teamId: 'T020', eventType: 'trial', isAlwaysOpen: true, isPartner: true,
     teamName: 'LSS MITAKA',
     isPeriod: true, periodText: '9月〜随時受付',
     date: '2026-09-01', time: null,
@@ -2277,7 +2421,7 @@ const SAMPLE_DATA = [
   },
   // ── 練習会：定期開催 ──
   {
-    id: 'trial-3', teamId: 'T011', eventType: 'trial', isAlwaysOpen: false,
+    id: 'trial-3', teamId: 'T011', eventType: 'trial', isAlwaysOpen: false, isPartner: true,
     teamName: 'F.C.RUIRE',
     isPeriod: true, periodText: '月1回実施（日程はInstagramで告知）',
     date: '2026-05-01', time: null,
@@ -2300,9 +2444,11 @@ function loadSelections() {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const data = JSON.parse(raw);
-      // migrate: add eventType/isAlwaysOpen if missing
+      // migrate: add missing fields
       return data.map(s => ({
-        eventType: 'selection', isAlwaysOpen: false, ...s
+        eventType: 'selection', isAlwaysOpen: false,
+        isPartner: !!(s.teamId && TEAM_PROFILES[s.teamId]),
+        ...s
       }));
     }
   } catch(e) {}
@@ -2479,6 +2625,167 @@ function clearAllFilters() {
   onFilterChange();
 }
 
+// ══════════════════════════════════
+// テキスト自動解析
+// ══════════════════════════════════
+let parsedData = null;
+let parsedSelectedDates = [];
+
+function openParseOverlay() {
+  document.getElementById('parseInput').value = '';
+  document.getElementById('parseResultWrap').classList.add('hidden');
+  parsedData = null;
+  parsedSelectedDates = [];
+  document.getElementById('parseOverlay').classList.add('open');
+}
+function closeParseOverlay() {
+  document.getElementById('parseOverlay').classList.remove('open');
+}
+
+function parseEventText(text) {
+  const result = { eventType: 'selection', dates: [], time: null, location: null };
+  // 種別判定
+  if (/練習会|練習参加|体験会|トライアル|trial/i.test(text)) result.eventType = 'trial';
+  // 日付抽出（複数対応）
+  const yearNow = new Date().getFullYear();
+  const dateRe = /(\d{4}年)?(\d{1,2})月(\d{1,2})日/g;
+  let m;
+  while ((m = dateRe.exec(text)) !== null) {
+    const y = m[1] ? parseInt(m[1]) : yearNow;
+    const mo = String(parseInt(m[2])).padStart(2,'0');
+    const d  = String(parseInt(m[3])).padStart(2,'0');
+    const ds = `${y}-${mo}-${d}`;
+    if (!result.dates.includes(ds)) result.dates.push(ds);
+  }
+  // 時間抽出（開始優先）
+  const startT = text.match(/開始[　\s]*(\d{1,2}:\d{2})/);
+  const recepT = text.match(/受付[　\s]*(\d{1,2}:\d{2})/);
+  result.time = startT ? startT[1] : (recepT ? recepT[1] : null);
+  // 会場抽出：日（曜）と受付の間
+  const locM = text.match(/[）)][　\s]+(.+?)[　\s]+受付/);
+  if (locM) {
+    result.location = locM[1].replace(/　/g,' ').trim();
+  } else {
+    const venueM = text.match(/会場[：:\s]+([^\n\r]+)/);
+    if (venueM) result.location = venueM[1].trim();
+  }
+  return result;
+}
+
+function executeParse() {
+  const text = document.getElementById('parseInput').value.trim();
+  if (!text) { alert('テキストを入力してください'); return; }
+  parsedData = parseEventText(text);
+  parsedSelectedDates = [...parsedData.dates];
+  const weekdays = ['日','月','火','水','木','金','土'];
+  // 基本情報
+  let body = `
+    <div class="parse-row"><span class="parse-result-label">種別</span><span class="parse-result-value">${parsedData.eventType==='trial'?'🏃 練習会':'⚽ セレクション'}</span></div>
+    <div class="parse-row"><span class="parse-result-label">開始時間</span><span class="parse-result-value ${parsedData.time?'':'missing'}">${parsedData.time||'検出できませんでした'}</span></div>
+    <div class="parse-row"><span class="parse-result-label">会場</span><span class="parse-result-value ${parsedData.location?'':'missing'}">${escHtml(parsedData.location||'検出できませんでした')}</span></div>
+  `;
+  document.getElementById('parseResultBody').innerHTML = body;
+  // 日程セクション
+  let dateHtml = '';
+  if (parsedData.dates.length === 0) {
+    dateHtml = '<div style="font-size:13px;color:var(--red);padding:6px 0;">⚠️ 日程を検出できませんでした。テキストを確認してください。</div>';
+    document.getElementById('applyParsedBtn').textContent = '✅ フォームに反映する';
+  } else if (parsedData.dates.length === 1) {
+    const d = new Date(parsedData.dates[0]+'T00:00:00');
+    body += `<div class="parse-row"><span class="parse-result-label">日程</span><span class="parse-result-value">${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（${weekdays[d.getDay()]}）</span></div>`;
+    document.getElementById('parseResultBody').innerHTML = body;
+    document.getElementById('applyParsedBtn').textContent = '✅ フォームに反映する';
+  } else {
+    dateHtml = `
+      <div class="parse-result-box" style="margin-top:0;">
+        <div class="parse-result-title">📅 ${parsedData.dates.length}件の日程を検出（登録する日程を選択）</div>
+        <div class="parse-date-list">
+          ${parsedData.dates.map(ds => {
+            const d = new Date(ds+'T00:00:00');
+            const label = `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（${weekdays[d.getDay()]}）`;
+            return `<label class="parse-date-pill selected" data-date="${ds}">
+              <input type="checkbox" checked value="${ds}" onchange="toggleParsedDate('${ds}', this.checked)">
+              <span class="parse-date-pill-label">${label}</span>
+            </label>`;
+          }).join('')}
+        </div>
+      </div>`;
+    document.getElementById('applyParsedBtn').textContent = `✅ ${parsedData.dates.length}件をまとめて登録する`;
+  }
+  document.getElementById('parseDateSection').innerHTML = dateHtml;
+  document.getElementById('parseResultWrap').classList.remove('hidden');
+}
+
+function toggleParsedDate(dateStr, checked) {
+  if (checked && !parsedSelectedDates.includes(dateStr)) parsedSelectedDates.push(dateStr);
+  else parsedSelectedDates = parsedSelectedDates.filter(d => d !== dateStr);
+  const pill = document.querySelector(`.parse-date-pill[data-date="${dateStr}"]`);
+  if (pill) pill.classList.toggle('selected', checked);
+  const btn = document.getElementById('applyParsedBtn');
+  btn.textContent = parsedSelectedDates.length > 1
+    ? `✅ ${parsedSelectedDates.length}件をまとめて登録する`
+    : '✅ フォームに反映する';
+}
+
+function applyParsedToForm() {
+  if (!parsedData || parsedSelectedDates.length === 0) { alert('日程を選択してください'); return; }
+  const weekdays = ['日','月','火','水','木','金','土'];
+  if (parsedSelectedDates.length > 1) {
+    // バッチ保存：チーム名だけ先に確認
+    const teamName = document.getElementById('fTeamName').value.trim();
+    const isPartner = document.getElementById('fIsPartner').checked;
+    const teamId = isPartner ? (document.getElementById('fTeamId').value || null) : null;
+    const location = parsedData.location || '';
+    const dateLabels = parsedSelectedDates.map(ds => {
+      const d = new Date(ds+'T00:00:00');
+      return `${d.getMonth()+1}月${d.getDate()}日（${weekdays[d.getDay()]}）`;
+    }).join('・');
+    if (!confirm(`以下の${parsedSelectedDates.length}件を登録します：\n${dateLabels}\n\nチーム名: ${teamName||'（未入力）'}\n会場: ${location||'（未検出）'}\n\n実行しますか？`)) return;
+    parsedSelectedDates.forEach(date => {
+      selections.push({
+        id: uuid(), teamName: teamName||'チーム名を入力してください',
+        eventType: parsedData.eventType, isPeriod: false,
+        isAlwaysOpen: false, isPartner, teamId, periodText: null,
+        date, time: parsedData.time, location,
+        targetGrades: [], capacity: 0, fee: null, deadline: null,
+        description: '', teamUrl: '', applyUrl: '', tags: [],
+      });
+    });
+    saveSelections(selections);
+    closeParseOverlay(); closeAdmin(); refresh();
+    alert(`✅ ${parsedSelectedDates.length}件を登録しました！\n一覧の編集ボタンから詳細を補足できます。`);
+    return;
+  }
+  // 単一日程：フォームに反映
+  setFormEventType(parsedData.eventType);
+  setFormScheduleType('date');
+  document.getElementById('fDate').value = parsedSelectedDates[0];
+  if (parsedData.time) document.getElementById('fTime').value = parsedData.time;
+  if (parsedData.location) document.getElementById('fLocation').value = parsedData.location;
+  closeParseOverlay();
+}
+
+// ══════════════════════════════════
+// 連携チーム
+// ══════════════════════════════════
+function togglePartnerMode() {
+  const isPartner = document.getElementById('fIsPartner').checked;
+  document.getElementById('partnerTeamRow').classList.toggle('hidden', !isPartner);
+  if (isPartner) populateTeamSelector();
+}
+function populateTeamSelector() {
+  const sel = document.getElementById('fTeamId');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">チームを選択してください</option>' +
+    Object.values(TEAM_PROFILES).map(t =>
+      `<option value="${escHtml(t.id)}"${t.id===cur?' selected':''}>${escHtml(t.name)}</option>`
+    ).join('');
+}
+function onTeamSelect() {
+  const t = TEAM_PROFILES[document.getElementById('fTeamId').value];
+  if (t) document.getElementById('fTeamName').value = t.name;
+}
+
 // ══ タイプフィルター ══
 function setTypeFilter(type) {
   filterType = type;
@@ -2624,7 +2931,10 @@ function selectionCardHtml(ev, isPast) {
     periodBadgeHtml = `<span class="period-badge ${badgeCls}">📅 開催予定</span>`;
   }
 
-  const topBadge = `${eventTypeBadge(ev)} ${periodBadgeHtml} ${ev.isPeriod ? '' : foundedYearBadge(ev.teamId)}`;
+  const partnerBadge = ev.isPartner
+    ? `<span class="partner-badge">🤝 連携</span>`
+    : `<span class="ext-badge">外部チーム</span>`;
+  const topBadge = `${eventTypeBadge(ev)} ${partnerBadge} ${periodBadgeHtml} ${ev.isPeriod ? '' : foundedYearBadge(ev.teamId)}`;
 
   const metaRows = ev.isPeriod
     ? `<div class="card-meta-row"><span class="period-time-label">🗓️ ${escHtml(ev.periodText)}</span></div>
@@ -2853,8 +3163,8 @@ function openDetail(id) {
   // actions: team detail → apply → official site → fav
   const actionsEl = document.getElementById('modalActions');
   let linksHtml = '';
-  // チーム詳細ボタン（teamIdがある場合）
-  if (ev.teamId && TEAM_PROFILES[ev.teamId]) {
+  // チーム詳細ボタン（連携チームのみ）
+  if (ev.isPartner && ev.teamId && TEAM_PROFILES[ev.teamId]) {
     linksHtml += `<button class="btn-team-detail" onclick="openTeamProfile('${ev.teamId}')">🏟️ チームの詳細情報を確認する</button>`;
   }
   if (ev.applyUrl) linksHtml += `<a href="${escHtml(ev.applyUrl)}" target="_blank" rel="noopener" class="btn-primary">✏️ 申し込む</a>`;
@@ -2965,6 +3275,9 @@ function resetForm() {
   document.getElementById('fTags').value = '';
   document.getElementById('fPeriodText').value = '';
   document.getElementById('fPeriodMonth').value = '';
+  document.getElementById('fIsPartner').checked = false;
+  document.getElementById('partnerTeamRow').classList.add('hidden');
+  document.getElementById('fTeamId').value = '';
   // reset toggles
   setFormEventType('selection');
   setFormScheduleType('date');
@@ -2995,6 +3308,14 @@ function editSelection(id) {
   document.getElementById('fTeamUrl').value = ev.teamUrl || '';
   document.getElementById('fApplyUrl').value = ev.applyUrl || '';
   document.getElementById('fTags').value = (ev.tags||[]).join(', ');
+  // partner
+  document.getElementById('fIsPartner').checked = !!ev.isPartner;
+  togglePartnerMode();
+  if (ev.isPartner && ev.teamId) {
+    // populate selector then set value
+    populateTeamSelector();
+    document.getElementById('fTeamId').value = ev.teamId;
+  }
   // event type
   setFormEventType(ev.eventType || 'selection');
   // schedule type
@@ -3049,6 +3370,8 @@ function saveSelection() {
     alert('チーム名・日程/開始月・会場は必須です');
     return;
   }
+  const isPartner = document.getElementById('fIsPartner').checked;
+  const teamId = isPartner ? (document.getElementById('fTeamId').value || null) : null;
   const grades = [];
   document.querySelectorAll('#gradeGroup input:checked').forEach(inp => grades.push(inp.value));
   const feeRaw = document.getElementById('fFee').value;
@@ -3058,6 +3381,8 @@ function saveSelection() {
     eventType,
     isPeriod,
     isAlwaysOpen,
+    isPartner,
+    teamId,
     periodText,
     date,
     time,
