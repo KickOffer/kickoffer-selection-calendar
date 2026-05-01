@@ -2643,32 +2643,161 @@ function closeParseOverlay() {
 }
 
 function parseEventText(text) {
-  const result = { eventType: 'selection', dates: [], time: null, location: null };
-  // 種別判定
-  if (/練習会|練習参加|体験会|トライアル|trial/i.test(text)) result.eventType = 'trial';
-  // 日付抽出（複数対応）
+  const result = {
+    eventType: 'selection',
+    dates: [],           // 開催日のみ（締切日は除外）
+    deadline: null,      // 申込締切日
+    time: null,          // 開始時刻
+    receptionTime: null, // 受付開始時刻
+    endTime: null,       // 終了時刻
+    location: null,
+    targetGrades: [],
+    fee: null,
+    capacity: null,
+  };
+
   const yearNow = new Date().getFullYear();
-  const dateRe = /(\d{4}年)?(\d{1,2})月(\d{1,2})日/g;
-  let m;
-  while ((m = dateRe.exec(text)) !== null) {
+
+  // ① 種別判定
+  if (/練習会|練習参加|体験会|トライアル|trial/i.test(text)) result.eventType = 'trial';
+
+  // ② テキストを行単位で分割
+  const lines = text.split(/[\r\n]+/).map(l => l.trim()).filter(l => l.length > 0);
+
+  // ③ 日付文字列をパースするユーティリティ
+  function extractDateFromMatch(m) {
     const y = m[1] ? parseInt(m[1]) : yearNow;
     const mo = String(parseInt(m[2])).padStart(2,'0');
     const d  = String(parseInt(m[3])).padStart(2,'0');
-    const ds = `${y}-${mo}-${d}`;
-    if (!result.dates.includes(ds)) result.dates.push(ds);
+    return `${y}-${mo}-${d}`;
   }
-  // 時間抽出（開始優先）
-  const startT = text.match(/開始[　\s]*(\d{1,2}:\d{2})/);
-  const recepT = text.match(/受付[　\s]*(\d{1,2}:\d{2})/);
-  result.time = startT ? startT[1] : (recepT ? recepT[1] : null);
-  // 会場抽出：日（曜）と受付の間
-  const locM = text.match(/[）)][　\s]+(.+?)[　\s]+受付/);
-  if (locM) {
-    result.location = locM[1].replace(/　/g,' ').trim();
+  const dateRe = /(\d{4}年)?(\d{1,2})月(\d{1,2})日/g;
+
+  // ④ 締切行・締切日を先行抽出（これらの行の日付は開催日に含めない）
+  const deadlineLineIndices = new Set();
+  const deadlineKeyRe = /締切|締め切り|〆切|申込期限|応募期限|期限|申し込み期限|まで.*日|応募締|参加締|締め/;
+  lines.forEach((line, i) => {
+    if (deadlineKeyRe.test(line)) {
+      deadlineLineIndices.add(i);
+      // 締切日を取得
+      const dm = line.match(/(\d{4}年)?(\d{1,2})月(\d{1,2})日/);
+      if (dm && !result.deadline) {
+        result.deadline = extractDateFromMatch(dm);
+      }
+    }
+  });
+  // 「〇月〇日まで」パターン（行をまたがる場合）
+  if (!result.deadline) {
+    const madeM = text.match(/(\d{4}年)?(\d{1,2})月(\d{1,2})日.*?まで/);
+    if (madeM) {
+      result.deadline = extractDateFromMatch(madeM);
+    }
+  }
+
+  // ⑤ 開催日の抽出：行ごとに文脈判定
+  const eventDateKeyRe = /[\（\(]?[月火水木金土日][）\)]|受付|開始|集合|試合|開催日|当日|会場|グラウンド|公園|フィールド|スタジアム|FC|SC|\d{1,2}:\d{2}/;
+  const standaloneExclusions = /チーム|クラブ|問い合わせ|連絡|代表|監督|コーチ|設立|活動|拠点|所属|FAX|TEL|メール|mail|http|URL|料金|参加費|定員|学年|年生|対象|説明|紹介|概要|コンセプト/i;
+
+  lines.forEach((line, i) => {
+    if (deadlineLineIndices.has(i)) return; // 締切行はスキップ
+
+    let m;
+    const re = /(\d{4}年)?(\d{1,2})月(\d{1,2})日/g;
+    while ((m = re.exec(line)) !== null) {
+      const ds = extractDateFromMatch(m);
+      if (result.dates.includes(ds)) continue;
+      if (result.deadline === ds) continue; // 締切日と同じならスキップ
+
+      // 文脈チェック：開催日らしい行か？
+      const hasEventContext = eventDateKeyRe.test(line);
+      const hasExclusion = standaloneExclusions.test(line);
+
+      // 日付だけの短い行・または開催文脈あり → 開催日と判定
+      if (hasEventContext || (!hasExclusion && line.replace(/\s/g,'').length < 40)) {
+        result.dates.push(ds);
+      }
+    }
+  });
+
+  // 開催日が0件の場合のフォールバック：全日付から締切を除いて追加（行文脈を無視）
+  if (result.dates.length === 0) {
+    const re = /(\d{4}年)?(\d{1,2})月(\d{1,2})日/g;
+    let m;
+    while ((m = re.exec(text)) !== null) {
+      const ds = extractDateFromMatch(m);
+      if (!result.dates.includes(ds) && result.deadline !== ds) {
+        result.dates.push(ds);
+      }
+    }
+  }
+
+  // ⑥ 時刻の抽出（受付・開始・終了）
+  const timePatterns = [
+    { key: 'receptionTime', re: /受付[開始]?\s*[：:]\s*(\d{1,2}[：:]\d{2})|受付\s*(\d{1,2}[：:]\d{2})/ },
+    { key: 'time',          re: /開始[時刻]?\s*[：:]\s*(\d{1,2}[：:]\d{2})|開始\s*(\d{1,2}[：:]\d{2})|キックオフ\s*(\d{1,2}[：:]\d{2})/ },
+    { key: 'endTime',       re: /終了[時刻]?\s*[：:]\s*(\d{1,2}[：:]\d{2})|終了\s*(\d{1,2}[：:]\d{2})/ },
+  ];
+  timePatterns.forEach(({ key, re }) => {
+    const m = text.match(re);
+    if (m) {
+      const raw = (m[1]||m[2]||m[3]||'').replace('：',':');
+      result[key] = raw || null;
+    }
+  });
+  // 開始時刻が未検出の場合、受付の次の時刻を開始とみなす
+  if (!result.time && result.receptionTime) {
+    const allTimes = [...text.matchAll(/(\d{1,2})[：:](\d{2})/g)].map(m => `${m[1]}:${m[2]}`);
+    if (allTimes.length >= 2) {
+      // 受付時刻と違う最初の時刻を開始とする
+      result.time = allTimes.find(t => t !== result.receptionTime) || null;
+    }
+  }
+  // どちらも未検出の場合、テキスト中の最初の時刻を開始時刻として使う
+  if (!result.time) {
+    const tm = text.match(/(\d{1,2})[：:](\d{2})/);
+    if (tm) result.time = `${tm[1]}:${tm[2]}`;
+  }
+
+  // ⑦ 会場の多戦略抽出
+  const locStrategies = [
+    // 「会場：〇〇」「会場/場所：〇〇」パターン
+    () => { const m = text.match(/(?:会場|場所|グラウンド|ピッチ)[：:\s　]+([^\n\r]{3,50})/); return m ? m[1].trim() : null; },
+    // 「場所：〇〇」パターン
+    () => { const m = text.match(/場所[：:\s　]+([^\n\r]{3,50})/); return m ? m[1].trim() : null; },
+    // 日（曜）のあとに来る場所（括弧内外）
+    () => { const m = text.match(/[）\)][　\s]+([^（\(\n\r受付開始集合]{3,40}?)(?:\s+受付|\s+集合|\s+開始|\s*$)/m); return m ? m[1].trim() : null; },
+    // 「〇〇公園」「〇〇グラウンド」「〇〇FC」などのキーワード抽出
+    () => { const m = text.match(/([^\s\n\r（\(]{2,20}(?:公園|グラウンド|ピッチ|フィールド|スタジアム|球場|施設|スポーツ|競技場))/); return m ? m[1].trim() : null; },
+    // 「〒〇〇〇-〇〇〇〇」の前後
+    () => { const m = text.match(/〒\d{3}-?\d{4}\s+([^\n\r]{3,40})/); return m ? m[1].trim() : null; },
+  ];
+  for (const strategy of locStrategies) {
+    const loc = strategy();
+    if (loc) { result.location = loc; break; }
+  }
+
+  // ⑧ 対象学年の抽出
+  const gradeM = text.match(/(?:対象|参加資格|対象学年)[：:\s　]*([^\n\r]{2,30})/);
+  if (gradeM) {
+    result.targetGrades = [gradeM[1].trim()];
   } else {
-    const venueM = text.match(/会場[：:\s]+([^\n\r]+)/);
-    if (venueM) result.location = venueM[1].trim();
+    // 「小学〇〇年生〜〇〇年生」「3年生〜6年生」などを抽出
+    const gradeRe = /(?:小学)?(\d+)年生?[〜～\-から](?:小学)?(\d+)年生?/;
+    const gm = text.match(gradeRe);
+    if (gm) result.targetGrades = [`${gm[1]}〜${gm[2]}年生`];
   }
+
+  // ⑨ 参加費の抽出
+  const feeM = text.match(/(?:参加費|参加料|費用|無料)[：:\s　]*([^\n\r]{0,20})/);
+  if (feeM) {
+    result.fee = feeM[1].trim() || '無料';
+    if (!result.fee) result.fee = '無料';
+  }
+
+  // ⑩ 定員の抽出
+  const capM = text.match(/定員[：:\s　]*(\d+)\s*名?/);
+  if (capM) result.capacity = parseInt(capM[1]);
+
   return result;
 }
 
@@ -2678,22 +2807,62 @@ function executeParse() {
   parsedData = parseEventText(text);
   parsedSelectedDates = [...parsedData.dates];
   const weekdays = ['日','月','火','水','木','金','土'];
+
+  function fmtDate(ds) {
+    if (!ds) return null;
+    const d = new Date(ds + 'T00:00:00');
+    return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（${weekdays[d.getDay()]}）`;
+  }
+  function row(label, val, isMissing) {
+    return `<div class="parse-row"><span class="parse-result-label">${label}</span><span class="parse-result-value ${isMissing?'missing':''}">${val}</span></div>`;
+  }
+
   // 基本情報
-  let body = `
-    <div class="parse-row"><span class="parse-result-label">種別</span><span class="parse-result-value">${parsedData.eventType==='trial'?'🏃 練習会':'⚽ セレクション'}</span></div>
-    <div class="parse-row"><span class="parse-result-label">開始時間</span><span class="parse-result-value ${parsedData.time?'':'missing'}">${parsedData.time||'検出できませんでした'}</span></div>
-    <div class="parse-row"><span class="parse-result-label">会場</span><span class="parse-result-value ${parsedData.location?'':'missing'}">${escHtml(parsedData.location||'検出できませんでした')}</span></div>
-  `;
+  let body = '';
+  body += row('種別', parsedData.eventType==='trial'?'🏃 練習会':'⚽ セレクション', false);
+
+  // 締切日
+  if (parsedData.deadline) {
+    body += row('📌 申込締切', `<strong style="color:var(--red)">${fmtDate(parsedData.deadline)}</strong>`, false);
+  }
+
+  // 受付・開始・終了時刻
+  const timeLabel = [
+    parsedData.receptionTime ? `受付 ${parsedData.receptionTime}` : null,
+    parsedData.time          ? `開始 ${parsedData.time}` : null,
+    parsedData.endTime       ? `終了 ${parsedData.endTime}` : null,
+  ].filter(Boolean).join('　／　');
+  body += row('時刻', timeLabel || '検出できませんでした', !timeLabel);
+
+  // 会場
+  body += row('会場', escHtml(parsedData.location || '検出できませんでした'), !parsedData.location);
+
+  // 対象学年
+  if (parsedData.targetGrades.length > 0) {
+    body += row('対象学年', escHtml(parsedData.targetGrades.join('・')), false);
+  }
+
+  // 参加費
+  if (parsedData.fee !== null) {
+    body += row('参加費', escHtml(parsedData.fee), false);
+  }
+
+  // 定員
+  if (parsedData.capacity) {
+    body += row('定員', `${parsedData.capacity}名`, false);
+  }
+
   document.getElementById('parseResultBody').innerHTML = body;
+
   // 日程セクション
   let dateHtml = '';
   if (parsedData.dates.length === 0) {
-    dateHtml = '<div style="font-size:13px;color:var(--red);padding:6px 0;">⚠️ 日程を検出できませんでした。テキストを確認してください。</div>';
+    dateHtml = '<div style="font-size:13px;color:var(--red);padding:6px 0;">⚠️ 開催日程を検出できませんでした。テキストを確認してください。</div>';
     document.getElementById('applyParsedBtn').textContent = '✅ フォームに反映する';
   } else if (parsedData.dates.length === 1) {
-    const d = new Date(parsedData.dates[0]+'T00:00:00');
-    body += `<div class="parse-row"><span class="parse-result-label">日程</span><span class="parse-result-value">${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（${weekdays[d.getDay()]}）</span></div>`;
-    document.getElementById('parseResultBody').innerHTML = body;
+    // 1件は結果ボックスに直接表示済み → 日付も追記
+    const extraRow = row('開催日', fmtDate(parsedData.dates[0]), false);
+    document.getElementById('parseResultBody').innerHTML = body + extraRow;
     document.getElementById('applyParsedBtn').textContent = '✅ フォームに反映する';
   } else {
     dateHtml = `
@@ -2730,8 +2899,15 @@ function toggleParsedDate(dateStr, checked) {
 function applyParsedToForm() {
   if (!parsedData || parsedSelectedDates.length === 0) { alert('日程を選択してください'); return; }
   const weekdays = ['日','月','火','水','木','金','土'];
+
+  // 共通フィールド充填ユーティリティ（IDが存在する場合のみセット）
+  function trySet(id, val) {
+    const el = document.getElementById(id);
+    if (el && val) el.value = val;
+  }
+
   if (parsedSelectedDates.length > 1) {
-    // バッチ保存：チーム名だけ先に確認
+    // バッチ保存
     const teamName = document.getElementById('fTeamName').value.trim();
     const isPartner = document.getElementById('fIsPartner').checked;
     const teamId = isPartner ? (document.getElementById('fTeamId').value || null) : null;
@@ -2740,14 +2916,22 @@ function applyParsedToForm() {
       const d = new Date(ds+'T00:00:00');
       return `${d.getMonth()+1}月${d.getDate()}日（${weekdays[d.getDay()]}）`;
     }).join('・');
-    if (!confirm(`以下の${parsedSelectedDates.length}件を登録します：\n${dateLabels}\n\nチーム名: ${teamName||'（未入力）'}\n会場: ${location||'（未検出）'}\n\n実行しますか？`)) return;
+    const deadlineLabel = parsedData.deadline ? (() => {
+      const d = new Date(parsedData.deadline+'T00:00:00');
+      return `\n📌 申込締切: ${d.getMonth()+1}月${d.getDate()}日（${weekdays[d.getDay()]}）`;
+    })() : '';
+    const feeLabel = parsedData.fee ? `\n参加費: ${parsedData.fee}` : '';
+    if (!confirm(`以下の${parsedSelectedDates.length}件を登録します：\n${dateLabels}${deadlineLabel}${feeLabel}\n\nチーム名: ${teamName||'（未入力）'}\n会場: ${location||'（未検出）'}\n\n実行しますか？`)) return;
     parsedSelectedDates.forEach(date => {
       selections.push({
         id: uuid(), teamName: teamName||'チーム名を入力してください',
         eventType: parsedData.eventType, isPeriod: false,
         isAlwaysOpen: false, isPartner, teamId, periodText: null,
         date, time: parsedData.time, location,
-        targetGrades: [], capacity: 0, fee: null, deadline: null,
+        targetGrades: parsedData.targetGrades || [],
+        capacity: parsedData.capacity || 0,
+        fee: parsedData.fee || null,
+        deadline: parsedData.deadline || null,
         description: '', teamUrl: '', applyUrl: '', tags: [],
       });
     });
@@ -2756,12 +2940,39 @@ function applyParsedToForm() {
     alert(`✅ ${parsedSelectedDates.length}件を登録しました！\n一覧の編集ボタンから詳細を補足できます。`);
     return;
   }
+
   // 単一日程：フォームに反映
   setFormEventType(parsedData.eventType);
   setFormScheduleType('date');
-  document.getElementById('fDate').value = parsedSelectedDates[0];
-  if (parsedData.time) document.getElementById('fTime').value = parsedData.time;
-  if (parsedData.location) document.getElementById('fLocation').value = parsedData.location;
+  trySet('fDate', parsedSelectedDates[0]);
+  // 開始時刻（受付時刻が検出された場合は受付を優先してfTimeに入れ、開始はfTimeStartがあればそちらへ）
+  trySet('fTime', parsedData.time || parsedData.receptionTime);
+  trySet('fLocation', parsedData.location);
+  trySet('fDeadline', parsedData.deadline);
+  if (parsedData.fee !== null) trySet('fFee', String(parsedData.fee).replace(/[^0-9]/g,'') || '0');
+  if (parsedData.capacity) trySet('fCapacity', String(parsedData.capacity));
+
+  // 対象学年チェックボックスを自動チェック
+  if (parsedData.targetGrades.length > 0) {
+    const gradeStr = parsedData.targetGrades.join('');
+    const allGrades = ['小1','小2','小3','小4','小5','小6','中1'];
+    // 範囲パターン（例: 3〜6年生 → 小3〜小6）
+    const rangeM = gradeStr.match(/(?:小)?(\d+)\s*[〜～\-]\s*(?:小)?(\d+)\s*年/);
+    let matchFn;
+    if (rangeM) {
+      const lo = parseInt(rangeM[1]), hi = parseInt(rangeM[2]);
+      matchFn = g => { const n = parseInt(g.replace(/[^\d]/g,'')); return n >= lo && n <= hi; };
+    } else {
+      // 直接一致チェック
+      matchFn = g => gradeStr.includes(g);
+    }
+    document.querySelectorAll('#gradeGroup .checkbox-pill').forEach(el => {
+      const v = el.dataset.val;
+      const hit = matchFn(v);
+      el.classList.toggle('checked', hit);
+      el.querySelector('input').checked = hit;
+    });
+  }
   closeParseOverlay();
 }
 
