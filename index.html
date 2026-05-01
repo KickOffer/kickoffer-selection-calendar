@@ -1,0 +1,3062 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>セレクションカレンダー | KickOffer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --green:        #2e7d4f;
+      --green-mid:    #3a9d62;
+      --green-light:  #e8f5ee;
+      --green-pale:   #f2faf5;
+      --green-glow:   rgba(46,125,79,.15);
+      --orange:       #e8702a;
+      --orange-light: #fff4ed;
+      --orange-glow:  rgba(232,112,42,.12);
+      --blue:         #2563eb;
+      --blue-light:   #eff6ff;
+      --purple:       #7c3aed;
+      --purple-light: #f5f3ff;
+      --red:          #dc2626;
+      --red-light:    #fef2f2;
+      --bg:           #f5f6f0;
+      --bg2:          #eef0e8;
+      --white:        #ffffff;
+      --text:         #1c2b22;
+      --text-sub:     #5a7060;
+      --text-mute:    #96a89c;
+      --border:       #dde5df;
+      --border2:      #c8d6cc;
+      --r-xl:  22px;
+      --r-lg:  16px;
+      --r-md:  12px;
+      --r-sm:   8px;
+      --shadow-sm: 0 1px 4px rgba(0,0,0,.06);
+      --shadow-md: 0 4px 16px rgba(0,0,0,.08);
+      --shadow-lg: 0 8px 32px rgba(0,0,0,.12);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Noto Sans JP','Hiragino Kaku Gothic ProN',sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ══ HERO ══ */
+    .hero {
+      background: linear-gradient(160deg, #1e5c35 0%, #2e7d4f 45%, #3a9d62 100%);
+      padding: 44px 20px 36px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+    .hero-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,.12);
+      padding: 6px 14px;
+      border-radius: 50px;
+      margin-bottom: 16px;
+    }
+    .hero-logo-icon { font-size: 18px; }
+    .hero-logo-text {
+      font-size: 13px;
+      font-weight: 700;
+      color: rgba(255,255,255,.9);
+      letter-spacing: .08em;
+    }
+    .hero h1 {
+      font-size: clamp(24px, 6vw, 30px);
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: -.02em;
+      line-height: 1.2;
+      margin-bottom: 8px;
+    }
+    .hero-sub {
+      font-size: 13px;
+      color: rgba(255,255,255,.72);
+      letter-spacing: .04em;
+    }
+    /* 通知ボタン（ヒーロー） */
+    .hero-notif-wrap { margin-top: 14px; }
+    .hero-notif-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,.15);
+      border: 1px solid rgba(255,255,255,.3);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: background .2s;
+      font-family: inherit;
+    }
+    .hero-notif-btn:hover { background: rgba(255,255,255,.25); }
+    .hero-notif-btn.notif-on {
+      background: rgba(255,255,255,.9);
+      color: var(--green);
+      border-color: transparent;
+    }
+    .hero-notif-btn.notif-denied {
+      background: rgba(0,0,0,.15);
+      border-color: rgba(255,255,255,.1);
+      opacity: .7;
+      cursor: default;
+    }
+    /* 詳細モーダル内通知ボタン */
+    .btn-notif {
+      width: 100%;
+      padding: 13px;
+      border-radius: var(--r-lg);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      border: 1.5px solid var(--border2);
+      background: var(--white);
+      color: var(--text-sub);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all .18s;
+    }
+    .btn-notif.notif-active {
+      border-color: var(--orange);
+      color: var(--orange);
+      background: var(--orange-light);
+    }
+    .btn-notif:hover { border-color: var(--green-mid); }
+
+    /* ══ NAV BAR ══ */
+    .nav-bar {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow-sm);
+    }
+    .nav-month {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+    }
+    .nav-btn {
+      width: 36px;
+      height: 36px;
+      border: 1.5px solid var(--border2);
+      border-radius: 50%;
+      background: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+      color: var(--text-sub);
+      transition: all .15s;
+      flex-shrink: 0;
+    }
+    .nav-btn:hover { background: var(--green-light); border-color: var(--green-mid); color: var(--green); }
+    .nav-month-label {
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--text);
+      letter-spacing: -.02em;
+    }
+    .nav-today-btn {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--green);
+      background: var(--green-light);
+      padding: 4px 12px;
+      border-radius: 50px;
+      border: none;
+      cursor: pointer;
+      letter-spacing: .04em;
+    }
+    .nav-tabs {
+      display: flex;
+      gap: 0;
+      padding: 0 16px 10px;
+    }
+    .nav-tab {
+      flex: 1;
+      padding: 7px 0;
+      font-size: 13px;
+      font-weight: 700;
+      text-align: center;
+      border: none;
+      background: none;
+      cursor: pointer;
+      color: var(--text-mute);
+      border-bottom: 2px solid transparent;
+      transition: all .15s;
+      letter-spacing: .04em;
+    }
+    .nav-tab.active { color: var(--green); border-bottom-color: var(--green); }
+
+    /* ══ CALENDAR VIEW ══ */
+    .cal-container { padding: 16px; }
+    .cal-weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 2px;
+      margin-bottom: 4px;
+    }
+    .cal-weekday {
+      text-align: center;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 0;
+      letter-spacing: .06em;
+    }
+    .cal-weekday:first-child { color: var(--red); }
+    .cal-weekday:last-child { color: var(--blue); }
+    .cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 2px;
+    }
+    .cal-cell {
+      background: var(--white);
+      border-radius: var(--r-sm);
+      min-height: 72px;
+      padding: 4px;
+      cursor: pointer;
+      transition: all .15s;
+      border: 1.5px solid transparent;
+      position: relative;
+    }
+    .cal-cell:hover { border-color: var(--green-mid); background: var(--green-pale); }
+    .cal-cell.today { border-color: var(--green); background: var(--green-pale); }
+    .cal-cell.other-month { opacity: .4; }
+    .cal-cell.has-events { }
+    .cal-day-num {
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 3px;
+      width: 22px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+    }
+    .cal-cell.today .cal-day-num {
+      background: var(--green);
+      color: #fff;
+    }
+    .cal-cell:first-child .cal-day-num,
+    .cal-sun .cal-day-num { color: var(--red); }
+    .cal-cell:nth-child(7n) .cal-day-num,
+    .cal-sat .cal-day-num { color: var(--blue); }
+    .cal-event-chip {
+      display: block;
+      font-size: 9px;
+      font-weight: 700;
+      padding: 2px 4px;
+      border-radius: 3px;
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.3;
+    }
+    .cal-more {
+      font-size: 9px;
+      color: var(--text-mute);
+      font-weight: 700;
+      padding: 1px 4px;
+    }
+    /* category colors (設立年バッジ) */
+    .cat-year   { background: #e8f5ee; color: #2e7d4f; border: 1px solid #c3dece; }
+
+    /* 開催予定期間バッジ */
+    .period-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 10px; font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 50px;
+      background: var(--orange-light);
+      color: var(--orange);
+      border: 1px dashed var(--orange);
+      letter-spacing: .04em;
+    }
+    /* 期間カード */
+    .selection-card.is-period {
+      border: 1.5px dashed var(--border2);
+      background: #fafbf8;
+    }
+    .selection-card.is-period:hover {
+      border-color: var(--orange);
+    }
+    .period-time-label {
+      font-size: 11px; font-weight: 700;
+      color: var(--orange);
+      background: var(--orange-light);
+      border-radius: 6px;
+      padding: 3px 8px;
+      display: inline-block;
+      margin-bottom: 2px;
+    }
+    /* 期間グループヘッダー */
+    .list-date-header.is-period {
+      color: var(--orange);
+      opacity: 1 !important;
+    }
+    .list-date-header.is-period::after {
+      background: var(--orange-light);
+    }
+    /* カレンダー期間チップ */
+    .cal-event-chip.is-period {
+      background: var(--orange-light) !important;
+      color: var(--orange) !important;
+      border: 1px dashed var(--orange) !important;
+      opacity: .85;
+    }
+
+    /* ══ LIST VIEW ══ */
+    .list-container { padding: 16px; }
+    .list-date-group { margin-bottom: 20px; }
+    .list-date-header {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-sub);
+      letter-spacing: .08em;
+      padding: 0 4px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .list-date-header::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+    .selection-card {
+      background: var(--white);
+      border-radius: var(--r-lg);
+      border: 1.5px solid var(--border);
+      margin-bottom: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all .18s;
+      box-shadow: var(--shadow-sm);
+    }
+    .selection-card:hover {
+      border-color: var(--green-mid);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-1px);
+    }
+    .card-top {
+      padding: 14px 14px 10px;
+    }
+    .card-cat-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+    .cat-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 50px;
+      letter-spacing: .04em;
+    }
+    .card-title {
+      font-size: 16px;
+      font-weight: 900;
+      color: var(--text);
+      letter-spacing: -.01em;
+      line-height: 1.3;
+      margin-bottom: 10px;
+    }
+    .card-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .card-meta-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--text-sub);
+    }
+    .card-meta-icon { font-size: 13px; flex-shrink: 0; }
+    .card-bottom {
+      padding: 8px 14px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      border-top: 1px solid var(--border);
+    }
+    .card-tags { display: flex; gap: 4px; flex-wrap: wrap; }
+    .tag {
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 50px;
+      background: var(--green-light);
+      color: var(--green);
+      font-weight: 700;
+    }
+    .card-detail-btn {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--green);
+      background: var(--green-light);
+      padding: 5px 14px;
+      border-radius: 50px;
+      border: none;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* ══ EMPTY STATE ══ */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+    }
+    .empty-icon { font-size: 48px; margin-bottom: 12px; }
+    .empty-title { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+    .empty-sub { font-size: 13px; color: var(--text-mute); }
+
+    /* ══ MODAL ══ */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.5);
+      z-index: 200;
+      display: flex;
+      align-items: flex-end;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: var(--white);
+      width: 100%;
+      max-height: 92vh;
+      border-radius: 24px 24px 0 0;
+      overflow-y: auto;
+      transform: translateY(100%);
+      transition: transform .3s cubic-bezier(.4,0,.2,1);
+    }
+    .modal-overlay.open .modal { transform: translateY(0); }
+    .modal-handle {
+      width: 36px;
+      height: 4px;
+      background: var(--border2);
+      border-radius: 2px;
+      margin: 12px auto 0;
+    }
+    .modal-header {
+      padding: 16px 20px 0;
+    }
+    .modal-cat-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+    .modal-title {
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--text);
+      letter-spacing: -.02em;
+      line-height: 1.25;
+      margin-bottom: 4px;
+    }
+    .modal-subtitle {
+      font-size: 13px;
+      color: var(--text-sub);
+      margin-bottom: 16px;
+    }
+    .modal-info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding: 0 20px;
+      margin-bottom: 16px;
+    }
+    .info-cell {
+      background: var(--bg);
+      border-radius: var(--r-md);
+      padding: 10px 12px;
+    }
+    .info-cell.full { grid-column: 1 / -1; }
+    .info-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-mute);
+      letter-spacing: .08em;
+      margin-bottom: 4px;
+    }
+    .info-value {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.4;
+    }
+    .info-value.price { color: var(--orange); }
+    .modal-section {
+      padding: 0 20px;
+      margin-bottom: 16px;
+    }
+    .modal-section-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-sub);
+      letter-spacing: .06em;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .modal-desc {
+      font-size: 14px;
+      line-height: 1.75;
+      color: var(--text);
+    }
+    .modal-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+    .modal-actions {
+      padding: 16px 20px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .btn-primary {
+      display: block;
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, var(--green), var(--green-mid));
+      color: #fff;
+      font-size: 15px;
+      font-weight: 900;
+      text-align: center;
+      border: none;
+      border-radius: var(--r-lg);
+      cursor: pointer;
+      letter-spacing: .04em;
+      text-decoration: none;
+    }
+    .btn-secondary {
+      display: block;
+      width: 100%;
+      padding: 13px;
+      background: var(--white);
+      color: var(--green);
+      font-size: 14px;
+      font-weight: 700;
+      text-align: center;
+      border: 1.5px solid var(--green-mid);
+      border-radius: var(--r-lg);
+      cursor: pointer;
+      letter-spacing: .04em;
+      text-decoration: none;
+    }
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 32px;
+      height: 32px;
+      background: var(--bg2);
+      border: none;
+      border-radius: 50%;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-sub);
+    }
+    .modal-header { position: relative; }
+
+    /* deadline badge */
+    .deadline-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 50px;
+      background: var(--red-light);
+      color: var(--red);
+    }
+    .deadline-badge.soon { animation: pulse 1.5s infinite; }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: .6; }
+    }
+
+    /* ══ FAB (Admin) ══ */
+    .fab {
+      position: fixed;
+      bottom: 28px;
+      right: 20px;
+      width: 52px;
+      height: 52px;
+      background: linear-gradient(135deg, var(--green), var(--green-mid));
+      border-radius: 50%;
+      border: none;
+      box-shadow: 0 4px 20px rgba(46,125,79,.4);
+      cursor: pointer;
+      font-size: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 150;
+      transition: transform .2s;
+    }
+    .fab:hover { transform: scale(1.1); }
+    .fab.hidden { display: none; }
+
+    /* ══ ADMIN MODAL ══ */
+    .admin-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.6);
+      z-index: 300;
+      display: flex;
+      align-items: flex-end;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s;
+    }
+    .admin-modal-overlay.open { opacity: 1; pointer-events: all; }
+    .admin-modal {
+      background: var(--white);
+      width: 100%;
+      max-height: 94vh;
+      border-radius: 24px 24px 0 0;
+      overflow-y: auto;
+      transform: translateY(100%);
+      transition: transform .3s cubic-bezier(.4,0,.2,1);
+      padding: 0 0 40px;
+    }
+    .admin-modal-overlay.open .admin-modal { transform: translateY(0); }
+    .admin-header {
+      padding: 20px 20px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .admin-title {
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--text);
+    }
+    .form-section {
+      padding: 16px 20px 0;
+    }
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-sub);
+      letter-spacing: .06em;
+      margin-bottom: 6px;
+    }
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      border: 1.5px solid var(--border2);
+      border-radius: var(--r-md);
+      padding: 10px 12px;
+      font-size: 14px;
+      font-family: inherit;
+      color: var(--text);
+      background: var(--white);
+      outline: none;
+      margin-bottom: 14px;
+      transition: border-color .15s;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: var(--green-mid);
+      box-shadow: 0 0 0 3px var(--green-glow);
+    }
+    .form-textarea { min-height: 80px; resize: vertical; line-height: 1.6; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .form-row .form-input, .form-row .form-select { margin-bottom: 0; }
+    .form-row-wrap { margin-bottom: 14px; }
+    .checkbox-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+    .checkbox-pill {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 12px;
+      border: 1.5px solid var(--border2);
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-sub);
+      transition: all .15s;
+      user-select: none;
+    }
+    .checkbox-pill input { display: none; }
+    .checkbox-pill.checked {
+      border-color: var(--green);
+      background: var(--green-light);
+      color: var(--green);
+    }
+    .form-actions {
+      padding: 20px 20px 0;
+      display: flex;
+      gap: 10px;
+    }
+    .btn-save {
+      flex: 1;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--green), var(--green-mid));
+      color: #fff;
+      font-size: 15px;
+      font-weight: 900;
+      border: none;
+      border-radius: var(--r-lg);
+      cursor: pointer;
+    }
+    .btn-cancel {
+      padding: 14px 20px;
+      background: var(--bg2);
+      color: var(--text-sub);
+      font-size: 14px;
+      font-weight: 700;
+      border: none;
+      border-radius: var(--r-lg);
+      cursor: pointer;
+    }
+    .btn-delete {
+      padding: 14px 16px;
+      background: var(--red-light);
+      color: var(--red);
+      font-size: 14px;
+      font-weight: 700;
+      border: none;
+      border-radius: var(--r-lg);
+      cursor: pointer;
+    }
+
+    /* ══ ADMIN PASSWORD ══ */
+    .admin-lock {
+      padding: 20px;
+      text-align: center;
+    }
+    .admin-lock-icon { font-size: 40px; margin-bottom: 12px; }
+    .admin-lock-title { font-size: 18px; font-weight: 900; margin-bottom: 6px; }
+    .admin-lock-sub { font-size: 13px; color: var(--text-sub); margin-bottom: 20px; }
+    .admin-pw-input {
+      width: 100%;
+      border: 1.5px solid var(--border2);
+      border-radius: var(--r-lg);
+      padding: 12px 16px;
+      font-size: 16px;
+      text-align: center;
+      letter-spacing: .2em;
+      margin-bottom: 12px;
+      outline: none;
+    }
+    .admin-pw-input:focus { border-color: var(--green); }
+    .btn-unlock {
+      width: 100%;
+      padding: 13px;
+      background: linear-gradient(135deg, var(--green), var(--green-mid));
+      color: #fff;
+      font-size: 15px;
+      font-weight: 900;
+      border: none;
+      border-radius: var(--r-lg);
+      cursor: pointer;
+    }
+    .pw-error { font-size: 12px; color: var(--red); margin-top: 8px; }
+
+    /* ══ ADMIN LIST ══ */
+    .admin-list-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--border);
+      gap: 8px;
+    }
+    .admin-item-info { flex: 1; min-width: 0; }
+    .admin-item-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .admin-item-date { font-size: 11px; color: var(--text-sub); margin-top: 2px; }
+    .admin-edit-btn {
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--green);
+      background: var(--green-light);
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    /* ══ ADMIN TABS ══ */
+    .admin-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+    }
+    .admin-tab {
+      flex: 1;
+      padding: 12px;
+      font-size: 13px;
+      font-weight: 700;
+      text-align: center;
+      border: none;
+      background: none;
+      cursor: pointer;
+      color: var(--text-mute);
+      border-bottom: 2px solid transparent;
+    }
+    .admin-tab.active { color: var(--green); border-bottom-color: var(--green); }
+
+    /* ══ DATA TOOLS ══ */
+    .data-tools {
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .btn-tool {
+      padding: 12px 16px;
+      font-size: 14px;
+      font-weight: 700;
+      border-radius: var(--r-md);
+      border: 1.5px solid;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-export { color: var(--blue); border-color: var(--blue); background: var(--blue-light); }
+    .btn-import { color: var(--purple); border-color: var(--purple); background: var(--purple-light); }
+
+    /* ══ UPCOMING STRIP (top of list) ══ */
+    .upcoming-strip {
+      background: linear-gradient(135deg, var(--orange-light), #fff9f0);
+      border: 1.5px solid var(--orange);
+      border-radius: var(--r-lg);
+      padding: 14px 16px;
+      margin: 16px 16px 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+    }
+    .upcoming-icon { font-size: 24px; flex-shrink: 0; }
+    .upcoming-text-block { flex: 1; min-width: 0; }
+    .upcoming-label { font-size: 10px; font-weight: 700; color: var(--orange); letter-spacing: .06em; margin-bottom: 2px; }
+    .upcoming-title { font-size: 14px; font-weight: 900; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .upcoming-meta { font-size: 11px; color: var(--text-sub); margin-top: 2px; }
+    .upcoming-arrow { font-size: 16px; color: var(--orange); flex-shrink: 0; }
+
+    /* responsive adjustments */
+    @media (min-width: 480px) {
+      .modal-info-grid { grid-template-columns: 1fr 1fr 1fr; }
+    }
+
+    /* ══ FILTER BAR ══ */
+    .filter-bar {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 16px;
+    }
+    .filter-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .search-wrap {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .search-icon {
+      position: absolute;
+      left: 10px;
+      font-size: 14px;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .search-input {
+      width: 100%;
+      border: 1.5px solid var(--border2);
+      border-radius: 50px;
+      padding: 8px 32px 8px 32px;
+      font-size: 13px;
+      font-family: inherit;
+      color: var(--text);
+      background: var(--bg);
+      outline: none;
+      transition: border-color .15s;
+    }
+    .search-input:focus { border-color: var(--green-mid); background: var(--white); }
+    .search-clear {
+      position: absolute;
+      right: 8px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: none;
+      background: var(--border2);
+      color: var(--text-sub);
+      font-size: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .area-select {
+      border: 1.5px solid var(--border2);
+      border-radius: 50px;
+      padding: 8px 10px;
+      font-size: 12px;
+      font-family: inherit;
+      color: var(--text);
+      background: var(--bg);
+      outline: none;
+      cursor: pointer;
+      white-space: nowrap;
+      max-width: 110px;
+      transition: border-color .15s;
+    }
+    .area-select:focus { border-color: var(--green-mid); }
+    .filter-status {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 8px;
+      padding: 6px 10px;
+      background: var(--green-light);
+      border-radius: var(--r-sm);
+    }
+    .filter-status-text { font-size: 12px; font-weight: 700; color: var(--green); }
+    .filter-clear-btn {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--green);
+      background: none;
+      border: 1px solid var(--green-mid);
+      border-radius: 50px;
+      padding: 2px 10px;
+      cursor: pointer;
+    }
+
+    /* ══ HEART BUTTON ══ */
+    .heart-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border2);
+      background: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+      flex-shrink: 0;
+      transition: all .15s;
+      line-height: 1;
+    }
+    .heart-btn:hover { border-color: #f43f5e; background: #fff1f2; }
+    .heart-btn.faved { border-color: #f43f5e; background: #fff1f2; }
+    .heart-btn .heart-icon { transition: transform .15s; }
+    .heart-btn.faved .heart-icon { transform: scale(1.15); }
+
+    /* Fav badge on calendar */
+    .cal-fav-dot {
+      position: absolute;
+      top: 3px;
+      right: 3px;
+      width: 6px;
+      height: 6px;
+      background: #f43f5e;
+      border-radius: 50%;
+    }
+
+    /* Modal fav button */
+    .btn-fav {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 13px;
+      background: var(--white);
+      font-size: 14px;
+      font-weight: 700;
+      border-radius: var(--r-lg);
+      cursor: pointer;
+      letter-spacing: .04em;
+      border: 1.5px solid var(--border2);
+      color: var(--text-sub);
+      transition: all .15s;
+    }
+    .btn-fav.faved {
+      border-color: #f43f5e;
+      background: #fff1f2;
+      color: #f43f5e;
+    }
+
+    /* ══ TEAM PROFILE MODAL ══ */
+    .tp-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.5);
+      z-index: 500;
+      display: flex;
+      align-items: flex-end;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s;
+    }
+    .tp-overlay.open { opacity: 1; pointer-events: all; }
+    .tp-sheet {
+      background: var(--white);
+      width: 100%;
+      max-height: 94vh;
+      border-radius: 24px 24px 0 0;
+      overflow-y: auto;
+      transform: translateY(100%);
+      transition: transform .3s cubic-bezier(.4,0,.2,1);
+    }
+    .tp-overlay.open .tp-sheet { transform: translateY(0); }
+    .tp-hero {
+      position: relative;
+      background: linear-gradient(160deg, #1a4a2e, #2e7d4f);
+      padding: 20px 20px 24px;
+    }
+    .tp-hero-img {
+      width: 60px; height: 60px;
+      border-radius: 14px;
+      object-fit: contain;
+      background: #fff;
+      padding: 4px;
+      margin-bottom: 12px;
+      display: block;
+    }
+    .tp-hero-img-placeholder {
+      width: 60px; height: 60px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      margin-bottom: 12px;
+    }
+    .tp-hero-name {
+      font-size: 20px;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: -.02em;
+      line-height: 1.2;
+      margin-bottom: 6px;
+    }
+    .tp-hero-sub {
+      font-size: 12px;
+      color: rgba(255,255,255,.75);
+    }
+    .tp-hero-badges {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    .tp-hero-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 50px;
+      background: rgba(255,255,255,.18);
+      color: #fff;
+    }
+    .tp-close {
+      position: absolute;
+      top: 14px; right: 14px;
+      width: 30px; height: 30px;
+      background: rgba(255,255,255,.2);
+      border: none; border-radius: 50%;
+      color: #fff; font-size: 14px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .tp-concept {
+      padding: 20px 20px 0;
+    }
+    .tp-concept-text {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--green);
+      line-height: 1.6;
+      border-left: 3px solid var(--green-mid);
+      padding-left: 12px;
+      margin-bottom: 10px;
+    }
+    .tp-intro {
+      font-size: 13px;
+      color: var(--text-sub);
+      line-height: 1.75;
+    }
+    .tp-section {
+      padding: 16px 20px 0;
+    }
+    .tp-section-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      color: var(--text-mute);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .tp-section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+    .tp-stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .tp-stat {
+      background: var(--bg);
+      border-radius: var(--r-md);
+      padding: 10px 12px;
+    }
+    .tp-stat.full { grid-column: 1 / -1; }
+    .tp-stat-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-mute);
+      letter-spacing: .06em;
+      margin-bottom: 4px;
+    }
+    .tp-stat-value {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.4;
+    }
+    .tp-sel-box {
+      background: var(--orange-light);
+      border: 1.5px solid var(--orange);
+      border-radius: var(--r-md);
+      padding: 12px 14px;
+    }
+    .tp-sel-label { font-size: 10px; font-weight: 700; color: var(--orange); letter-spacing: .06em; margin-bottom: 4px; }
+    .tp-sel-value { font-size: 14px; font-weight: 900; color: var(--text); }
+    .tp-links {
+      padding: 16px 20px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .tp-link-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      background: var(--bg);
+      border-radius: var(--r-md);
+      text-decoration: none;
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 700;
+      border: 1.5px solid var(--border);
+      transition: all .15s;
+    }
+    .tp-link-btn:hover { border-color: var(--green-mid); background: var(--green-pale); }
+    .tp-link-icon { font-size: 18px; flex-shrink: 0; }
+    .tp-link-label { color: var(--text-sub); font-size: 11px; font-weight: 400; }
+
+    /* Team detail button in selection modal */
+    .btn-team-detail {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #1e5c35, #2e7d4f);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 900;
+      border: none;
+      border-radius: var(--r-lg);
+      cursor: pointer;
+      letter-spacing: .04em;
+    }
+
+    /* ══ ONBOARDING ══ */
+    .ob-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.55);
+      z-index: 400;
+      display: flex;
+      align-items: flex-end;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .25s;
+    }
+    .ob-overlay.open { opacity: 1; pointer-events: all; }
+    .ob-sheet {
+      background: var(--white);
+      width: 100%;
+      border-radius: 28px 28px 0 0;
+      overflow: hidden;
+      transform: translateY(100%);
+      transition: transform .35s cubic-bezier(.4,0,.2,1);
+      padding-bottom: 32px;
+    }
+    .ob-overlay.open .ob-sheet { transform: translateY(0); }
+
+    .ob-handle {
+      width: 36px; height: 4px;
+      background: var(--border2);
+      border-radius: 2px;
+      margin: 14px auto 0;
+    }
+
+    /* slide track */
+    .ob-track-wrap {
+      overflow: hidden;
+      margin: 0;
+    }
+    .ob-track {
+      display: flex;
+      transition: transform .3s cubic-bezier(.4,0,.2,1);
+    }
+    .ob-slide {
+      min-width: 100%;
+      padding: 28px 28px 8px;
+      text-align: center;
+    }
+    .ob-slide-icon {
+      font-size: 52px;
+      margin-bottom: 16px;
+      display: block;
+      line-height: 1;
+    }
+    .ob-slide-title {
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--text);
+      letter-spacing: -.02em;
+      margin-bottom: 10px;
+      line-height: 1.3;
+    }
+    .ob-slide-desc {
+      font-size: 14px;
+      color: var(--text-sub);
+      line-height: 1.75;
+    }
+    .ob-slide-desc strong { color: var(--green); font-weight: 700; }
+
+    /* highlight pill inside slide */
+    .ob-tip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--green-light);
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 5px 14px;
+      border-radius: 50px;
+      margin-top: 12px;
+    }
+
+    /* dots */
+    .ob-dots {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      padding: 20px 0 8px;
+    }
+    .ob-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--border2);
+      transition: all .2s;
+      cursor: pointer;
+    }
+    .ob-dot.active { background: var(--green); width: 20px; border-radius: 4px; }
+
+    /* nav buttons */
+    .ob-nav {
+      display: flex;
+      gap: 10px;
+      padding: 0 20px;
+    }
+    .ob-btn-skip {
+      padding: 13px 20px;
+      background: var(--bg2);
+      color: var(--text-sub);
+      font-size: 14px;
+      font-weight: 700;
+      border: none;
+      border-radius: var(--r-lg);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .ob-btn-next {
+      flex: 1;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--green), var(--green-mid));
+      color: #fff;
+      font-size: 15px;
+      font-weight: 900;
+      border: none;
+      border-radius: var(--r-lg);
+      cursor: pointer;
+      letter-spacing: .04em;
+    }
+
+    /* help button in hero */
+    .hero-help-btn {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 32px;
+      height: 32px;
+      background: rgba(255,255,255,.2);
+      border: 1.5px solid rgba(255,255,255,.35);
+      border-radius: 50%;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 900;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* hidden */
+    .hidden { display: none !important; }
+    .view-section { display: none; }
+    .view-section.active { display: block; }
+  </style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-logo">
+    <span class="hero-logo-icon">⚽</span>
+    <span class="hero-logo-text">KickOffer</span>
+  </div>
+  <h1>セレクション<br>カレンダー</h1>
+  <p class="hero-sub">見逃さないで、あなたのチャンス</p>
+  <button class="hero-help-btn" onclick="openOnboarding()" title="使い方">?</button>
+  <div class="hero-notif-wrap">
+    <button class="hero-notif-btn" id="heroNotifBtn" onclick="handleNotifBtnClick()">
+      <span id="heroNotifIcon">🔔</span>
+      <span id="heroNotifText">セレクション通知を受け取る</span>
+    </button>
+  </div>
+</div>
+
+<!-- NAV BAR -->
+<div class="nav-bar">
+  <div class="nav-month">
+    <button class="nav-btn" id="prevMonth">&#8249;</button>
+    <div>
+      <div class="nav-month-label" id="monthLabel">2026年5月</div>
+    </div>
+    <div style="display:flex;gap:6px;align-items:center;">
+      <button class="nav-today-btn" id="todayBtn">今月</button>
+      <button class="nav-btn" id="nextMonth">&#8250;</button>
+    </div>
+  </div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" id="tabCal" onclick="switchTab('cal')">📅 カレンダー</button>
+    <button class="nav-tab" id="tabList" onclick="switchTab('list')">📋 一覧</button>
+    <button class="nav-tab" id="tabFav" onclick="switchTab('fav')">❤️ お気に入り</button>
+  </div>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-bar" id="filterBar">
+  <div class="filter-row">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input class="search-input" id="searchInput" placeholder="チーム名で検索..." oninput="onFilterChange()">
+      <button class="search-clear hidden" id="searchClear" onclick="clearSearch()">✕</button>
+    </div>
+    <select class="area-select" id="areaSelect" onchange="onFilterChange()">
+      <option value="">すべてのエリア</option>
+    </select>
+  </div>
+  <div class="filter-status hidden" id="filterStatus">
+    <span class="filter-status-text" id="filterStatusText"></span>
+    <button class="filter-clear-btn" onclick="clearAllFilters()">クリア ✕</button>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div id="viewCal" class="view-section active">
+  <div class="cal-container">
+    <div class="cal-weekdays">
+      <div class="cal-weekday">日</div>
+      <div class="cal-weekday">月</div>
+      <div class="cal-weekday">火</div>
+      <div class="cal-weekday">水</div>
+      <div class="cal-weekday">木</div>
+      <div class="cal-weekday">金</div>
+      <div class="cal-weekday">土</div>
+    </div>
+    <div class="cal-grid" id="calGrid"></div>
+  </div>
+</div>
+
+<div id="viewList" class="view-section">
+  <div id="upcomingStrip"></div>
+  <div class="list-container" id="listContainer"></div>
+</div>
+
+<div id="viewFav" class="view-section">
+  <div class="list-container" id="favContainer"></div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="modal-overlay" id="detailOverlay" onclick="closeDetailOnOverlay(event)">
+  <div class="modal" id="detailModal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <button class="modal-close" onclick="closeDetail()">✕</button>
+      <div class="modal-cat-row" id="modalCatRow"></div>
+      <div class="modal-title" id="modalTitle"></div>
+      <div class="modal-subtitle" id="modalSubtitle"></div>
+    </div>
+    <div class="modal-info-grid" id="modalInfoGrid"></div>
+    <div class="modal-section" id="modalDescSection">
+      <div class="modal-section-title">📝 セレクション詳細</div>
+      <div class="modal-desc" id="modalDesc"></div>
+    </div>
+    <div class="modal-section" id="modalTagSection">
+      <div class="modal-section-title">🏷️ タグ</div>
+      <div class="modal-tags" id="modalTags"></div>
+    </div>
+    <div class="modal-actions" id="modalActions">
+      <button class="btn-notif" id="modalNotifBtn" onclick="toggleNotifFromModal()" style="display:none"></button>
+      <button class="btn-fav" id="modalFavBtn" onclick="toggleFavoriteFromModal()"></button>
+    </div>
+  </div>
+</div>
+
+<!-- TEAM PROFILE MODAL -->
+<div class="tp-overlay" id="tpOverlay" onclick="closeTpOnOverlay(event)">
+  <div class="tp-sheet" id="tpSheet">
+    <div class="modal-handle" style="margin-top:12px;"></div>
+    <div class="tp-hero" id="tpHero">
+      <button class="tp-close" onclick="closeTeamProfile()">✕</button>
+      <div id="tpEmblem"></div>
+      <div class="tp-hero-name" id="tpName"></div>
+      <div class="tp-hero-sub" id="tpSub"></div>
+      <div class="tp-hero-badges" id="tpBadges"></div>
+    </div>
+    <div id="tpBody"></div>
+  </div>
+</div>
+
+<!-- ONBOARDING MODAL -->
+<div class="ob-overlay" id="obOverlay" onclick="closeObOnOverlay(event)">
+  <div class="ob-sheet">
+    <div class="ob-handle"></div>
+
+    <div class="ob-track-wrap">
+      <div class="ob-track" id="obTrack">
+
+        <!-- Slide 1 -->
+        <div class="ob-slide">
+          <span class="ob-slide-icon">📅</span>
+          <div class="ob-slide-title">セレクション日程を<br>一目で確認</div>
+          <div class="ob-slide-desc">
+            カレンダーと一覧の2つのビューで、どのチームがいつセレクションを行っているか確認できます。<br><br>
+            <strong>「気づいたら終わっていた」をゼロに。</strong>
+          </div>
+          <div class="ob-tip">📋 一覧タブでは日付順に並びます</div>
+        </div>
+
+        <!-- Slide 2 -->
+        <div class="ob-slide">
+          <span class="ob-slide-icon">❤️</span>
+          <div class="ob-slide-title">気になるチームを<br>お気に入り保存</div>
+          <div class="ob-slide-desc">
+            カードの <strong>🤍 ボタン</strong>を押すとお気に入りに追加されます。「❤️ お気に入り」タブでまとめて確認できるので、候補チームの整理に便利です。
+          </div>
+          <div class="ob-tip">💾 端末に自動保存されます</div>
+        </div>
+
+        <!-- Slide 3 -->
+        <div class="ob-slide">
+          <span class="ob-slide-icon">🔍</span>
+          <div class="ob-slide-title">チーム名・エリアで<br>絞り込み検索</div>
+          <div class="ob-slide-desc">
+            上部の検索バーで<strong>チーム名</strong>、エリア選択で<strong>都道府県</strong>から絞り込めます。近くのチームや気になるチームをすぐに見つけられます。
+          </div>
+          <div class="ob-tip">🗾 エリアは自動で更新されます</div>
+        </div>
+
+        <!-- Slide 4 -->
+        <div class="ob-slide">
+          <span class="ob-slide-icon">✅</span>
+          <div class="ob-slide-title">準備完了！<br>チャンスを逃さず</div>
+          <div class="ob-slide-desc">
+            セレクション情報はKickOfferチームが随時更新します。<br><br>
+            詳細画面では会場・締切日・参加費・申込リンクまで確認できます。<strong>締切が近いものは赤バッジで表示されます。</strong>
+          </div>
+          <div class="ob-tip">⚠️ 締切3日前から赤く点滅します</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="ob-dots" id="obDots">
+      <div class="ob-dot active" onclick="goObSlide(0)"></div>
+      <div class="ob-dot" onclick="goObSlide(1)"></div>
+      <div class="ob-dot" onclick="goObSlide(2)"></div>
+      <div class="ob-dot" onclick="goObSlide(3)"></div>
+    </div>
+
+    <div class="ob-nav">
+      <button class="ob-btn-skip" id="obSkipBtn" onclick="closeOnboarding()">スキップ</button>
+      <button class="ob-btn-next" id="obNextBtn" onclick="obNext()">次へ →</button>
+    </div>
+  </div>
+</div>
+
+<!-- FAB -->
+<button class="fab" id="adminFab" onclick="openAdminGate()">⚙️</button>
+
+<!-- ADMIN MODAL -->
+<div class="admin-modal-overlay" id="adminOverlay" onclick="closeAdminOnOverlay(event)">
+  <div class="admin-modal" id="adminModal">
+    <div class="modal-handle"></div>
+    <div class="admin-header">
+      <div class="admin-title" id="adminModalTitle">管理パネル</div>
+      <button class="modal-close" onclick="closeAdmin()">✕</button>
+    </div>
+
+    <!-- PASSWORD SCREEN -->
+    <div id="adminLock" class="admin-lock">
+      <div class="admin-lock-icon">🔒</div>
+      <div class="admin-lock-title">管理者ログイン</div>
+      <div class="admin-lock-sub">パスワードを入力してください</div>
+      <input type="password" class="admin-pw-input" id="pwInput" placeholder="••••••" onkeydown="if(event.key==='Enter')checkPw()">
+      <button class="btn-unlock" onclick="checkPw()">ログイン</button>
+      <div class="pw-error hidden" id="pwError">パスワードが違います</div>
+    </div>
+
+    <!-- ADMIN CONTENT -->
+    <div id="adminContent" class="hidden">
+      <div class="admin-tabs">
+        <button class="admin-tab active" id="aTabList" onclick="switchAdminTab('list')">一覧・編集</button>
+        <button class="admin-tab" id="aTabAdd" onclick="switchAdminTab('add')">➕ 新規追加</button>
+        <button class="admin-tab" id="aTabData" onclick="switchAdminTab('data')">データ管理</button>
+      </div>
+
+      <!-- LIST TAB -->
+      <div id="adminListView">
+        <div id="adminItemList"></div>
+      </div>
+
+      <!-- ADD/EDIT FORM -->
+      <div id="adminFormView" class="hidden">
+        <div class="form-section">
+          <input type="hidden" id="editId">
+
+          <label class="form-label">チーム名 *</label>
+          <input class="form-input" id="fTeamName" placeholder="例：FC東京 ジュニア">
+
+          <div class="form-row form-row-wrap">
+            <div>
+              <label class="form-label">セレクション日 *</label>
+              <input class="form-input" type="date" id="fDate">
+            </div>
+            <div>
+              <label class="form-label">時間</label>
+              <input class="form-input" type="time" id="fTime">
+            </div>
+          </div>
+
+          <label class="form-label">会場（市区町村以上）*</label>
+          <input class="form-input" id="fLocation" placeholder="例：調布市 味の素スタジアム">
+
+          <label class="form-label">対象学年</label>
+          <div class="checkbox-group" id="gradeGroup">
+            <label class="checkbox-pill" data-val="小1"><input type="checkbox" value="小1">小1</label>
+            <label class="checkbox-pill" data-val="小2"><input type="checkbox" value="小2">小2</label>
+            <label class="checkbox-pill" data-val="小3"><input type="checkbox" value="小3">小3</label>
+            <label class="checkbox-pill" data-val="小4"><input type="checkbox" value="小4">小4</label>
+            <label class="checkbox-pill" data-val="小5"><input type="checkbox" value="小5">小5</label>
+            <label class="checkbox-pill" data-val="小6"><input type="checkbox" value="小6">小6</label>
+            <label class="checkbox-pill" data-val="中1"><input type="checkbox" value="中1">中1</label>
+          </div>
+
+          <div class="form-row form-row-wrap">
+            <div>
+              <label class="form-label">定員（人）</label>
+              <input class="form-input" type="number" id="fCapacity" placeholder="例：30">
+            </div>
+            <div>
+              <label class="form-label">参加費（円）</label>
+              <input class="form-input" type="number" id="fFee" placeholder="例：2000">
+            </div>
+          </div>
+
+          <label class="form-label">締切日</label>
+          <input class="form-input" type="date" id="fDeadline">
+
+          <label class="form-label">セレクション詳細・備考</label>
+          <textarea class="form-textarea" id="fDescription" placeholder="セレクションの流れ、持ち物、注意点など..."></textarea>
+
+          <label class="form-label">チームWebサイトURL</label>
+          <input class="form-input" type="url" id="fTeamUrl" placeholder="https://...">
+
+          <label class="form-label">申込フォームURL</label>
+          <input class="form-input" type="url" id="fApplyUrl" placeholder="https://...">
+
+          <label class="form-label">タグ（カンマ区切り）</label>
+          <input class="form-input" id="fTags" placeholder="例：体験型, 練習参加あり, 保護者説明会あり">
+        </div>
+
+        <div class="form-actions" id="formActions">
+          <button class="btn-save" onclick="saveSelection()">保存する</button>
+          <button class="btn-cancel" onclick="switchAdminTab('list')">キャンセル</button>
+        </div>
+      </div>
+
+      <!-- DATA TAB -->
+      <div id="adminDataView" class="hidden">
+        <div class="data-tools">
+          <button class="btn-tool btn-export" onclick="exportData()">
+            📤 データをエクスポート（JSON）
+          </button>
+          <button class="btn-tool btn-import" onclick="document.getElementById('importFile').click()">
+            📥 データをインポート（JSON）
+          </button>
+          <input type="file" id="importFile" accept=".json" class="hidden" onchange="importData(event)">
+          <div style="font-size:12px;color:var(--text-mute);line-height:1.6;padding:8px 0;">
+            エクスポートしたJSONファイルを別の端末でインポートすることでデータを同期できます。
+            定期的にバックアップを取ることをおすすめします。
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════
+// DATA LAYER
+// ══════════════════════════════════
+const STORAGE_KEY   = 'kickoffer_selections_v1';
+const FAVORITES_KEY = 'kickoffer_favorites_v1';
+const NOTIF_KEY     = 'kickoffer_notif_ids_v1';
+const NOTIF_DATE_KEY= 'kickoffer_notif_date_v1';
+const ADMIN_PW      = 'kick2026';
+
+// ══════════════════════════════════
+// NOTIFICATION
+// ══════════════════════════════════
+let notifIds = new Set(JSON.parse(localStorage.getItem(NOTIF_KEY) || '[]'));
+
+function saveNotifIds() {
+  localStorage.setItem(NOTIF_KEY, JSON.stringify([...notifIds]));
+}
+
+function notifSupported() { return 'Notification' in window; }
+
+async function handleNotifBtnClick() {
+  if (!notifSupported()) {
+    alert('このブラウザは通知機能に対応していません');
+    return;
+  }
+  if (Notification.permission === 'denied') return;
+  if (Notification.permission === 'default') {
+    const perm = await Notification.requestPermission();
+    updateHeroNotifBtn();
+    if (perm === 'granted') {
+      new Notification('🔔 KickOffer通知をONにしました', {
+        body: 'セレクション情報の🔔ボタンで個別に通知を設定できます',
+      });
+    }
+    return;
+  }
+  // Already granted — no action needed (user manages per-selection below)
+  updateHeroNotifBtn();
+}
+
+function updateHeroNotifBtn() {
+  const btn = document.getElementById('heroNotifBtn');
+  const icon = document.getElementById('heroNotifIcon');
+  const text = document.getElementById('heroNotifText');
+  if (!btn) return;
+  if (!notifSupported()) {
+    btn.style.display = 'none'; return;
+  }
+  const perm = Notification.permission;
+  if (perm === 'granted') {
+    btn.className = 'hero-notif-btn notif-on';
+    icon.textContent = '🔔';
+    text.textContent = '通知ON — 各セレクションで個別設定';
+  } else if (perm === 'denied') {
+    btn.className = 'hero-notif-btn notif-denied';
+    icon.textContent = '🔕';
+    text.textContent = 'ブラウザ設定から通知を許可してください';
+  } else {
+    btn.className = 'hero-notif-btn';
+    icon.textContent = '🔔';
+    text.textContent = 'セレクション通知を受け取る';
+  }
+}
+
+function updateModalNotifBtn(id) {
+  const btn = document.getElementById('modalNotifBtn');
+  if (!btn) return;
+  const ev = selections.find(s => s.id === id);
+  // 期間エントリーや通知未許可の場合は非表示
+  if (!ev || ev.isPeriod || !notifSupported() || Notification.permission !== 'granted') {
+    btn.style.display = 'none'; return;
+  }
+  btn.style.display = 'flex';
+  if (notifIds.has(id)) {
+    btn.className = 'btn-notif notif-active';
+    btn.innerHTML = '🔔 通知ON — タップして解除';
+  } else {
+    btn.className = 'btn-notif';
+    btn.innerHTML = '🔔 この日程の通知を受け取る';
+  }
+}
+
+function toggleNotifFromModal() {
+  if (!openDetailId) return;
+  if (!notifSupported() || Notification.permission !== 'granted') {
+    handleNotifBtnClick(); return;
+  }
+  if (notifIds.has(openDetailId)) {
+    notifIds.delete(openDetailId);
+  } else {
+    notifIds.add(openDetailId);
+    const ev = selections.find(s => s.id === openDetailId);
+    if (ev) {
+      new Notification('🔔 通知を設定しました', {
+        body: `${ev.teamName} の日程が近づいたらお知らせします`,
+      });
+    }
+  }
+  saveNotifIds();
+  updateModalNotifBtn(openDetailId);
+}
+
+function checkUpcomingNotifications() {
+  if (!notifSupported() || Notification.permission !== 'granted') return;
+  const today = new Date().toISOString().slice(0, 10);
+  const lastDate = localStorage.getItem(NOTIF_DATE_KEY);
+  if (lastDate === today) return; // 1日1回チェック
+  localStorage.setItem(NOTIF_DATE_KEY, today);
+  selections.forEach(ev => {
+    if (ev.isPeriod || !notifIds.has(ev.id)) return;
+    const days = daysUntil(ev.date);
+    if (days < 0 || days > 7) return;
+    const title = days === 0
+      ? `⚽ 本日セレクション開催！`
+      : `📅 セレクションまであと${days}日`;
+    setTimeout(() => {
+      new Notification(title, {
+        body: `${ev.teamName}${ev.time ? ' ' + ev.time + '〜' : ''}`,
+        tag: ev.id,
+      });
+    }, 1500);
+  });
+}
+
+// 設立年バッジ（チームプロフィールから取得）
+function foundedYearBadge(teamId) {
+  const t = teamId ? TEAM_PROFILES[teamId] : null;
+  if (!t || !t.foundedYear) return '';
+  return `<span class="cat-badge cat-year">${t.foundedYear}年設立</span>`;
+}
+
+// ══ チームプロフィール（Notionより取得）══
+const TEAM_PROFILES = {
+  'T007': {
+    id: 'T007', foundedYear: null,
+    name: '東京ヴェルディアジュント',
+    fullName: 'VERDY S.S. AJUNT JY',
+    area: '調布市',
+    league: 'T1',
+    members: '90名',
+    concept: '東京ヴェルディ公認支部として、選手の育成に重きを置いた指導を心がけています。ピッチ内で起きている課題に気がつき、解決策（アイデア）を考え、責任を持って実行する力を育てる。個々の得意なプレー（長所）を伸ばし、苦手なプレー（短所）から逃げずに挑戦する。勝負がかかる試合で、プレーを楽しめる選手を育てます。',
+    intro: '当クラブは、プロ選手の育成を目的とした組織である「東京ヴェルディ」の公認支部として活動しています。チームとしての勝利を目指しつつも、選手の将来を見据えた個人の育成に重点を置いて指導を行なっています。',
+    selectionPeriod: '6〜8月（変動あり）',
+    trialPeriod: '4〜6月（変動あり）',
+    environment: '人工芝・天然芝',
+    ground: '調布市民西町サッカー場、府中の森公園、大原学園登戸グラウンド',
+    frequency: '週5回（月・火・木・土・日）',
+    fee: null, monthlyFee: null, joinFee: null, yearlyFee: null,
+    otherFee: null,
+    support: '進路サポート、接骨院との提携、食育サポート',
+    career: '東京ヴェルディユース、他（HP参照）',
+    hp: 'https://www.verdyajunt.com/',
+    instagram: 'https://www.instagram.com/verdy.ss.ajunt/',
+    twitter: 'https://x.com/verdy_ajunt/',
+    facebook: 'https://www.facebook.com/photo/?fbid=129636852497013',
+    youtube: null, tiktok: null,
+    emblem: 'https://storage.googleapis.com/glide-prod.appspot.com/uploads-v2/Kgo828yYSptTf6sfDweK/pub/0GkSxrqBCNrMfs1tMpry.jpg',
+  },
+  'T008': {
+    id: 'T008', foundedYear: null,
+    name: 'C.F プラミーゴ U-15',
+    fullName: 'C.F Pulamigo U-15',
+    area: '三鷹市・杉並区',
+    league: 'T3',
+    members: '40名',
+    concept: '文武両道、テクニックと判断力「美しくあれ」',
+    intro: 'テクニックを中心に華麗に美しく勝つサッカーを、追求するサッカーファミリーを目指します。',
+    selectionPeriod: '7月頃',
+    trialPeriod: '6月頃',
+    environment: '人工芝',
+    ground: '國學院大学久我山中学高等学校第３グラウンド',
+    frequency: '週5回（月・水・木・土・日）',
+    fee: null, monthlyFee: null, joinFee: null, yearlyFee: null,
+    otherFee: null,
+    support: '進路サポート、食育サポート、フィジカルトレーニング',
+    career: 'InstagramのOB情報参照',
+    hp: 'https://www.cfpulamigo.com/',
+    instagram: 'https://www.instagram.com/c.f.pulamigo/',
+    twitter: null, facebook: null, youtube: null, tiktok: null,
+    emblem: 'https://storage.googleapis.com/glide-prod.appspot.com/uploads-v2/Kgo828yYSptTf6sfDweK/pub/n85ZuTADGJdvX5j5vwDo.jpg',
+  },
+  'T009': {
+    id: 'T009', foundedYear: null,
+    name: '調布FC U-15',
+    fullName: '調布FC U-15（チョウフFC U-15）',
+    area: '調布市',
+    league: 'T3',
+    members: '100名',
+    concept: 'サッカーに対する愛着を育み、向上心を持ち、更なる飛躍へと導けるように指導していきます。観ていてわくわくするようなサッカーを目指してチーム創りをしていきます。',
+    intro: 'U-15Jr.ユースとU-18ユースを有する調布FCです。コミュニケーションを第一義とし、選手/保護者の方々と共に成長してまいります。',
+    selectionPeriod: '9〜10月',
+    trialPeriod: '実施なし（随時問い合わせ対応）',
+    environment: '人工芝・土',
+    ground: '調布市西町グラウンド、調布第三中学校、関東村D1/E3グラウンド、青山学院大学グラウンド',
+    frequency: '週5回（1年生：火水木・土日祝 / 2年生：火木金・土日祝 / 3年生：火水金・土日祝）',
+    fee: '月謝15,000円×12', monthlyFee: '15,000円', joinFee: '10,000円', yearlyFee: '10,000円',
+    otherFee: 'ウェア類：100,000円（初年度のみ）、合宿費：年2回100,000円、都内近郊試合遠征あり。合計約400,000円+。海外遠征も企画中（300,000〜400,000円）',
+    support: '進路サポート、接骨院との連携、大学チームとの連携',
+    career: '各クラブユースチーム、各高校（プリンスリーグ〜T5リーグ）',
+    hp: 'https://raiz.tokyo/about-u15/',
+    instagram: 'https://www.instagram.com/raiz_chofu_fc_u18/',
+    twitter: 'https://x.com/RaizChofu',
+    facebook: 'https://www.facebook.com/chofufc/',
+    youtube: null, tiktok: null,
+    emblem: 'https://storage.googleapis.com/glide-prod.appspot.com/uploads-v2/Kgo828yYSptTf6sfDweK/pub/AEqsnvtXaqY7mUAl5oaD.jpg',
+  },
+  'T010': {
+    id: 'T010', foundedYear: null,
+    name: 'ヴァイスブラウミタカ',
+    fullName: 'Weiss Blau MITAKA',
+    area: '多摩地域',
+    league: 'T4',
+    members: '35名',
+    concept: 'サッカーが大好きで向上心を持ってひたむきに努力できる選手を募集しています',
+    intro: '仲間と共に挑み、支え合い、成長しつづける。そして誰もが誇りを持てる「最高のチーム」を築く。Weiss Blau MITAKAは努力と絆で未来を切り拓くチームです。',
+    selectionPeriod: '5月〜2月（通年）',
+    trialPeriod: '5月〜2月',
+    environment: '人工芝・土',
+    ground: '三鷹第七中学校、大沢総合グラウンド、大沢野川グラウンド',
+    frequency: '週4回（月・木・土・日祝）',
+    fee: null, monthlyFee: null, joinFee: null, yearlyFee: null,
+    otherFee: null,
+    support: '進路サポート、学習サポート',
+    career: '非公開',
+    hp: 'https://sites.google.com/view/weiss-bm',
+    instagram: 'https://www.instagram.com/weiss.blau.mitaka/',
+    twitter: null, facebook: null, youtube: null, tiktok: null,
+    emblem: 'https://storage.googleapis.com/glide-prod.appspot.com/uploads-v2/Kgo828yYSptTf6sfDweK/pub/1lw65kYk8yYKPoAsFSa4.jpg',
+  },
+  'T011': {
+    id: 'T011', foundedYear: 2010,
+    name: 'F.C.RUIRE',
+    fullName: 'F.C.RUIRE（エフシールイーレ）',
+    area: '日野市',
+    league: '中体連・八王子リーグ・三多摩リーグ・ディブロップメントリーグ',
+    members: '25名（2学年）',
+    concept: '自ら考え行動出来る主体的な選手の育成',
+    intro: 'F.C.RUIREは2010年より日野市で活動し、子どもから大人まで幅広い世代が笑顔でサッカーを楽しめる環境を提供。2024年にU-15を新設し、技術・戦術・メンタルを育む育成法で主体性と人間性を伸ばすことを目指しています。',
+    selectionPeriod: 'セレクションなし（練習会：月1回）',
+    trialPeriod: '月1回実施',
+    environment: '人工芝',
+    ground: 'ルイマスフットボールパーク八王子寺田、オーチャードグリーンフットサルクラブ、日野市立第四・第二中学校',
+    frequency: '週4回（火・木・土・日）',
+    fee: '月謝11,000円', monthlyFee: '11,000円', joinFee: '13,200円', yearlyFee: '0円',
+    otherFee: '合宿費：¥40,000、ウェア代：¥35,000（変動あり）',
+    support: '特になし',
+    career: '卒業生なし（新設チーム）',
+    hp: 'https://www.ruire.jp/',
+    instagram: 'https://www.instagram.com/ruimas_2010',
+    twitter: null,
+    facebook: 'https://www.facebook.com/share/19g2LdygWM/',
+    youtube: null, tiktok: null,
+    emblem: 'https://storage.googleapis.com/glide-prod.appspot.com/uploads-v2/Kgo828yYSptTf6sfDweK/pub/HTkRy82LmWLx2V6zvF7b.jpg',
+  },
+  'T012': {
+    id: 'T012', foundedYear: null,
+    name: 'MIP FC',
+    fullName: 'MIP FC（ミップエフシー）',
+    area: '世田谷区',
+    league: 'T3',
+    members: '55名',
+    concept: 'モラル、インテリジェンス、フィジカル',
+    intro: '世田谷区を拠点に活動しているMIP FCです。自ら考え主体的に動き、的確なポジショニングでボールを回して攻撃して行くサッカーを目指しているチームです。入団をお待ちしております。',
+    selectionPeriod: '2回実施：8月末・10月初め',
+    trialPeriod: '6月〜9月',
+    environment: '土',
+    ground: '非公開（固定グラウンドあり）',
+    frequency: '週5回（学年別シフト）',
+    fee: null, monthlyFee: '非公開', joinFee: '非公開', yearlyFee: '非公開',
+    otherFee: '非公開',
+    support: '整骨院との提携',
+    career: 'HP参照',
+    hp: 'https://www.fc.mip-sports.com/',
+    instagram: 'https://www.instagram.com/mip_fc_jy/',
+    twitter: null, facebook: null, youtube: null, tiktok: null,
+    emblem: 'https://storage.googleapis.com/glide-prod.appspot.com/uploads-v2/Kgo828yYSptTf6sfDweK/pub/dU7K5D2aoIylD7SzVcO7.png',
+  },
+  'T014': {
+    id: 'T014', foundedYear: null,
+    name: 'ARTE八王子FC',
+    fullName: 'ARTE八王子FC（アルテハチオウジ）',
+    area: '八王子市',
+    league: 'T3',
+    members: '70〜80名',
+    concept: '心・折れることなく',
+    intro: '',
+    selectionPeriod: '6〜9月（実施しない可能性あり）',
+    trialPeriod: '6〜11月',
+    environment: '人工芝・土',
+    ground: 'NICHIBUNSAKURAFIELD・大学セミナーハウス',
+    frequency: '週4〜5回（2/3年生：火水金・土日いずれか / 1年生：火木金・土日いずれか）',
+    fee: null, monthlyFee: '非公開', joinFee: '非公開', yearlyFee: '非公開',
+    otherFee: null,
+    support: '整骨院との連携、学習サポート、その他HP参照',
+    career: 'HP参照',
+    hp: 'https://yohtairen.jp/pages/14/',
+    instagram: 'https://www.instagram.com/artehachioji14.jp/',
+    twitter: null, facebook: null, youtube: null, tiktok: null,
+    emblem: 'https://storage.googleapis.com/glide-prod.appspot.com/uploads-v2/Kgo828yYSptTf6sfDweK/pub/a8GGL4Gzov25gCcM4hGj.jpg',
+  },
+  'T020': {
+    id: 'T020',
+    name: 'LSS MITAKA',
+    fullName: 'LSS MITAKA（エルエスエスミタカ）',
+    area: '三鷹市',
+    league: 'T4',
+    members: '30名',
+    concept: '',
+    intro: '',
+    selectionPeriod: 'セレクションなし（募集開始：9月〜）',
+    trialPeriod: '9月〜',
+    environment: '人工芝・天然芝・土',
+    ground: '大沢総合グラウンド、三鷹第一中学校、三鷹第六中学校',
+    frequency: '週5回（火・水・金・土日祝）',
+    fee: null, monthlyFee: '非公開', joinFee: '非公開', yearlyFee: '非公開',
+    otherFee: null,
+    support: 'JFA公式ライセンス保持者が指導',
+    career: 'ユース昇格、プリンスリーグ〜ユースリーグまで輩出',
+    hp: 'https://lss-mitaka.com/',
+    instagram: 'https://www.instagram.com/lss_mitaka/',
+    twitter: 'https://x.com/LSS_MITAKA',
+    facebook: 'https://www.facebook.com/lssmitaka/',
+    youtube: null, tiktok: null,
+    emblem: 'https://storage.googleapis.com/glide-prod.appspot.com/uploads-v2/Kgo828yYSptTf6sfDweK/pub/67pZgNYFcDCdThnK7JO9.jpg',
+  },
+  'T022': {
+    id: 'T022',
+    name: 'ACエチェレンテ',
+    fullName: 'ACエチェレンテ（エーシーエチェレンテ）',
+    area: '練馬区',
+    league: '新設（2025年）',
+    members: '8名',
+    concept: '夢に本気、共に世界へ',
+    intro: '',
+    selectionPeriod: '随時募集（現在受け入れ可能）',
+    trialPeriod: '随時練習参加可能',
+    environment: '人工芝自社フィールド（インドア施設）',
+    ground: 'さくら運動場、希望ヶ丘公園、エチェレンテフィールド',
+    frequency: '週5回（水・木・土、火・金・日は変動）',
+    fee: '月謝5,500円', monthlyFee: '5,500円', joinFee: 'なし', yearlyFee: '16,800円',
+    otherFee: '要問い合わせ（ユニフォーム・合宿費・遠征費）',
+    support: '進路サポート、整骨院との連携、トレーニング施設所有、海外チームへの練習参加',
+    career: '新設チームのため卒業生なし',
+    hp: 'https://eccellentegroup.wixsite.com/eccellentehomepage',
+    instagram: 'https://www.instagram.com/eccellente_scuola_calcio/',
+    twitter: null, facebook: null, youtube: null, tiktok: null,
+    emblem: 'https://storage.googleapis.com/glide-prod.appspot.com/uploads-v2/Kgo828yYSptTf6sfDweK/pub/LWk3olif9WkVpHy4qEL3.png',
+  },
+};
+
+const SAMPLE_DATA = [
+  // ── 開催予定期間（確定日程が出次第更新） ──
+  {
+    id: 'sel-1', teamId: 'T010',
+    teamName: 'ヴァイスブラウミタカ',
+    isPeriod: true, periodText: '5月〜2月（通年）',
+    date: '2026-05-01', time: null,
+    location: '東京都 多摩地域',
+    targetGrades: ['小6'], capacity: null, fee: null, deadline: null,
+    description: '練習会・セレクションを5月〜2月の間で実施予定。詳細な日程は公式HPまたはお問い合わせください。',
+    teamUrl: 'https://sites.google.com/view/weiss-bm', applyUrl: '',
+    tags: ['多摩地域', 'T4リーグ'],
+  },
+  {
+    id: 'sel-2', teamId: 'T007',
+    teamName: '東京ヴェルディアジュント',
+    isPeriod: true, periodText: '6〜8月（変動あり）',
+    date: '2026-06-01', time: null,
+    location: '東京都 調布市',
+    targetGrades: ['小6'], capacity: null, fee: null, deadline: null,
+    description: '6〜8月を目安にU-15セレクションを実施予定（変動あり）。詳細・最新情報は公式HPをご確認ください。',
+    teamUrl: 'https://www.verdyajunt.com/', applyUrl: '',
+    tags: ['ヴェルディ公認', 'T1リーグ', '調布'],
+  },
+  {
+    id: 'sel-4', teamId: 'T014',
+    teamName: 'ARTE八王子FC',
+    isPeriod: true, periodText: '6〜9月（実施しない可能性あり）',
+    date: '2026-06-01', time: null,
+    location: '東京都 八王子市',
+    targetGrades: ['小6'], capacity: null, fee: null, deadline: null,
+    description: '6〜9月の間でセレクションを実施予定（実施しない可能性もあり）。詳細・最新情報は公式HPをご確認ください。',
+    teamUrl: 'https://yohtairen.jp/pages/14/', applyUrl: '',
+    tags: ['T3リーグ', '八王子'],
+  },
+  {
+    id: 'sel-3', teamId: 'T008',
+    teamName: 'C.F プラミーゴ U-15',
+    isPeriod: true, periodText: '7月頃',
+    date: '2026-07-01', time: null,
+    location: '東京都 三鷹市・杉並区',
+    targetGrades: ['小6'], capacity: null, fee: null, deadline: null,
+    description: '練習会（6月頃）に参加後、7月頃のセレクションへご案内する流れです。詳細は公式HPをご確認ください。',
+    teamUrl: 'https://www.cfpulamigo.com/', applyUrl: '',
+    tags: ['テクニック重視', 'T3リーグ'],
+  },
+  {
+    id: 'sel-5', teamId: 'T012',
+    teamName: 'MIP FC',
+    isPeriod: true, periodText: '8月末・10月初め（2回実施予定）',
+    date: '2026-08-01', time: null,
+    location: '東京都 世田谷区',
+    targetGrades: ['小6'], capacity: null, fee: null, deadline: null,
+    description: '第1回：8月末、第2回：10月初めの計2回実施予定。詳細・申込は公式インスタグラムをご確認ください。',
+    teamUrl: 'https://www.fc.mip-sports.com/', applyUrl: '',
+    tags: ['2回実施', 'T3リーグ', '世田谷'],
+  },
+  {
+    id: 'sel-6', teamId: 'T009',
+    teamName: '調布FC U-15',
+    isPeriod: true, periodText: '9〜10月',
+    date: '2026-09-01', time: null,
+    location: '東京都 調布市',
+    targetGrades: ['小6'], capacity: null, fee: null, deadline: null,
+    description: '9〜10月を目安にセレクションを実施予定。練習会は随時受け付けています（要問い合わせ）。詳細は公式HPをご確認ください。',
+    teamUrl: 'https://raiz.tokyo/about-u15/', applyUrl: '',
+    tags: ['T3リーグ', '調布'],
+  },
+];
+
+function getRelativeDate(days) {
+  const d = new Date();
+  d.setDate(d.getDate() + days);
+  return d.toISOString().slice(0, 10);
+}
+
+function loadSelections() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  // first visit: load sample data
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(SAMPLE_DATA));
+  return SAMPLE_DATA;
+}
+
+function saveSelections(data) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function loadFavorites() {
+  try { return JSON.parse(localStorage.getItem(FAVORITES_KEY)) || []; } catch(e) { return []; }
+}
+function saveFavorites() {
+  localStorage.setItem(FAVORITES_KEY, JSON.stringify([...favorites]));
+}
+
+let selections = loadSelections();
+let favorites  = new Set(loadFavorites());
+
+// ══════════════════════════════════
+// STATE
+// ══════════════════════════════════
+let currentYear   = new Date().getFullYear();
+let currentMonth  = new Date().getMonth();
+let currentTab    = 'cal';
+let adminUnlocked = false;
+let adminTab      = 'list';
+let editingId     = null;
+let filterText    = '';
+let filterArea    = '';
+let openDetailId  = null;
+
+// ══════════════════════════════════
+// HELPERS
+// ══════════════════════════════════
+function formatDate(dateStr) {
+  if (!dateStr) return '';
+  const [y, m, d] = dateStr.split('-');
+  const weekdays = ['日','月','火','水','木','金','土'];
+  const date = new Date(dateStr + 'T00:00:00');
+  return `${y}年${parseInt(m)}月${parseInt(d)}日（${weekdays[date.getDay()]}）`;
+}
+function formatDateShort(dateStr) {
+  if (!dateStr) return '';
+  const [y, m, d] = dateStr.split('-');
+  return `${parseInt(m)}/${parseInt(d)}`;
+}
+function daysUntil(dateStr) {
+  const today = new Date(); today.setHours(0,0,0,0);
+  const target = new Date(dateStr + 'T00:00:00');
+  return Math.ceil((target - today) / 86400000);
+}
+function isSameDay(a, b) { return a === b; }
+function uuid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
+function escHtml(str) {
+  return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function catBadge(cat, small) {
+  const c = CAT_MAP[cat] || CAT_MAP.other;
+  return `<span class="cat-badge ${c.cls}" style="${small?'font-size:10px':''}">${c.label}</span>`;
+}
+function deadlineBadge(deadline) {
+  if (!deadline) return '';
+  const days = daysUntil(deadline);
+  if (days < 0) return `<span class="deadline-badge">締切済み</span>`;
+  if (days === 0) return `<span class="deadline-badge soon">⚠️ 本日締切</span>`;
+  if (days <= 3) return `<span class="deadline-badge soon">⚠️ 締切まで${days}日</span>`;
+  if (days <= 7) return `<span class="deadline-badge">締切まで${days}日</span>`;
+  return '';
+}
+
+// ══════════════════════════════════
+// FAVORITES
+// ══════════════════════════════════
+function toggleFavorite(id, e) {
+  if (e) e.stopPropagation();
+  if (favorites.has(id)) favorites.delete(id);
+  else favorites.add(id);
+  saveFavorites();
+  // update button in list if visible
+  const btn = document.querySelector(`.heart-btn[data-id="${id}"]`);
+  if (btn) updateHeartBtn(btn, id);
+  // update modal fav button if open
+  if (openDetailId === id) updateModalFavBtn(id);
+  // refresh fav tab badge
+  updateFavTab();
+}
+function toggleFavoriteFromModal() {
+  if (openDetailId) toggleFavorite(openDetailId);
+}
+function updateHeartBtn(btn, id) {
+  const isFaved = favorites.has(id);
+  btn.classList.toggle('faved', isFaved);
+  btn.querySelector('.heart-icon').textContent = isFaved ? '❤️' : '🤍';
+  btn.title = isFaved ? 'お気に入りから削除' : 'お気に入りに追加';
+}
+function updateModalFavBtn(id) {
+  const btn = document.getElementById('modalFavBtn');
+  if (!btn) return;
+  const isFaved = favorites.has(id);
+  btn.classList.toggle('faved', isFaved);
+  btn.innerHTML = isFaved ? '❤️ お気に入りから削除' : '🤍 お気に入りに追加';
+}
+function updateFavTab() {
+  const count = favorites.size;
+  const tab = document.getElementById('tabFav');
+  tab.textContent = count > 0 ? `❤️ お気に入り（${count}）` : '❤️ お気に入り';
+}
+function heartBtnHtml(id) {
+  const isFaved = favorites.has(id);
+  return `<button class="heart-btn${isFaved?' faved':''}" data-id="${id}" onclick="toggleFavorite('${id}', event)" title="${isFaved?'お気に入りから削除':'お気に入りに追加'}"><span class="heart-icon">${isFaved?'❤️':'🤍'}</span></button>`;
+}
+
+// ══════════════════════════════════
+// FILTER
+// ══════════════════════════════════
+function getFiltered() {
+  return selections.filter(s => {
+    const matchText = !filterText || s.teamName.toLowerCase().includes(filterText.toLowerCase());
+    const matchArea = !filterArea || s.location.includes(filterArea);
+    return matchText && matchArea;
+  });
+}
+function buildAreaOptions() {
+  const select = document.getElementById('areaSelect');
+  const current = select.value;
+  // extract prefecture-level area (first token ending in 都/道/府/県, or first word)
+  const areas = new Set();
+  selections.forEach(s => {
+    if (!s.location) return;
+    const m = s.location.match(/([^\s]+[都道府県])/);
+    if (m) areas.add(m[1]);
+    else areas.add(s.location.split(/[\s　]/)[0]);
+  });
+  const preserved = select.innerHTML.split('\n')[0]; // keep first option
+  select.innerHTML = `<option value="">すべてのエリア</option>` +
+    [...areas].sort().map(a => `<option value="${escHtml(a)}"${a===current?' selected':''}>${escHtml(a)}</option>`).join('');
+}
+function onFilterChange() {
+  filterText = document.getElementById('searchInput').value.trim();
+  filterArea = document.getElementById('areaSelect').value;
+  const hasClear = document.getElementById('searchClear');
+  hasClear.classList.toggle('hidden', !filterText);
+  updateFilterStatus();
+  renderCalendar();
+  if (currentTab === 'list') renderList();
+  if (currentTab === 'fav') renderFavorites();
+}
+function updateFilterStatus() {
+  const active = filterText || filterArea;
+  const statusEl = document.getElementById('filterStatus');
+  statusEl.classList.toggle('hidden', !active);
+  if (active) {
+    const count = getFiltered().length;
+    document.getElementById('filterStatusText').textContent = `${count}件が見つかりました`;
+  }
+}
+function clearSearch() {
+  document.getElementById('searchInput').value = '';
+  filterText = '';
+  onFilterChange();
+}
+function clearAllFilters() {
+  document.getElementById('searchInput').value = '';
+  document.getElementById('areaSelect').value = '';
+  filterText = '';
+  filterArea = '';
+  onFilterChange();
+}
+
+// ══════════════════════════════════
+// (hero count removed — replaced by notification button)
+
+// ══════════════════════════════════
+// CALENDAR
+// ══════════════════════════════════
+function renderCalendar() {
+  const label = document.getElementById('monthLabel');
+  label.textContent = `${currentYear}年${currentMonth + 1}月`;
+
+  const grid = document.getElementById('calGrid');
+  grid.innerHTML = '';
+
+  const today = new Date().toISOString().slice(0,10);
+  const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+  const lastDate = new Date(currentYear, currentMonth + 1, 0).getDate();
+  const prevLastDate = new Date(currentYear, currentMonth, 0).getDate();
+
+  const cells = [];
+  // prev month padding
+  for (let i = firstDay - 1; i >= 0; i--) {
+    cells.push({ day: prevLastDate - i, month: currentMonth - 1, year: currentYear, other: true });
+  }
+  // current month
+  for (let d = 1; d <= lastDate; d++) {
+    cells.push({ day: d, month: currentMonth, year: currentYear, other: false });
+  }
+  // next month padding
+  const remain = 7 - (cells.length % 7 || 7);
+  if (remain < 7) {
+    for (let d = 1; d <= remain; d++) {
+      cells.push({ day: d, month: currentMonth + 1, year: currentYear, other: true });
+    }
+  }
+
+  const filtered = getFiltered();
+  cells.forEach(cell => {
+    const y = cell.month < 0 ? cell.year - 1 : cell.month > 11 ? cell.year + 1 : cell.year;
+    const m = ((cell.month % 12) + 12) % 12;
+    const dateStr = `${y}-${String(m+1).padStart(2,'0')}-${String(cell.day).padStart(2,'0')}`;
+    const dayEvents = filtered.filter(s => s.date === dateStr);
+    const isToday = dateStr === today;
+    const isSun = new Date(dateStr + 'T00:00:00').getDay() === 0;
+    const isSat = new Date(dateStr + 'T00:00:00').getDay() === 6;
+
+    const div = document.createElement('div');
+    div.className = `cal-cell${cell.other?' other-month':''}${isToday?' today':''}${isSun?' cal-sun':''}${isSat?' cal-sat':''}`;
+    if (dayEvents.length) div.classList.add('has-events');
+
+    let numCls = '';
+    if (isSun) numCls = ' style="color:var(--red)"';
+    if (isSat) numCls = ' style="color:var(--blue)"';
+    if (isToday) numCls = '';
+
+    let html = `<div class="cal-day-num"${isToday?'':isSun?' style="color:var(--red)"':isSat?' style="color:var(--blue)"':''}>${cell.day}</div>`;
+
+    const show = dayEvents.slice(0, 2);
+    show.forEach(ev => {
+      const chipCls = ev.isPeriod ? 'is-period' : 'cat-year';
+      html += `<span class="cal-event-chip ${chipCls}">${escHtml(ev.teamName)}</span>`;
+    });
+    if (dayEvents.length > 2) {
+      html += `<span class="cal-more">+${dayEvents.length - 2}件</span>`;
+    }
+
+    // fav dot if any event is favorited
+    if (dayEvents.some(ev => favorites.has(ev.id))) {
+      html += `<span class="cal-fav-dot"></span>`;
+    }
+    div.innerHTML = html;
+    div.addEventListener('click', () => {
+      if (dayEvents.length === 1) openDetail(dayEvents[0].id);
+      else if (dayEvents.length > 1) showDayList(dateStr, dayEvents);
+    });
+    grid.appendChild(div);
+  });
+}
+
+function showDayList(dateStr, events) {
+  // For multiple events on same day, switch to list view and scroll there
+  switchTab('list');
+  setTimeout(() => {
+    const el = document.getElementById('date-group-' + dateStr);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 100);
+}
+
+// ══════════════════════════════════
+// LIST VIEW
+// ══════════════════════════════════
+function selectionCardHtml(ev, isPast) {
+  const periodClass = ev.isPeriod ? ' is-period' : '';
+  const topBadge = ev.isPeriod
+    ? `<span class="period-badge">📅 開催予定</span>`
+    : foundedYearBadge(ev.teamId);
+  const metaRows = ev.isPeriod
+    ? `<div class="card-meta-row"><span class="period-time-label">🗓️ ${escHtml(ev.periodText)}</span></div>
+       <div class="card-meta-row"><span class="card-meta-icon">📍</span>${escHtml(ev.location)}</div>
+       ${ev.targetGrades&&ev.targetGrades.length ? `<div class="card-meta-row"><span class="card-meta-icon">🎓</span>${ev.targetGrades.join('・')}</div>` : ''}`
+    : `<div class="card-meta-row"><span class="card-meta-icon">🕐</span>${ev.time || '時間未定'}</div>
+       <div class="card-meta-row"><span class="card-meta-icon">📍</span>${escHtml(ev.location)}</div>
+       ${ev.targetGrades&&ev.targetGrades.length ? `<div class="card-meta-row"><span class="card-meta-icon">🎓</span>${ev.targetGrades.join('・')}</div>` : ''}`;
+  return `
+  <div class="selection-card${periodClass}" onclick="openDetail('${ev.id}')" style="${isPast?'opacity:.6':''}">
+    <div class="card-top">
+      <div class="card-cat-row">
+        ${topBadge}
+        ${ev.deadline ? deadlineBadge(ev.deadline) : ''}
+        <span style="margin-left:auto">${heartBtnHtml(ev.id)}</span>
+      </div>
+      <div class="card-title">${escHtml(ev.teamName)}</div>
+      <div class="card-meta">${metaRows}</div>
+    </div>
+    <div class="card-bottom">
+      <div class="card-tags">
+        ${(ev.tags||[]).slice(0,3).map(t=>`<span class="tag">${escHtml(t)}</span>`).join('')}
+        ${ev.fee===0 ? '<span class="tag" style="background:var(--orange-light);color:var(--orange)">無料</span>' : ''}
+      </div>
+      <button class="card-detail-btn">詳細を見る ›</button>
+    </div>
+  </div>`;
+}
+
+function renderList() {
+  const container = document.getElementById('listContainer');
+  const strip = document.getElementById('upcomingStrip');
+  const today = new Date().toISOString().slice(0,10);
+  const filtered = getFiltered();
+  const upcoming = filtered.filter(s => s.date >= today).sort((a,b) => a.date.localeCompare(b.date));
+  const past = filtered.filter(s => s.date < today).sort((a,b) => b.date.localeCompare(a.date));
+
+  // Upcoming strip: 確定日のみ表示（期間エントリーは除外）
+  const upcomingConfirmed = upcoming.filter(s => !s.isPeriod);
+  if (upcomingConfirmed.length > 0 && !filterText && !filterArea) {
+    const next = upcomingConfirmed[0];
+    const days = daysUntil(next.date);
+    const dayLabel = days === 0 ? '今日' : days === 1 ? '明日' : `あと${days}日`;
+    strip.innerHTML = `
+      <div class="upcoming-strip" onclick="openDetail('${next.id}')">
+        <div class="upcoming-icon">🔔</div>
+        <div class="upcoming-text-block">
+          <div class="upcoming-label">直近のセレクション · ${dayLabel}</div>
+          <div class="upcoming-title">${escHtml(next.teamName)}</div>
+          <div class="upcoming-meta">${formatDateShort(next.date)} ${next.time||''} · ${escHtml(next.location)}</div>
+        </div>
+        <div class="upcoming-arrow">›</div>
+      </div>`;
+  } else {
+    strip.innerHTML = '';
+  }
+
+  if (filtered.length === 0) {
+    container.innerHTML = selections.length === 0
+      ? `<div class="empty-state"><div class="empty-icon">📅</div><div class="empty-title">セレクション情報がありません</div><div class="empty-sub">管理者がセレクション情報を追加するまでお待ちください</div></div>`
+      : `<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">該当するセレクションがありません</div><div class="empty-sub">フィルターを変えてみてください</div></div>`;
+    return;
+  }
+
+  const byDate = {};
+  upcoming.forEach(s => { (byDate[s.date] = byDate[s.date]||[]).push(s); });
+  past.forEach(s => { (byDate[s.date] = byDate[s.date]||[]).push(s); });
+
+  const sortedDates = [
+    ...upcoming.map(s=>s.date).filter((v,i,a)=>a.indexOf(v)===i),
+    ...past.map(s=>s.date).filter((v,i,a)=>a.indexOf(v)===i && !upcoming.find(u=>u.date===v))
+  ];
+
+  const weekdays = ['日','月','火','水','木','金','土'];
+  let html = '';
+  sortedDates.forEach(date => {
+    const events = byDate[date];
+    const isPast = date < today;
+    const d = new Date(date + 'T00:00:00');
+    // 期間エントリーのみの日（月初1日）か確定日かで表示を変える
+    const allPeriod = events.every(ev => ev.isPeriod);
+    const hasPeriod = events.some(ev => ev.isPeriod);
+    let headerLabel, headerClass;
+    if (allPeriod) {
+      headerLabel = `${d.getMonth()+1}月 開催予定`;
+      headerClass = 'is-period';
+    } else {
+      headerLabel = `${d.getMonth()+1}月${d.getDate()}日（${weekdays[d.getDay()]}）${isPast ? ' · 終了' : ''}`;
+      headerClass = isPast ? '' : '';
+    }
+    html += `<div class="list-date-group" id="date-group-${date}">
+      <div class="list-date-header ${headerClass}" style="${isPast&&!allPeriod?'opacity:.5':''}">
+        ${allPeriod ? '🗓️' : '📅'} ${headerLabel}
+      </div>`;
+    events.forEach(ev => { html += selectionCardHtml(ev, isPast); });
+    html += '</div>';
+  });
+
+  container.innerHTML = html || `<div class="empty-state"><div class="empty-icon">✅</div><div class="empty-title">直近のセレクションはありません</div></div>`;
+}
+
+// ══════════════════════════════════
+// FAVORITES VIEW
+// ══════════════════════════════════
+function renderFavorites() {
+  const container = document.getElementById('favContainer');
+  const today = new Date().toISOString().slice(0,10);
+  const favList = getFiltered().filter(s => favorites.has(s.id)).sort((a,b) => a.date.localeCompare(b.date));
+
+  if (favorites.size === 0) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon">🤍</div><div class="empty-title">お気に入りがありません</div><div class="empty-sub">カードの ❤️ ボタンを押すと、ここに保存されます</div></div>`;
+    return;
+  }
+  if (favList.length === 0) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">該当するお気に入りがありません</div><div class="empty-sub">フィルターを変えてみてください</div></div>`;
+    return;
+  }
+
+  const weekdays = ['日','月','火','水','木','金','土'];
+  const byDate = {};
+  favList.forEach(s => { (byDate[s.date] = byDate[s.date]||[]).push(s); });
+  const sortedDates = [...new Set(favList.map(s=>s.date))];
+
+  let html = '';
+  sortedDates.forEach(date => {
+    const isPast = date < today;
+    const d = new Date(date + 'T00:00:00');
+    const headerLabel = `${d.getMonth()+1}月${d.getDate()}日（${weekdays[d.getDay()]}）${isPast?' · 終了':''}`;
+    html += `<div class="list-date-group"><div class="list-date-header" style="${isPast?'opacity:.5':''}">📅 ${headerLabel}</div>`;
+    byDate[date].forEach(ev => { html += selectionCardHtml(ev, isPast); });
+    html += '</div>';
+  });
+  container.innerHTML = html;
+}
+
+// ══════════════════════════════════
+// DETAIL MODAL
+// ══════════════════════════════════
+function openDetail(id) {
+  const ev = selections.find(s => s.id === id);
+  if (!ev) return;
+  openDetailId = id;
+
+  const periodBadgeHtml = ev.isPeriod ? `<span class="period-badge">📅 開催予定</span>` : '';
+  document.getElementById('modalCatRow').innerHTML = (ev.isPeriod ? periodBadgeHtml : foundedYearBadge(ev.teamId)) + (ev.deadline ? ' ' + deadlineBadge(ev.deadline) : '');
+  document.getElementById('modalTitle').textContent = ev.teamName;
+  document.getElementById('modalSubtitle').textContent = ev.isPeriod
+    ? `開催予定：${ev.periodText}`
+    : formatDate(ev.date) + (ev.time ? ' ' + ev.time + '〜' : '');
+
+  const infoItems = ev.isPeriod
+    ? [
+        { label: '開催予定期間', value: ev.periodText },
+        { label: '開催エリア', value: ev.location || '未定' },
+        { label: '対象学年', value: ev.targetGrades&&ev.targetGrades.length ? ev.targetGrades.join('・') : '要確認' },
+        { label: '参加費', value: ev.fee === 0 ? '無料' : ev.fee ? ev.fee.toLocaleString() + '円' : '未定' },
+      ]
+    : [
+        { label: '日時', value: formatDate(ev.date) + (ev.time ? ' ' + ev.time : '') },
+        { label: '会場', value: ev.location || '未定' },
+        { label: '対象学年', value: ev.targetGrades&&ev.targetGrades.length ? ev.targetGrades.join('・') : '要確認' },
+        { label: '定員', value: ev.capacity ? ev.capacity + '名' : '未定' },
+        { label: '参加費', value: ev.fee === 0 ? '無料' : ev.fee ? ev.fee.toLocaleString() + '円' : '未定' },
+        ev.deadline ? { label: '申込締切', value: formatDate(ev.deadline) } : null,
+      ].filter(Boolean);
+
+  document.getElementById('modalInfoGrid').innerHTML = infoItems.map(item =>
+    `<div class="info-cell"><div class="info-label">${item.label}</div><div class="info-value${item.label==='参加費'?' price':''}">${escHtml(item.value)}</div></div>`
+  ).join('');
+
+  const descSec = document.getElementById('modalDescSection');
+  if (ev.description) {
+    document.getElementById('modalDesc').innerHTML = escHtml(ev.description).replace(/\n/g,'<br>');
+    descSec.classList.remove('hidden');
+  } else { descSec.classList.add('hidden'); }
+
+  const tagSec = document.getElementById('modalTagSection');
+  if (ev.tags && ev.tags.length) {
+    document.getElementById('modalTags').innerHTML = ev.tags.map(t=>`<span class="tag">${escHtml(t)}</span>`).join('');
+    tagSec.classList.remove('hidden');
+  } else { tagSec.classList.add('hidden'); }
+
+  // actions: team detail → apply → official site → fav
+  const actionsEl = document.getElementById('modalActions');
+  let linksHtml = '';
+  // チーム詳細ボタン（teamIdがある場合）
+  if (ev.teamId && TEAM_PROFILES[ev.teamId]) {
+    linksHtml += `<button class="btn-team-detail" onclick="openTeamProfile('${ev.teamId}')">🏟️ チームの詳細情報を確認する</button>`;
+  }
+  if (ev.applyUrl) linksHtml += `<a href="${escHtml(ev.applyUrl)}" target="_blank" rel="noopener" class="btn-primary">✏️ 申し込む</a>`;
+  if (ev.teamUrl) linksHtml += `<a href="${escHtml(ev.teamUrl)}" target="_blank" rel="noopener" class="btn-secondary">🔗 チーム公式サイトへ</a>`;
+  if (!ev.applyUrl && !ev.teamUrl && !ev.teamId) linksHtml += `<div style="text-align:center;font-size:13px;color:var(--text-mute);padding:8px 0;">申込先は各チームへお問い合わせください</div>`;
+  const notifBtn = document.getElementById('modalNotifBtn');
+  const favBtn = document.getElementById('modalFavBtn');
+  actionsEl.innerHTML = linksHtml;
+  actionsEl.appendChild(notifBtn);
+  actionsEl.appendChild(favBtn);
+  updateModalFavBtn(id);
+  updateModalNotifBtn(id);
+
+  document.getElementById('detailOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeDetail() {
+  document.getElementById('detailOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function closeDetailOnOverlay(e) {
+  if (e.target === document.getElementById('detailOverlay')) closeDetail();
+}
+
+// ══════════════════════════════════
+// ADMIN
+// ══════════════════════════════════
+function openAdminGate() {
+  document.getElementById('adminOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  if (!adminUnlocked) {
+    document.getElementById('adminLock').classList.remove('hidden');
+    document.getElementById('adminContent').classList.add('hidden');
+    setTimeout(() => document.getElementById('pwInput').focus(), 300);
+  } else {
+    showAdminContent();
+  }
+}
+function closeAdmin() {
+  document.getElementById('adminOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function closeAdminOnOverlay(e) {
+  if (e.target === document.getElementById('adminOverlay')) closeAdmin();
+}
+function checkPw() {
+  const val = document.getElementById('pwInput').value;
+  if (val === ADMIN_PW) {
+    adminUnlocked = true;
+    document.getElementById('pwError').classList.add('hidden');
+    document.getElementById('pwInput').value = '';
+    showAdminContent();
+  } else {
+    document.getElementById('pwError').classList.remove('hidden');
+    document.getElementById('pwInput').value = '';
+    document.getElementById('pwInput').focus();
+  }
+}
+function showAdminContent() {
+  document.getElementById('adminLock').classList.add('hidden');
+  document.getElementById('adminContent').classList.remove('hidden');
+  switchAdminTab('list');
+}
+function switchAdminTab(tab) {
+  adminTab = tab;
+  document.getElementById('aTabList').classList.toggle('active', tab==='list');
+  document.getElementById('aTabAdd').classList.toggle('active', tab==='add');
+  document.getElementById('aTabData').classList.toggle('active', tab==='data');
+  document.getElementById('adminListView').classList.toggle('hidden', tab!=='list');
+  document.getElementById('adminFormView').classList.toggle('hidden', tab!=='add');
+  document.getElementById('adminDataView').classList.toggle('hidden', tab!=='data');
+  if (tab === 'list') renderAdminList();
+  if (tab === 'add') resetForm();
+}
+function renderAdminList() {
+  const sorted = [...selections].sort((a,b) => a.date.localeCompare(b.date));
+  const el = document.getElementById('adminItemList');
+  if (!sorted.length) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">データがありません</div><div class="empty-sub">「新規追加」タブから追加してください</div></div>`;
+    return;
+  }
+  el.innerHTML = sorted.map(s => `
+    <div class="admin-list-item">
+      <div class="admin-item-info">
+        <div class="admin-item-name">${escHtml(s.teamName)}</div>
+        <div class="admin-item-date">${formatDateShort(s.date)} ${s.time||''} · ${escHtml(s.location||'')}</div>
+      </div>
+      <button class="admin-edit-btn" onclick="editSelection('${s.id}')">編集</button>
+    </div>`).join('');
+}
+function resetForm() {
+  editingId = null;
+  document.getElementById('editId').value = '';
+  document.getElementById('fTeamName').value = '';
+  // (category removed)
+  document.getElementById('fDate').value = '';
+  document.getElementById('fTime').value = '';
+  document.getElementById('fLocation').value = '';
+  document.getElementById('fCapacity').value = '';
+  document.getElementById('fFee').value = '';
+  document.getElementById('fDeadline').value = '';
+  document.getElementById('fDescription').value = '';
+  document.getElementById('fTeamUrl').value = '';
+  document.getElementById('fApplyUrl').value = '';
+  document.getElementById('fTags').value = '';
+  // reset checkboxes
+  document.querySelectorAll('#gradeGroup .checkbox-pill').forEach(el => {
+    el.classList.remove('checked');
+    el.querySelector('input').checked = false;
+  });
+  // remove delete btn
+  const existing = document.getElementById('deleteBtn');
+  if (existing) existing.remove();
+  document.getElementById('adminModalTitle').textContent = '新規追加';
+}
+function editSelection(id) {
+  const ev = selections.find(s => s.id === id);
+  if (!ev) return;
+  editingId = id;
+  document.getElementById('aTabAdd').click();
+  switchAdminTab('add');
+  document.getElementById('adminModalTitle').textContent = '編集';
+  document.getElementById('editId').value = id;
+  document.getElementById('fTeamName').value = ev.teamName || '';
+  // (category removed)
+  document.getElementById('fDate').value = ev.date || '';
+  document.getElementById('fTime').value = ev.time || '';
+  document.getElementById('fLocation').value = ev.location || '';
+  document.getElementById('fCapacity').value = ev.capacity || '';
+  document.getElementById('fFee').value = ev.fee !== undefined ? ev.fee : '';
+  document.getElementById('fDeadline').value = ev.deadline || '';
+  document.getElementById('fDescription').value = ev.description || '';
+  document.getElementById('fTeamUrl').value = ev.teamUrl || '';
+  document.getElementById('fApplyUrl').value = ev.applyUrl || '';
+  document.getElementById('fTags').value = (ev.tags||[]).join(', ');
+  // grades
+  document.querySelectorAll('#gradeGroup .checkbox-pill').forEach(el => {
+    const v = el.dataset.val;
+    const checked = (ev.targetGrades||[]).includes(v);
+    el.classList.toggle('checked', checked);
+    el.querySelector('input').checked = checked;
+  });
+  // add delete btn
+  if (!document.getElementById('deleteBtn')) {
+    const btn = document.createElement('button');
+    btn.id = 'deleteBtn';
+    btn.className = 'btn-delete';
+    btn.textContent = '削除';
+    btn.onclick = () => deleteSelection(id);
+    document.getElementById('formActions').appendChild(btn);
+  }
+}
+function saveSelection() {
+  const id = document.getElementById('editId').value;
+  const teamName = document.getElementById('fTeamName').value.trim();
+  const date = document.getElementById('fDate').value;
+  const location = document.getElementById('fLocation').value.trim();
+  if (!teamName || !date || !location) {
+    alert('チーム名・セレクション日・会場は必須です');
+    return;
+  }
+  const grades = [];
+  document.querySelectorAll('#gradeGroup input:checked').forEach(inp => grades.push(inp.value));
+  const feeRaw = document.getElementById('fFee').value;
+  const data = {
+    id: id || uuid(),
+    teamName,
+    date,
+    time: document.getElementById('fTime').value,
+    location,
+    targetGrades: grades,
+    capacity: parseInt(document.getElementById('fCapacity').value)||0,
+    fee: feeRaw === '' ? null : parseInt(feeRaw)||0,
+    deadline: document.getElementById('fDeadline').value || null,
+    description: document.getElementById('fDescription').value.trim(),
+    teamUrl: document.getElementById('fTeamUrl').value.trim(),
+    applyUrl: document.getElementById('fApplyUrl').value.trim(),
+    tags: document.getElementById('fTags').value.split(',').map(t=>t.trim()).filter(Boolean),
+  };
+  if (id) {
+    const idx = selections.findIndex(s => s.id === id);
+    if (idx >= 0) selections[idx] = data;
+  } else {
+    selections.push(data);
+  }
+  saveSelections(selections);
+  closeAdmin();
+  refresh();
+  alert('保存しました ✅');
+}
+function deleteSelection(id) {
+  if (!confirm('このセレクション情報を削除しますか？')) return;
+  selections = selections.filter(s => s.id !== id);
+  saveSelections(selections);
+  closeAdmin();
+  refresh();
+}
+function exportData() {
+  const blob = new Blob([JSON.stringify(selections, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `kickoffer_selections_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+function importData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!Array.isArray(data)) throw new Error('invalid');
+      selections = data;
+      saveSelections(selections);
+      refresh();
+      closeAdmin();
+      alert(`${data.length}件のデータをインポートしました ✅`);
+    } catch(err) {
+      alert('インポートに失敗しました。有効なJSONファイルを選択してください。');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+// ══════════════════════════════════
+// CHECKBOX PILLS
+// ══════════════════════════════════
+document.querySelectorAll('.checkbox-pill').forEach(label => {
+  label.addEventListener('click', function() {
+    const inp = this.querySelector('input');
+    inp.checked = !inp.checked;
+    this.classList.toggle('checked', inp.checked);
+  });
+});
+
+// ══════════════════════════════════
+// TABS & NAV
+// ══════════════════════════════════
+function switchTab(tab) {
+  currentTab = tab;
+  document.getElementById('tabCal').classList.toggle('active', tab==='cal');
+  document.getElementById('tabList').classList.toggle('active', tab==='list');
+  document.getElementById('tabFav').classList.toggle('active', tab==='fav');
+  document.getElementById('viewCal').classList.toggle('active', tab==='cal');
+  document.getElementById('viewList').classList.toggle('active', tab==='list');
+  document.getElementById('viewFav').classList.toggle('active', tab==='fav');
+  // month nav only relevant on calendar
+  document.getElementById('prevMonth').style.visibility = tab==='cal' ? '' : 'hidden';
+  document.getElementById('nextMonth').style.visibility = tab==='cal' ? '' : 'hidden';
+  document.getElementById('todayBtn').style.visibility  = tab==='cal' ? '' : 'hidden';
+  document.getElementById('monthLabel').style.visibility = tab==='cal' ? '' : 'hidden';
+  if (tab==='list') renderList();
+  if (tab==='fav') renderFavorites();
+}
+document.getElementById('prevMonth').onclick = () => {
+  currentMonth--;
+  if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+  renderCalendar();
+};
+document.getElementById('nextMonth').onclick = () => {
+  currentMonth++;
+  if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+  renderCalendar();
+};
+document.getElementById('todayBtn').onclick = () => {
+  currentYear  = new Date().getFullYear();
+  currentMonth = new Date().getMonth();
+  renderCalendar();
+};
+
+// ══════════════════════════════════
+// TEAM PROFILE
+// ══════════════════════════════════
+function openTeamProfile(teamId) {
+  const t = TEAM_PROFILES[teamId];
+  if (!t) return;
+
+  // emblem
+  const emblemEl = document.getElementById('tpEmblem');
+  if (t.emblem) {
+    emblemEl.innerHTML = `<img class="tp-hero-img" src="${escHtml(t.emblem)}" alt="${escHtml(t.name)}" onerror="this.style.display='none'">`;
+  } else {
+    emblemEl.innerHTML = `<div class="tp-hero-img-placeholder">⚽</div>`;
+  }
+
+  document.getElementById('tpName').textContent = t.name;
+  document.getElementById('tpSub').textContent = t.fullName;
+  document.getElementById('tpBadges').innerHTML = [
+    t.league ? `<span class="tp-hero-badge">${escHtml(t.league)}</span>` : '',
+    t.area   ? `<span class="tp-hero-badge">📍 ${escHtml(t.area)}</span>` : '',
+    t.members? `<span class="tp-hero-badge">👥 ${escHtml(t.members)}</span>` : '',
+  ].join('');
+
+  // body
+  let body = '';
+
+  // concept + intro
+  if (t.concept || t.intro) {
+    body += `<div class="tp-concept">`;
+    if (t.concept) body += `<div class="tp-concept-text">${escHtml(t.concept)}</div>`;
+    if (t.intro)   body += `<div class="tp-intro">${escHtml(t.intro)}</div>`;
+    body += `</div>`;
+  }
+
+  // セレクション情報
+  if (t.selectionPeriod) {
+    body += `<div class="tp-section">
+      <div class="tp-section-title">🎯 セレクション情報</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div class="tp-sel-box">
+          <div class="tp-sel-label">セレクション時期</div>
+          <div class="tp-sel-value">${escHtml(t.selectionPeriod)}</div>
+        </div>
+        ${t.trialPeriod ? `<div class="tp-stat"><div class="tp-stat-label">練習会時期</div><div class="tp-stat-value">${escHtml(t.trialPeriod)}</div></div>` : ''}
+      </div>
+    </div>`;
+  }
+
+  // 基本情報グリッド
+  body += `<div class="tp-section">
+    <div class="tp-section-title">📋 基本情報</div>
+    <div class="tp-stats-grid">
+      ${t.frequency ? `<div class="tp-stat full"><div class="tp-stat-label">活動頻度</div><div class="tp-stat-value">${escHtml(t.frequency)}</div></div>` : ''}
+      ${t.environment ? `<div class="tp-stat"><div class="tp-stat-label">練習環境</div><div class="tp-stat-value">${escHtml(t.environment)}</div></div>` : ''}
+      ${t.league ? `<div class="tp-stat"><div class="tp-stat-label">所属リーグ</div><div class="tp-stat-value">${escHtml(t.league)}</div></div>` : ''}
+      ${t.ground ? `<div class="tp-stat full"><div class="tp-stat-label">練習グラウンド</div><div class="tp-stat-value">${escHtml(t.ground)}</div></div>` : ''}
+    </div>
+  </div>`;
+
+  // 費用
+  const hasFee = t.monthlyFee || t.joinFee || t.yearlyFee || t.otherFee;
+  if (hasFee) {
+    body += `<div class="tp-section">
+      <div class="tp-section-title">💴 費用</div>
+      <div class="tp-stats-grid">
+        ${t.monthlyFee ? `<div class="tp-stat"><div class="tp-stat-label">月謝</div><div class="tp-stat-value">${escHtml(t.monthlyFee)}</div></div>` : ''}
+        ${t.joinFee    ? `<div class="tp-stat"><div class="tp-stat-label">入会金</div><div class="tp-stat-value">${escHtml(t.joinFee)}</div></div>` : ''}
+        ${t.yearlyFee  ? `<div class="tp-stat"><div class="tp-stat-label">年会費</div><div class="tp-stat-value">${escHtml(t.yearlyFee)}</div></div>` : ''}
+        ${t.otherFee   ? `<div class="tp-stat full"><div class="tp-stat-label">その他費用</div><div class="tp-stat-value">${escHtml(t.otherFee)}</div></div>` : ''}
+      </div>
+    </div>`;
+  }
+
+  // サポート・進路
+  const hasSupport = t.support || t.career;
+  if (hasSupport) {
+    body += `<div class="tp-section">
+      <div class="tp-section-title">🎓 サポート・進路</div>
+      <div class="tp-stats-grid">
+        ${t.support ? `<div class="tp-stat full"><div class="tp-stat-label">サポート体制</div><div class="tp-stat-value">${escHtml(t.support)}</div></div>` : ''}
+        ${t.career  ? `<div class="tp-stat full"><div class="tp-stat-label">卒業生の主な進路先</div><div class="tp-stat-value">${escHtml(t.career)}</div></div>` : ''}
+      </div>
+    </div>`;
+  }
+
+  // 公式リンク
+  const links = [
+    t.hp        ? { icon:'🌐', label:'公式HP',           url: t.hp }        : null,
+    t.instagram ? { icon:'📸', label:'Instagram',        url: t.instagram } : null,
+    t.twitter   ? { icon:'🐦', label:'X（旧Twitter）',   url: t.twitter }   : null,
+    t.facebook  ? { icon:'👥', label:'Facebook',         url: t.facebook }  : null,
+    t.youtube   ? { icon:'▶️', label:'YouTube',          url: t.youtube }   : null,
+    t.tiktok    ? { icon:'🎵', label:'TikTok',           url: t.tiktok }    : null,
+  ].filter(Boolean);
+
+  if (links.length) {
+    body += `<div class="tp-section"><div class="tp-section-title">🔗 公式リンク</div></div>`;
+    body += `<div class="tp-links">`;
+    links.forEach(l => {
+      body += `<a href="${escHtml(l.url)}" target="_blank" rel="noopener" class="tp-link-btn">
+        <span class="tp-link-icon">${l.icon}</span>
+        <span>
+          <div style="font-size:13px;font-weight:700;color:var(--text)">${l.label}</div>
+          <div class="tp-link-label" style="font-size:11px;">${escHtml(l.url.replace(/https?:\/\//,'').replace(/\/$/,''))}</div>
+        </span>
+      </a>`;
+    });
+    body += `</div>`;
+  } else {
+    body += `<div style="height:32px;"></div>`;
+  }
+
+  document.getElementById('tpBody').innerHTML = body;
+  document.getElementById('tpOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeTeamProfile() {
+  document.getElementById('tpOverlay').classList.remove('open');
+  document.body.style.overflow = 'hidden'; // detail modal still open
+}
+function closeTpOnOverlay(e) {
+  if (e.target === document.getElementById('tpOverlay')) closeTeamProfile();
+}
+
+// ══════════════════════════════════
+// ONBOARDING
+// ══════════════════════════════════
+const OB_KEY = 'kickoffer_cal_onboarded_v1';
+let obCurrentSlide = 0;
+const OB_TOTAL = 4;
+
+function openOnboarding() {
+  obCurrentSlide = 0;
+  updateObSlide();
+  document.getElementById('obOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeOnboarding() {
+  document.getElementById('obOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+  localStorage.setItem(OB_KEY, '1');
+}
+function closeObOnOverlay(e) {
+  if (e.target === document.getElementById('obOverlay')) closeOnboarding();
+}
+function goObSlide(idx) {
+  obCurrentSlide = idx;
+  updateObSlide();
+}
+function obNext() {
+  if (obCurrentSlide < OB_TOTAL - 1) {
+    obCurrentSlide++;
+    updateObSlide();
+  } else {
+    closeOnboarding();
+  }
+}
+function updateObSlide() {
+  document.getElementById('obTrack').style.transform = `translateX(-${obCurrentSlide * 100}%)`;
+  document.querySelectorAll('.ob-dot').forEach((d, i) => d.classList.toggle('active', i === obCurrentSlide));
+  const isLast = obCurrentSlide === OB_TOTAL - 1;
+  document.getElementById('obNextBtn').textContent = isLast ? 'はじめる ✓' : '次へ →';
+  document.getElementById('obSkipBtn').style.visibility = isLast ? 'hidden' : 'visible';
+}
+
+// swipe support
+(function() {
+  let startX = 0;
+  const track = document.getElementById('obTrack');
+  track.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+  track.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - startX;
+    if (Math.abs(dx) > 40) {
+      if (dx < 0 && obCurrentSlide < OB_TOTAL - 1) { obCurrentSlide++; updateObSlide(); }
+      if (dx > 0 && obCurrentSlide > 0) { obCurrentSlide--; updateObSlide(); }
+    }
+  }, { passive: true });
+})();
+
+// ══════════════════════════════════
+// REFRESH
+// ══════════════════════════════════
+function refresh() {
+  buildAreaOptions();
+  updateFavTab();
+  renderCalendar();
+  if (currentTab === 'list') renderList();
+  if (currentTab === 'fav') renderFavorites();
+}
+
+// ══════════════════════════════════
+// INIT
+// ══════════════════════════════════
+refresh();
+updateHeroNotifBtn();
+checkUpcomingNotifications();
+
+// 初回訪問時のみオンボーディングを表示
+if (!localStorage.getItem(OB_KEY)) {
+  setTimeout(openOnboarding, 600);
+}
+</script>
+</body>
+</html>
