@@ -20,6 +20,10 @@
       --blue-light:   #eff6ff;
       --purple:       #7c3aed;
       --purple-light: #f5f3ff;
+      --trial:        #16a34a;
+      --trial-mid:    #22c55e;
+      --trial-light:  #f0fdf4;
+      --trial-glow:   rgba(22,163,74,.12);
       --red:          #dc2626;
       --red-light:    #fef2f2;
       --bg:           #f4f6fb;
@@ -1384,6 +1388,93 @@
       justify-content: center;
     }
 
+    /* ══ イベント種別バッジ ══ */
+    .event-type-badge {
+      font-size: 10px; font-weight: 700; padding: 2px 9px; border-radius: 50px;
+      display: inline-flex; align-items: center; gap: 3px; letter-spacing: .04em;
+    }
+    .event-type-badge.type-selection { background: var(--green-light); color: var(--green); }
+    .event-type-badge.type-trial     { background: var(--trial-light); color: var(--trial); }
+    .event-type-badge.type-always    { background: var(--purple-light); color: var(--purple); border: 1px solid var(--purple); }
+
+    /* 練習会カード */
+    .selection-card.is-trial { border-color: #bbf7d0; }
+    .selection-card.is-trial:hover { border-color: var(--trial); }
+    .selection-card.is-trial .card-detail-btn { color: var(--trial); background: var(--trial-light); }
+    .selection-card.is-trial.is-period { border: 1.5px dashed #bbf7d0; background: #f9fef9; }
+    .selection-card.is-trial.is-period:hover { border-color: var(--trial); }
+    /* 常時募集カード */
+    .selection-card.is-always { border: 1.5px solid #c4b5fd; }
+    .selection-card.is-always:hover { border-color: var(--purple); }
+    .selection-card.is-always .card-detail-btn { color: var(--purple); background: var(--purple-light); }
+
+    /* 練習会 period-time-label の色変え */
+    .selection-card.is-trial .period-time-label { color: var(--trial); background: var(--trial-light); }
+    .selection-card.is-always .period-time-label { color: var(--purple); background: var(--purple-light); }
+
+    /* period-badge のバリアント */
+    .period-badge.trial-badge  { background: var(--trial-light); color: var(--trial); border-color: var(--trial); }
+    .period-badge.always-badge { background: var(--purple-light); color: var(--purple); border-color: var(--purple); }
+
+    /* カレンダーチップ（練習会・常時） */
+    .cal-event-chip.is-trial  { background: var(--trial-light) !important; color: var(--trial) !important; }
+    .cal-event-chip.is-always { background: var(--purple-light) !important; color: var(--purple) !important; border: none !important; }
+
+    /* ══ タイプフィルター ══ */
+    .type-filter {
+      display: flex; gap: 6px; padding: 8px 16px 10px;
+      background: var(--white); border-bottom: 1px solid var(--border);
+      overflow-x: auto; -webkit-overflow-scrolling: touch;
+    }
+    .type-filter::-webkit-scrollbar { display: none; }
+    .type-filter-btn {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 6px 14px; border-radius: 50px; font-size: 12px; font-weight: 700;
+      border: 1.5px solid var(--border2); background: var(--white); color: var(--text-mute);
+      cursor: pointer; white-space: nowrap; transition: all .15s; flex-shrink: 0;
+      font-family: inherit;
+    }
+    .type-filter-btn.active-all       { border-color: var(--text); background: var(--text); color: #fff; }
+    .type-filter-btn.active-selection { border-color: var(--green); background: var(--green-light); color: var(--green); }
+    .type-filter-btn.active-trial     { border-color: var(--trial); background: var(--trial-light); color: var(--trial); }
+
+    /* ══ 常時募集セクション ══ */
+    .always-open-section { padding: 14px 16px 0; }
+    .always-open-title {
+      font-size: 12px; font-weight: 700; color: var(--purple);
+      letter-spacing: .06em; margin-bottom: 10px;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .always-open-scroll {
+      display: flex; gap: 10px; overflow-x: auto; padding-bottom: 14px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .always-open-scroll::-webkit-scrollbar { display: none; }
+    .always-open-card {
+      min-width: 180px; max-width: 200px;
+      background: var(--white); border: 1.5px solid #c4b5fd;
+      border-radius: var(--r-lg); padding: 12px; flex-shrink: 0;
+      cursor: pointer; transition: all .15s;
+    }
+    .always-open-card:hover { border-color: var(--purple); box-shadow: var(--shadow-md); transform: translateY(-1px); }
+    .always-open-team { font-size: 13px; font-weight: 900; color: var(--text); margin: 6px 0 4px; line-height: 1.3; }
+    .always-open-period { font-size: 11px; color: var(--purple); font-weight: 700; margin-bottom: 3px; }
+    .always-open-area { font-size: 11px; color: var(--text-mute); }
+
+    /* ══ 管理フォーム 種別トグル ══ */
+    .form-toggle-wrap { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+    .form-toggle-btn {
+      flex: 1; padding: 9px 10px; border-radius: var(--r-md);
+      font-size: 13px; font-weight: 700; border: 1.5px solid var(--border2);
+      background: var(--white); color: var(--text-mute); cursor: pointer;
+      text-align: center; transition: all .15s; font-family: inherit; white-space: nowrap;
+    }
+    .form-toggle-btn.active-selection { border-color: var(--green); background: var(--green-light); color: var(--green); }
+    .form-toggle-btn.active-trial     { border-color: var(--trial); background: var(--trial-light); color: var(--trial); }
+    .form-toggle-btn.active-date   { border-color: var(--green); background: var(--green-light); color: var(--green); }
+    .form-toggle-btn.active-period { border-color: var(--orange); background: var(--orange-light); color: var(--orange); }
+    .form-toggle-btn.active-always { border-color: var(--purple); background: var(--purple-light); color: var(--purple); }
+
     /* hidden */
     .hidden { display: none !important; }
     .view-section { display: none; }
@@ -1398,8 +1489,8 @@
     <span class="hero-logo-icon">⚽</span>
     <span class="hero-logo-text">KickOffer</span>
   </div>
-  <h1>セレクション<br>カレンダー</h1>
-  <p class="hero-sub">見逃さないで、あなたのチャンス</p>
+  <h1>セレクション・練習会<br>カレンダー</h1>
+  <p class="hero-sub">セレクション情報も練習会情報も、まとめて確認</p>
   <button class="hero-help-btn" onclick="openOnboarding()" title="使い方">?</button>
   <div class="hero-notif-wrap">
     <button class="hero-notif-btn" id="heroNotifBtn" onclick="handleNotifBtnClick()">
@@ -1426,6 +1517,13 @@
     <button class="nav-tab" id="tabList" onclick="switchTab('list')">📋 一覧</button>
     <button class="nav-tab" id="tabFav" onclick="switchTab('fav')">❤️ お気に入り</button>
   </div>
+</div>
+
+<!-- TYPE FILTER -->
+<div class="type-filter" id="typeFilter">
+  <button class="type-filter-btn active-all"       data-type="all"       onclick="setTypeFilter('all')">🔍 すべて</button>
+  <button class="type-filter-btn"                   data-type="selection" onclick="setTypeFilter('selection')">⚽ セレクション</button>
+  <button class="type-filter-btn"                   data-type="trial"     onclick="setTypeFilter('trial')">🏃 練習会</button>
 </div>
 
 <!-- FILTER BAR -->
@@ -1463,6 +1561,7 @@
 </div>
 
 <div id="viewList" class="view-section">
+  <div id="alwaysOpenSection"></div>
   <div id="upcomingStrip"></div>
   <div class="list-container" id="listContainer"></div>
 </div>
@@ -1618,19 +1717,45 @@
       <div id="adminFormView" class="hidden">
         <div class="form-section">
           <input type="hidden" id="editId">
+          <input type="hidden" id="fEventType" value="selection">
+          <input type="hidden" id="fScheduleType" value="date">
+
+          <label class="form-label">種別 *</label>
+          <div class="form-toggle-wrap" id="fEventTypeToggle">
+            <button type="button" class="form-toggle-btn active-selection" data-type="selection" onclick="setFormEventType('selection')">⚽ セレクション</button>
+            <button type="button" class="form-toggle-btn" data-type="trial" onclick="setFormEventType('trial')">🏃 練習会</button>
+          </div>
+
+          <label class="form-label">開催形態 *</label>
+          <div class="form-toggle-wrap" id="fScheduleTypeToggle">
+            <button type="button" class="form-toggle-btn active-date" data-stype="date" onclick="setFormScheduleType('date')">📅 確定日程</button>
+            <button type="button" class="form-toggle-btn" data-stype="period" onclick="setFormScheduleType('period')">📆 期間指定</button>
+            <button type="button" class="form-toggle-btn" data-stype="always" onclick="setFormScheduleType('always')">🔄 常時募集</button>
+          </div>
 
           <label class="form-label">チーム名 *</label>
           <input class="form-input" id="fTeamName" placeholder="例：FC東京 ジュニア">
 
+          <!-- 確定日程フィールド -->
+          <div id="formDateFields">
           <div class="form-row form-row-wrap">
             <div>
-              <label class="form-label">セレクション日 *</label>
+              <label class="form-label">開催日 *</label>
               <input class="form-input" type="date" id="fDate">
             </div>
             <div>
               <label class="form-label">時間</label>
               <input class="form-input" type="time" id="fTime">
             </div>
+          </div>
+          </div>
+
+          <!-- 期間・常時募集フィールド -->
+          <div id="formPeriodFields" class="hidden">
+            <label class="form-label">期間テキスト *</label>
+            <input class="form-input" id="fPeriodText" placeholder="例：6〜9月（変動あり）、随時受付中">
+            <label class="form-label">カレンダー表示開始月</label>
+            <input class="form-input" type="month" id="fPeriodMonth">
           </div>
 
           <label class="form-label">会場（市区町村以上）*</label>
@@ -1704,7 +1829,7 @@
 // ══════════════════════════════════
 // DATA LAYER
 // ══════════════════════════════════
-const STORAGE_KEY   = 'kickoffer_selections_v1';
+const STORAGE_KEY   = 'kickoffer_selections_v2';
 const FAVORITES_KEY = 'kickoffer_favorites_v1';
 const NOTIF_KEY     = 'kickoffer_notif_ids_v1';
 const NOTIF_DATE_KEY= 'kickoffer_notif_date_v1';
@@ -1830,6 +1955,14 @@ function foundedYearBadge(teamId) {
   const t = teamId ? TEAM_PROFILES[teamId] : null;
   if (!t || !t.foundedYear) return '';
   return `<span class="cat-badge cat-year">${t.foundedYear}年設立</span>`;
+}
+
+// イベント種別バッジ
+function eventTypeBadge(ev) {
+  if (ev.isAlwaysOpen) return `<span class="event-type-badge type-always">🔄 常時募集</span>`;
+  const type = ev.eventType || 'selection';
+  if (type === 'trial') return `<span class="event-type-badge type-trial">🏃 練習会</span>`;
+  return `<span class="event-type-badge type-selection">⚽ セレクション</span>`;
 }
 
 // ══ チームプロフィール（Notionより取得）══
@@ -2052,20 +2185,20 @@ const TEAM_PROFILES = {
 };
 
 const SAMPLE_DATA = [
-  // ── 開催予定期間（確定日程が出次第更新） ──
+  // ── セレクション：開催予定期間（確定日程が出次第更新） ──
   {
-    id: 'sel-1', teamId: 'T010',
+    id: 'sel-1', teamId: 'T010', eventType: 'selection', isAlwaysOpen: false,
     teamName: 'ヴァイスブラウミタカ',
     isPeriod: true, periodText: '5月〜2月（通年）',
     date: '2026-05-01', time: null,
     location: '東京都 多摩地域',
     targetGrades: ['小6'], capacity: null, fee: null, deadline: null,
-    description: '練習会・セレクションを5月〜2月の間で実施予定。詳細な日程は公式HPまたはお問い合わせください。',
+    description: 'セレクションを5月〜2月の間で実施予定。詳細な日程は公式HPまたはお問い合わせください。',
     teamUrl: 'https://sites.google.com/view/weiss-bm', applyUrl: '',
     tags: ['多摩地域', 'T4リーグ'],
   },
   {
-    id: 'sel-2', teamId: 'T007',
+    id: 'sel-2', teamId: 'T007', eventType: 'selection', isAlwaysOpen: false,
     teamName: '東京ヴェルディアジュント',
     isPeriod: true, periodText: '6〜8月（変動あり）',
     date: '2026-06-01', time: null,
@@ -2076,7 +2209,7 @@ const SAMPLE_DATA = [
     tags: ['ヴェルディ公認', 'T1リーグ', '調布'],
   },
   {
-    id: 'sel-4', teamId: 'T014',
+    id: 'sel-4', teamId: 'T014', eventType: 'selection', isAlwaysOpen: false,
     teamName: 'ARTE八王子FC',
     isPeriod: true, periodText: '6〜9月（実施しない可能性あり）',
     date: '2026-06-01', time: null,
@@ -2087,7 +2220,7 @@ const SAMPLE_DATA = [
     tags: ['T3リーグ', '八王子'],
   },
   {
-    id: 'sel-3', teamId: 'T008',
+    id: 'sel-3', teamId: 'T008', eventType: 'selection', isAlwaysOpen: false,
     teamName: 'C.F プラミーゴ U-15',
     isPeriod: true, periodText: '7月頃',
     date: '2026-07-01', time: null,
@@ -2098,7 +2231,7 @@ const SAMPLE_DATA = [
     tags: ['テクニック重視', 'T3リーグ'],
   },
   {
-    id: 'sel-5', teamId: 'T012',
+    id: 'sel-5', teamId: 'T012', eventType: 'selection', isAlwaysOpen: false,
     teamName: 'MIP FC',
     isPeriod: true, periodText: '8月末・10月初め（2回実施予定）',
     date: '2026-08-01', time: null,
@@ -2109,15 +2242,50 @@ const SAMPLE_DATA = [
     tags: ['2回実施', 'T3リーグ', '世田谷'],
   },
   {
-    id: 'sel-6', teamId: 'T009',
+    id: 'sel-6', teamId: 'T009', eventType: 'selection', isAlwaysOpen: false,
     teamName: '調布FC U-15',
     isPeriod: true, periodText: '9〜10月',
     date: '2026-09-01', time: null,
     location: '東京都 調布市',
     targetGrades: ['小6'], capacity: null, fee: null, deadline: null,
-    description: '9〜10月を目安にセレクションを実施予定。練習会は随時受け付けています（要問い合わせ）。詳細は公式HPをご確認ください。',
+    description: '9〜10月を目安にセレクションを実施予定。詳細は公式HPをご確認ください。',
     teamUrl: 'https://raiz.tokyo/about-u15/', applyUrl: '',
     tags: ['T3リーグ', '調布'],
+  },
+  // ── 練習会：常時募集 ──
+  {
+    id: 'trial-1', teamId: 'T022', eventType: 'trial', isAlwaysOpen: true,
+    teamName: 'ACエチェレンテ',
+    isPeriod: true, periodText: '随時参加受付中',
+    date: '2026-05-01', time: null,
+    location: '東京都 練馬区',
+    targetGrades: ['小6'], capacity: null, fee: null, deadline: null,
+    description: '現在入団・練習参加を随時受け付けています。人工芝の自社フィールドあり。まずはお問い合わせください。',
+    teamUrl: 'https://eccellentegroup.wixsite.com/eccellentehomepage', applyUrl: '',
+    tags: ['常時募集', '練馬区', '新設チーム'],
+  },
+  {
+    id: 'trial-2', teamId: 'T020', eventType: 'trial', isAlwaysOpen: true,
+    teamName: 'LSS MITAKA',
+    isPeriod: true, periodText: '9月〜随時受付',
+    date: '2026-09-01', time: null,
+    location: '東京都 三鷹市',
+    targetGrades: ['小6'], capacity: null, fee: null, deadline: null,
+    description: 'セレクションなし。9月より練習参加・入団募集開始予定。詳細はお問い合わせください。',
+    teamUrl: 'https://lss-mitaka.com/', applyUrl: '',
+    tags: ['セレクションなし', '三鷹', 'T4リーグ'],
+  },
+  // ── 練習会：定期開催 ──
+  {
+    id: 'trial-3', teamId: 'T011', eventType: 'trial', isAlwaysOpen: false,
+    teamName: 'F.C.RUIRE',
+    isPeriod: true, periodText: '月1回実施（日程はInstagramで告知）',
+    date: '2026-05-01', time: null,
+    location: '東京都 日野市',
+    targetGrades: ['小6'], capacity: null, fee: null, deadline: null,
+    description: 'セレクションなし。月1回の練習会に参加後、入団を検討できます。詳細・日程はInstagram(@ruimas_2010)またはHPをご確認ください。',
+    teamUrl: 'https://www.ruire.jp/', applyUrl: '',
+    tags: ['練習会のみ', '日野市', '2010年設立'],
   },
 ];
 
@@ -2130,11 +2298,17 @@ function getRelativeDate(days) {
 function loadSelections() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw);
+    if (raw) {
+      const data = JSON.parse(raw);
+      // migrate: add eventType/isAlwaysOpen if missing
+      return data.map(s => ({
+        eventType: 'selection', isAlwaysOpen: false, ...s
+      }));
+    }
   } catch(e) {}
   // first visit: load sample data
   localStorage.setItem(STORAGE_KEY, JSON.stringify(SAMPLE_DATA));
-  return SAMPLE_DATA;
+  return [...SAMPLE_DATA];
 }
 
 function saveSelections(data) {
@@ -2162,6 +2336,7 @@ let adminTab      = 'list';
 let editingId     = null;
 let filterText    = '';
 let filterArea    = '';
+let filterType    = 'all'; // 'all' | 'selection' | 'trial'
 let openDetailId  = null;
 
 // ══════════════════════════════════
@@ -2252,7 +2427,8 @@ function getFiltered() {
   return selections.filter(s => {
     const matchText = !filterText || s.teamName.toLowerCase().includes(filterText.toLowerCase());
     const matchArea = !filterArea || s.location.includes(filterArea);
-    return matchText && matchArea;
+    const matchType = filterType === 'all' || (s.eventType || 'selection') === filterType;
+    return matchText && matchArea && matchType;
   });
 }
 function buildAreaOptions() {
@@ -2278,6 +2454,7 @@ function onFilterChange() {
   updateFilterStatus();
   renderCalendar();
   if (currentTab === 'list') renderList();
+  else renderAlwaysOpen();
   if (currentTab === 'fav') renderFavorites();
 }
 function updateFilterStatus() {
@@ -2300,6 +2477,41 @@ function clearAllFilters() {
   filterText = '';
   filterArea = '';
   onFilterChange();
+}
+
+// ══ タイプフィルター ══
+function setTypeFilter(type) {
+  filterType = type;
+  document.querySelectorAll('.type-filter-btn').forEach(btn => {
+    btn.classList.remove('active-all', 'active-selection', 'active-trial');
+    if (btn.dataset.type === type) btn.classList.add(`active-${type}`);
+  });
+  renderCalendar();
+  if (currentTab === 'list') renderList();
+  if (currentTab === 'fav') renderFavorites();
+}
+
+// ══ 管理フォーム 種別トグル ══
+function setFormEventType(type) {
+  document.getElementById('fEventType').value = type;
+  document.querySelectorAll('#fEventTypeToggle .form-toggle-btn').forEach(b => {
+    b.classList.remove('active-selection', 'active-trial');
+    if (b.dataset.type === type) b.classList.add(`active-${type}`);
+  });
+}
+function setFormScheduleType(stype) {
+  document.getElementById('fScheduleType').value = stype;
+  document.querySelectorAll('#fScheduleTypeToggle .form-toggle-btn').forEach(b => {
+    b.classList.remove('active-date', 'active-period', 'active-always');
+    if (b.dataset.stype === stype) b.classList.add(`active-${stype}`);
+  });
+  const isDate = stype === 'date';
+  document.getElementById('formDateFields').classList.toggle('hidden', !isDate);
+  document.getElementById('formPeriodFields').classList.toggle('hidden', isDate);
+  if (stype === 'always') document.getElementById('fPeriodText').value = '随時受付中';
+  else if (stype === 'period' && document.getElementById('fPeriodText').value === '随時受付中') {
+    document.getElementById('fPeriodText').value = '';
+  }
 }
 
 // ══════════════════════════════════
@@ -2360,7 +2572,11 @@ function renderCalendar() {
 
     const show = dayEvents.slice(0, 2);
     show.forEach(ev => {
-      const chipCls = ev.isPeriod ? 'is-period' : 'cat-year';
+      let chipCls;
+      if (ev.isAlwaysOpen) chipCls = 'is-always';
+      else if ((ev.eventType || 'selection') === 'trial') chipCls = 'is-trial';
+      else if (ev.isPeriod) chipCls = 'is-period';
+      else chipCls = 'cat-year';
       html += `<span class="cal-event-chip ${chipCls}">${escHtml(ev.teamName)}</span>`;
     });
     if (dayEvents.length > 2) {
@@ -2393,10 +2609,23 @@ function showDayList(dateStr, events) {
 // LIST VIEW
 // ══════════════════════════════════
 function selectionCardHtml(ev, isPast) {
-  const periodClass = ev.isPeriod ? ' is-period' : '';
-  const topBadge = ev.isPeriod
-    ? `<span class="period-badge">📅 開催予定</span>`
-    : foundedYearBadge(ev.teamId);
+  const type = ev.eventType || 'selection';
+  const isAlways = !!ev.isAlwaysOpen;
+  // カードクラス: period / trial / always の組み合わせ
+  let cardClasses = '';
+  if (ev.isPeriod && !isAlways) cardClasses += ' is-period';
+  if (type === 'trial') cardClasses += ' is-trial';
+  if (isAlways) cardClasses += ' is-always';
+
+  // period-badge: 常時募集の場合はeventTypeBadgeのみ（重複防止）
+  let periodBadgeHtml = '';
+  if (ev.isPeriod && !isAlways) {
+    const badgeCls = type === 'trial' ? 'trial-badge' : '';
+    periodBadgeHtml = `<span class="period-badge ${badgeCls}">📅 開催予定</span>`;
+  }
+
+  const topBadge = `${eventTypeBadge(ev)} ${periodBadgeHtml} ${ev.isPeriod ? '' : foundedYearBadge(ev.teamId)}`;
+
   const metaRows = ev.isPeriod
     ? `<div class="card-meta-row"><span class="period-time-label">🗓️ ${escHtml(ev.periodText)}</span></div>
        <div class="card-meta-row"><span class="card-meta-icon">📍</span>${escHtml(ev.location)}</div>
@@ -2405,9 +2634,9 @@ function selectionCardHtml(ev, isPast) {
        <div class="card-meta-row"><span class="card-meta-icon">📍</span>${escHtml(ev.location)}</div>
        ${ev.targetGrades&&ev.targetGrades.length ? `<div class="card-meta-row"><span class="card-meta-icon">🎓</span>${ev.targetGrades.join('・')}</div>` : ''}`;
   return `
-  <div class="selection-card${periodClass}" onclick="openDetail('${ev.id}')" style="${isPast?'opacity:.6':''}">
+  <div class="selection-card${cardClasses}" onclick="openDetail('${ev.id}')" style="${isPast?'opacity:.6':''}">
     <div class="card-top">
-      <div class="card-cat-row">
+      <div class="card-cat-row" style="flex-wrap:wrap;gap:4px;">
         ${topBadge}
         ${ev.deadline ? deadlineBadge(ev.deadline) : ''}
         <span style="margin-left:auto">${heartBtnHtml(ev.id)}</span>
@@ -2425,9 +2654,37 @@ function selectionCardHtml(ev, isPast) {
   </div>`;
 }
 
+// ══ 常時募集セクション ══
+function renderAlwaysOpen() {
+  const section = document.getElementById('alwaysOpenSection');
+  if (!section) return;
+  // フィルター中・練習会タブ以外では非表示（常時募集は練習会タブ or すべてで表示）
+  const alwaysTeams = selections.filter(s => s.isAlwaysOpen && (filterType === 'all' || filterType === 'trial'));
+  const matchFiltered = alwaysTeams.filter(s => {
+    const matchText = !filterText || s.teamName.toLowerCase().includes(filterText.toLowerCase());
+    const matchArea = !filterArea || s.location.includes(filterArea);
+    return matchText && matchArea;
+  });
+  if (matchFiltered.length === 0) { section.innerHTML = ''; return; }
+  const cards = matchFiltered.map(ev => `
+    <div class="always-open-card" onclick="openDetail('${ev.id}')">
+      <span class="event-type-badge type-always" style="margin-bottom:8px;display:inline-flex;">🔄 常時募集</span>
+      <div class="always-open-team">${escHtml(ev.teamName)}</div>
+      <div class="always-open-period">${escHtml(ev.periodText || '随時受付中')}</div>
+      <div class="always-open-area">📍 ${escHtml(ev.location)}</div>
+    </div>
+  `).join('');
+  section.innerHTML = `
+    <div class="always-open-section">
+      <div class="always-open-title">🔄 常時・随時募集チーム <span style="font-size:10px;font-weight:400;color:var(--text-mute)">(タップして詳細確認)</span></div>
+      <div class="always-open-scroll">${cards}</div>
+    </div>`;
+}
+
 function renderList() {
   const container = document.getElementById('listContainer');
   const strip = document.getElementById('upcomingStrip');
+  renderAlwaysOpen();
   const today = new Date().toISOString().slice(0,10);
   const filtered = getFiltered();
   const upcoming = filtered.filter(s => s.date >= today).sort((a,b) => a.date.localeCompare(b.date));
@@ -2477,18 +2734,33 @@ function renderList() {
     const d = new Date(date + 'T00:00:00');
     // 期間エントリーのみの日（月初1日）か確定日かで表示を変える
     const allPeriod = events.every(ev => ev.isPeriod);
-    const hasPeriod = events.some(ev => ev.isPeriod);
-    let headerLabel, headerClass;
+    // 期間エントリーの種別判定
+    const hasAlways = events.some(ev => ev.isAlwaysOpen);
+    const hasTrial = events.some(ev => (ev.eventType||'selection') === 'trial');
+    let headerLabel, headerClass, headerIcon;
     if (allPeriod) {
-      headerLabel = `${d.getMonth()+1}月 開催予定`;
-      headerClass = 'is-period';
+      if (hasAlways) {
+        headerLabel = `${d.getMonth()+1}月〜 常時募集`;
+        headerClass = ''; // purple via inline
+        headerIcon = '🔄';
+      } else if (hasTrial) {
+        headerLabel = `${d.getMonth()+1}月 練習会予定`;
+        headerClass = ''; // green via inline
+        headerIcon = '🏃';
+      } else {
+        headerLabel = `${d.getMonth()+1}月 セレクション予定`;
+        headerClass = 'is-period';
+        headerIcon = '🗓️';
+      }
     } else {
       headerLabel = `${d.getMonth()+1}月${d.getDate()}日（${weekdays[d.getDay()]}）${isPast ? ' · 終了' : ''}`;
-      headerClass = isPast ? '' : '';
+      headerClass = '';
+      headerIcon = '📅';
     }
+    const headerStyle = allPeriod && hasAlways ? 'color:var(--purple);' : allPeriod && hasTrial ? 'color:var(--trial);' : isPast&&!allPeriod ? 'opacity:.5' : '';
     html += `<div class="list-date-group" id="date-group-${date}">
-      <div class="list-date-header ${headerClass}" style="${isPast&&!allPeriod?'opacity:.5':''}">
-        ${allPeriod ? '🗓️' : '📅'} ${headerLabel}
+      <div class="list-date-header ${headerClass}" style="${headerStyle}">
+        ${headerIcon} ${headerLabel}
       </div>`;
     events.forEach(ev => { html += selectionCardHtml(ev, isPast); });
     html += '</div>';
@@ -2664,20 +2936,23 @@ function renderAdminList() {
     el.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">データがありません</div><div class="empty-sub">「新規追加」タブから追加してください</div></div>`;
     return;
   }
-  el.innerHTML = sorted.map(s => `
+  el.innerHTML = sorted.map(s => {
+    const typeIcon = s.isAlwaysOpen ? '🔄' : (s.eventType||'selection') === 'trial' ? '🏃' : '⚽';
+    const dateLabel = s.isPeriod ? (s.periodText || '期間未定') : `${formatDateShort(s.date)} ${s.time||''}`;
+    return `
     <div class="admin-list-item">
       <div class="admin-item-info">
-        <div class="admin-item-name">${escHtml(s.teamName)}</div>
-        <div class="admin-item-date">${formatDateShort(s.date)} ${s.time||''} · ${escHtml(s.location||'')}</div>
+        <div class="admin-item-name">${typeIcon} ${escHtml(s.teamName)}</div>
+        <div class="admin-item-date">${escHtml(dateLabel)} · ${escHtml(s.location||'')}</div>
       </div>
       <button class="admin-edit-btn" onclick="editSelection('${s.id}')">編集</button>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 function resetForm() {
   editingId = null;
   document.getElementById('editId').value = '';
   document.getElementById('fTeamName').value = '';
-  // (category removed)
   document.getElementById('fDate').value = '';
   document.getElementById('fTime').value = '';
   document.getElementById('fLocation').value = '';
@@ -2688,6 +2963,11 @@ function resetForm() {
   document.getElementById('fTeamUrl').value = '';
   document.getElementById('fApplyUrl').value = '';
   document.getElementById('fTags').value = '';
+  document.getElementById('fPeriodText').value = '';
+  document.getElementById('fPeriodMonth').value = '';
+  // reset toggles
+  setFormEventType('selection');
+  setFormScheduleType('date');
   // reset checkboxes
   document.querySelectorAll('#gradeGroup .checkbox-pill').forEach(el => {
     el.classList.remove('checked');
@@ -2707,17 +2987,26 @@ function editSelection(id) {
   document.getElementById('adminModalTitle').textContent = '編集';
   document.getElementById('editId').value = id;
   document.getElementById('fTeamName').value = ev.teamName || '';
-  // (category removed)
-  document.getElementById('fDate').value = ev.date || '';
-  document.getElementById('fTime').value = ev.time || '';
   document.getElementById('fLocation').value = ev.location || '';
   document.getElementById('fCapacity').value = ev.capacity || '';
-  document.getElementById('fFee').value = ev.fee !== undefined ? ev.fee : '';
+  document.getElementById('fFee').value = ev.fee !== undefined && ev.fee !== null ? ev.fee : '';
   document.getElementById('fDeadline').value = ev.deadline || '';
   document.getElementById('fDescription').value = ev.description || '';
   document.getElementById('fTeamUrl').value = ev.teamUrl || '';
   document.getElementById('fApplyUrl').value = ev.applyUrl || '';
   document.getElementById('fTags').value = (ev.tags||[]).join(', ');
+  // event type
+  setFormEventType(ev.eventType || 'selection');
+  // schedule type
+  const stype = ev.isAlwaysOpen ? 'always' : ev.isPeriod ? 'period' : 'date';
+  setFormScheduleType(stype);
+  if (stype === 'date') {
+    document.getElementById('fDate').value = ev.date || '';
+    document.getElementById('fTime').value = ev.time || '';
+  } else {
+    document.getElementById('fPeriodText').value = ev.periodText || '';
+    if (ev.date) document.getElementById('fPeriodMonth').value = ev.date.slice(0,7);
+  }
   // grades
   document.querySelectorAll('#gradeGroup .checkbox-pill').forEach(el => {
     const v = el.dataset.val;
@@ -2738,10 +3027,26 @@ function editSelection(id) {
 function saveSelection() {
   const id = document.getElementById('editId').value;
   const teamName = document.getElementById('fTeamName').value.trim();
-  const date = document.getElementById('fDate').value;
+  const eventType = document.getElementById('fEventType').value || 'selection';
+  const scheduleType = document.getElementById('fScheduleType').value || 'date';
+  const isPeriod = scheduleType !== 'date';
+  const isAlwaysOpen = scheduleType === 'always';
   const location = document.getElementById('fLocation').value.trim();
+
+  let date, time, periodText;
+  if (scheduleType === 'date') {
+    date = document.getElementById('fDate').value;
+    time = document.getElementById('fTime').value;
+    periodText = null;
+  } else {
+    periodText = document.getElementById('fPeriodText').value.trim();
+    const periodMonth = document.getElementById('fPeriodMonth').value;
+    date = periodMonth ? periodMonth + '-01' : new Date().toISOString().slice(0, 8) + '01';
+    time = null;
+  }
+
   if (!teamName || !date || !location) {
-    alert('チーム名・セレクション日・会場は必須です');
+    alert('チーム名・日程/開始月・会場は必須です');
     return;
   }
   const grades = [];
@@ -2750,8 +3055,12 @@ function saveSelection() {
   const data = {
     id: id || uuid(),
     teamName,
+    eventType,
+    isPeriod,
+    isAlwaysOpen,
+    periodText,
     date,
-    time: document.getElementById('fTime').value,
+    time,
     location,
     targetGrades: grades,
     capacity: parseInt(document.getElementById('fCapacity').value)||0,
