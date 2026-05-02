@@ -1521,18 +1521,56 @@
       color: #fff; font-size: 15px; font-weight: 900; border: none;
       border-radius: var(--r-lg); cursor: pointer; font-family: inherit; margin-bottom: 16px;
     }
-    .parse-result-box {
-      background: var(--bg); border-radius: var(--r-md); padding: 14px; margin-bottom: 12px;
+    /* parse edit section */
+    .pe-section {
+      background: var(--bg); border-radius: var(--r-md);
+      padding: 14px 14px 8px; margin-bottom: 12px;
+      border: 1.5px solid var(--border2);
     }
-    .parse-result-title {
-      font-size: 11px; font-weight: 700; color: var(--text-mute);
+    .pe-section-title {
+      font-size: 11px; font-weight: 800; color: var(--text-mute);
+      letter-spacing: .08em; margin-bottom: 12px; text-transform: uppercase;
+    }
+    .pe-field { margin-bottom: 12px; }
+    .pe-label {
+      display: block; font-size: 11px; font-weight: 700; color: var(--text-sub);
+      margin-bottom: 5px;
+    }
+    .pe-input {
+      width: 100%; padding: 9px 10px; border: 1.5px solid var(--border2);
+      border-radius: var(--r-md); font-size: 13px; font-family: inherit;
+      color: var(--text); background: var(--white); outline: none;
+      transition: border-color .15s; box-sizing: border-box;
+    }
+    .pe-input:focus { border-color: var(--green-mid); }
+    .pe-time-row { display: flex; gap: 6px; }
+    .pe-time-cell { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+    .pe-time-lbl { font-size: 10px; font-weight: 700; color: var(--text-mute); }
+    .pe-time .pe-input, .pe-time-cell .pe-input { width: 100%; }
+    .pe-toggle-wrap { display: flex; gap: 6px; }
+    .pe-toggle-btn {
+      flex: 1; padding: 8px 6px; border-radius: var(--r-md);
+      font-size: 12px; font-weight: 700; border: 1.5px solid var(--border2);
+      background: var(--white); color: var(--text-mute); cursor: pointer;
+      text-align: center; transition: all .15s; font-family: inherit;
+    }
+    .pe-toggle-btn.active-selection { border-color: var(--green); background: var(--green-light); color: var(--green); }
+    .pe-toggle-btn.active-trial     { border-color: var(--trial); background: var(--trial-light); color: var(--trial); }
+    .pe-deadline-banner {
+      background: #fff7ed; border: 1.5px solid #fdba74; border-radius: var(--r-md);
+      padding: 9px 12px; margin-bottom: 12px;
+      font-size: 12px; font-weight: 700; color: #c2410c;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .parse-date-list { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
+    .parse-date-section-wrap {
+      background: var(--bg); border-radius: var(--r-md); padding: 12px;
+      margin-bottom: 12px; border: 1.5px solid var(--border2);
+    }
+    .parse-date-section-title {
+      font-size: 11px; font-weight: 800; color: var(--text-mute);
       letter-spacing: .08em; margin-bottom: 10px;
     }
-    .parse-row { display: flex; gap: 8px; margin-bottom: 6px; font-size: 13px; align-items: flex-start; }
-    .parse-row-label { font-weight: 700; color: var(--text-sub); min-width: 72px; flex-shrink: 0; font-size: 12px; }
-    .parse-row-value { color: var(--text); line-height: 1.5; }
-    .parse-row-value.missing { color: var(--text-mute); font-style: italic; }
-    .parse-date-list { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
     .parse-date-pill {
       display: flex; align-items: center; gap: 10px;
       padding: 9px 12px; border-radius: var(--r-md);
@@ -1542,6 +1580,10 @@
     .parse-date-pill.selected { border-color: var(--green); background: var(--green-light); }
     .parse-date-pill input { accent-color: var(--green); width: 16px; height: 16px; flex-shrink: 0; cursor: pointer; }
     .parse-date-pill-label { font-size: 13px; font-weight: 700; color: var(--text); }
+    .parse-no-date {
+      font-size: 13px; color: var(--red); padding: 4px 0;
+      display: flex; align-items: center; gap: 6px;
+    }
     .btn-apply-parsed {
       width: 100%; padding: 14px;
       background: linear-gradient(135deg, var(--green), var(--green-mid));
@@ -1792,13 +1834,71 @@
       <button class="btn-parse-run" onclick="executeParse()">🔍 解析する</button>
 
       <div id="parseResultWrap" class="hidden">
-        <div class="parse-result-box">
-          <div class="parse-result-title">📋 検出した情報</div>
-          <div id="parseResultBody"></div>
+
+        <!-- 締切日バナー（検出時のみ表示） -->
+        <div id="peDeadlineBanner" class="pe-deadline-banner hidden">
+          📌 <span id="peDeadlineBannerText"></span>
         </div>
+
+        <!-- 編集可能フィールド -->
+        <div class="pe-section">
+          <div class="pe-section-title">✏️ 内容を確認・修正してから登録</div>
+
+          <!-- 種別 -->
+          <div class="pe-field">
+            <label class="pe-label">種別</label>
+            <div class="pe-toggle-wrap" id="peEventTypeToggle">
+              <button type="button" class="pe-toggle-btn active-selection" data-type="selection"
+                onclick="setPeEventType('selection')">⚽ セレクション</button>
+              <button type="button" class="pe-toggle-btn" data-type="trial"
+                onclick="setPeEventType('trial')">🏃 練習会</button>
+            </div>
+          </div>
+
+          <!-- 時刻 -->
+          <div class="pe-field">
+            <label class="pe-label">時刻</label>
+            <div class="pe-time-row">
+              <div class="pe-time-cell">
+                <span class="pe-time-lbl">受付</span>
+                <input class="pe-input" type="time" id="peReception">
+              </div>
+              <div class="pe-time-cell">
+                <span class="pe-time-lbl">開始</span>
+                <input class="pe-input" type="time" id="peStart">
+              </div>
+              <div class="pe-time-cell">
+                <span class="pe-time-lbl">終了</span>
+                <input class="pe-input" type="time" id="peEnd">
+              </div>
+            </div>
+          </div>
+
+          <!-- 会場 -->
+          <div class="pe-field">
+            <label class="pe-label">会場</label>
+            <input class="pe-input" type="text" id="peLocation"
+              placeholder="未検出の場合は入力してください">
+          </div>
+
+          <!-- 締切日 -->
+          <div class="pe-field">
+            <label class="pe-label">📌 申込締切日</label>
+            <input class="pe-input" type="date" id="peDeadlineInput">
+          </div>
+
+          <!-- 参加費 -->
+          <div class="pe-field" style="margin-bottom:4px;">
+            <label class="pe-label">参加費（円 / 「無料」などもOK）</label>
+            <input class="pe-input" type="text" id="peFee" placeholder="例：1000　または　無料">
+          </div>
+        </div>
+
+        <!-- 日程選択 -->
         <div id="parseDateSection"></div>
+
         <button class="btn-apply-parsed" id="applyParsedBtn" onclick="applyParsedToForm()">
-          ✅ フォームに反映する
+          ✅ 登録する
         </button>
       </div>
     </div>
@@ -2801,6 +2901,14 @@ function parseEventText(text) {
   return result;
 }
 
+// オーバーレイ内の種別トグル
+function setPeEventType(type) {
+  document.querySelectorAll('#peEventTypeToggle .pe-toggle-btn').forEach(btn => {
+    btn.classList.remove('active-selection','active-trial');
+    if (btn.dataset.type === type) btn.classList.add(`active-${type}`);
+  });
+}
+
 function executeParse() {
   const text = document.getElementById('parseInput').value.trim();
   if (!text) { alert('テキストを入力してください'); return; }
@@ -2813,76 +2921,66 @@ function executeParse() {
     const d = new Date(ds + 'T00:00:00');
     return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（${weekdays[d.getDay()]}）`;
   }
-  function row(label, val, isMissing) {
-    return `<div class="parse-row"><span class="parse-result-label">${label}</span><span class="parse-result-value ${isMissing?'missing':''}">${val}</span></div>`;
-  }
 
-  // 基本情報
-  let body = '';
-  body += row('種別', parsedData.eventType==='trial'?'🏃 練習会':'⚽ セレクション', false);
+  // ── 編集フィールドに解析結果を流し込む ──
+  // 種別
+  setPeEventType(parsedData.eventType);
 
-  // 締切日
+  // 締切日バナー＆フィールド
+  const banner = document.getElementById('peDeadlineBanner');
   if (parsedData.deadline) {
-    body += row('📌 申込締切', `<strong style="color:var(--red)">${fmtDate(parsedData.deadline)}</strong>`, false);
+    document.getElementById('peDeadlineBannerText').textContent =
+      `申込締切：${fmtDate(parsedData.deadline)}`;
+    banner.classList.remove('hidden');
+    document.getElementById('peDeadlineInput').value = parsedData.deadline;
+  } else {
+    banner.classList.add('hidden');
+    document.getElementById('peDeadlineInput').value = '';
   }
 
-  // 受付・開始・終了時刻
-  const timeLabel = [
-    parsedData.receptionTime ? `受付 ${parsedData.receptionTime}` : null,
-    parsedData.time          ? `開始 ${parsedData.time}` : null,
-    parsedData.endTime       ? `終了 ${parsedData.endTime}` : null,
-  ].filter(Boolean).join('　／　');
-  body += row('時刻', timeLabel || '検出できませんでした', !timeLabel);
+  // 時刻
+  document.getElementById('peReception').value = parsedData.receptionTime || '';
+  document.getElementById('peStart').value      = parsedData.time || '';
+  document.getElementById('peEnd').value        = parsedData.endTime || '';
 
   // 会場
-  body += row('会場', escHtml(parsedData.location || '検出できませんでした'), !parsedData.location);
-
-  // 対象学年
-  if (parsedData.targetGrades.length > 0) {
-    body += row('対象学年', escHtml(parsedData.targetGrades.join('・')), false);
-  }
+  document.getElementById('peLocation').value = parsedData.location || '';
 
   // 参加費
-  if (parsedData.fee !== null) {
-    body += row('参加費', escHtml(parsedData.fee), false);
-  }
+  document.getElementById('peFee').value = parsedData.fee !== null ? String(parsedData.fee) : '';
 
-  // 定員
-  if (parsedData.capacity) {
-    body += row('定員', `${parsedData.capacity}名`, false);
-  }
-
-  document.getElementById('parseResultBody').innerHTML = body;
-
-  // 日程セクション
+  // ── 日程選択セクション ──
   let dateHtml = '';
   if (parsedData.dates.length === 0) {
-    dateHtml = '<div style="font-size:13px;color:var(--red);padding:6px 0;">⚠️ 開催日程を検出できませんでした。テキストを確認してください。</div>';
-    document.getElementById('applyParsedBtn').textContent = '✅ フォームに反映する';
-  } else if (parsedData.dates.length === 1) {
-    // 1件は結果ボックスに直接表示済み → 日付も追記
-    const extraRow = row('開催日', fmtDate(parsedData.dates[0]), false);
-    document.getElementById('parseResultBody').innerHTML = body + extraRow;
-    document.getElementById('applyParsedBtn').textContent = '✅ フォームに反映する';
+    dateHtml = `<div class="parse-no-date">⚠️ 開催日程を検出できませんでした。直接フォームに入力してください。</div>`;
+    document.getElementById('applyParsedBtn').classList.add('hidden');
   } else {
+    document.getElementById('applyParsedBtn').classList.remove('hidden');
+    const title = parsedData.dates.length === 1
+      ? `📅 開催日`
+      : `📅 ${parsedData.dates.length}件の日程（登録する日程を選択）`;
     dateHtml = `
-      <div class="parse-result-box" style="margin-top:0;">
-        <div class="parse-result-title">📅 ${parsedData.dates.length}件の日程を検出（登録する日程を選択）</div>
+      <div class="parse-date-section-wrap">
+        <div class="parse-date-section-title">${title}</div>
         <div class="parse-date-list">
           ${parsedData.dates.map(ds => {
             const d = new Date(ds+'T00:00:00');
             const label = `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（${weekdays[d.getDay()]}）`;
             return `<label class="parse-date-pill selected" data-date="${ds}">
-              <input type="checkbox" checked value="${ds}" onchange="toggleParsedDate('${ds}', this.checked)">
+              <input type="checkbox" checked value="${ds}" onchange="toggleParsedDate('${ds}',this.checked)">
               <span class="parse-date-pill-label">${label}</span>
             </label>`;
           }).join('')}
         </div>
       </div>`;
-    document.getElementById('applyParsedBtn').textContent = `✅ ${parsedData.dates.length}件をまとめて登録する`;
+    const n = parsedData.dates.length;
+    document.getElementById('applyParsedBtn').textContent =
+      n > 1 ? `✅ ${n}件まとめて登録する` : '✅ 登録する';
   }
   document.getElementById('parseDateSection').innerHTML = dateHtml;
   document.getElementById('parseResultWrap').classList.remove('hidden');
+  // 解析結果エリアまでスクロール
+  document.getElementById('parseResultWrap').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
 function toggleParsedDate(dateStr, checked) {
@@ -2890,90 +2988,70 @@ function toggleParsedDate(dateStr, checked) {
   else parsedSelectedDates = parsedSelectedDates.filter(d => d !== dateStr);
   const pill = document.querySelector(`.parse-date-pill[data-date="${dateStr}"]`);
   if (pill) pill.classList.toggle('selected', checked);
+  const n = parsedSelectedDates.length;
   const btn = document.getElementById('applyParsedBtn');
-  btn.textContent = parsedSelectedDates.length > 1
-    ? `✅ ${parsedSelectedDates.length}件をまとめて登録する`
-    : '✅ フォームに反映する';
+  btn.textContent = n > 1 ? `✅ ${n}件まとめて登録する` : '✅ 登録する';
 }
 
 function applyParsedToForm() {
-  if (!parsedData || parsedSelectedDates.length === 0) { alert('日程を選択してください'); return; }
-  const weekdays = ['日','月','火','水','木','金','土'];
-
-  // 共通フィールド充填ユーティリティ（IDが存在する場合のみセット）
-  function trySet(id, val) {
-    const el = document.getElementById(id);
-    if (el && val) el.value = val;
-  }
-
-  if (parsedSelectedDates.length > 1) {
-    // バッチ保存
-    const teamName = document.getElementById('fTeamName').value.trim();
-    const isPartner = document.getElementById('fIsPartner').checked;
-    const teamId = isPartner ? (document.getElementById('fTeamId').value || null) : null;
-    const location = parsedData.location || '';
-    const dateLabels = parsedSelectedDates.map(ds => {
-      const d = new Date(ds+'T00:00:00');
-      return `${d.getMonth()+1}月${d.getDate()}日（${weekdays[d.getDay()]}）`;
-    }).join('・');
-    const deadlineLabel = parsedData.deadline ? (() => {
-      const d = new Date(parsedData.deadline+'T00:00:00');
-      return `\n📌 申込締切: ${d.getMonth()+1}月${d.getDate()}日（${weekdays[d.getDay()]}）`;
-    })() : '';
-    const feeLabel = parsedData.fee ? `\n参加費: ${parsedData.fee}` : '';
-    if (!confirm(`以下の${parsedSelectedDates.length}件を登録します：\n${dateLabels}${deadlineLabel}${feeLabel}\n\nチーム名: ${teamName||'（未入力）'}\n会場: ${location||'（未検出）'}\n\n実行しますか？`)) return;
-    parsedSelectedDates.forEach(date => {
-      selections.push({
-        id: uuid(), teamName: teamName||'チーム名を入力してください',
-        eventType: parsedData.eventType, isPeriod: false,
-        isAlwaysOpen: false, isPartner, teamId, periodText: null,
-        date, time: parsedData.time, location,
-        targetGrades: parsedData.targetGrades || [],
-        capacity: parsedData.capacity || 0,
-        fee: parsedData.fee || null,
-        deadline: parsedData.deadline || null,
-        description: '', teamUrl: '', applyUrl: '', tags: [],
-      });
-    });
-    saveSelections(selections);
-    closeParseOverlay(); closeAdmin(); refresh();
-    alert(`✅ ${parsedSelectedDates.length}件を登録しました！\n一覧の編集ボタンから詳細を補足できます。`);
+  if (!parsedData) return;
+  if (parsedSelectedDates.length === 0) {
+    alert('登録する日程を1件以上選択してください');
     return;
   }
 
-  // 単一日程：フォームに反映
-  setFormEventType(parsedData.eventType);
-  setFormScheduleType('date');
-  trySet('fDate', parsedSelectedDates[0]);
-  // 開始時刻（受付時刻が検出された場合は受付を優先してfTimeに入れ、開始はfTimeStartがあればそちらへ）
-  trySet('fTime', parsedData.time || parsedData.receptionTime);
-  trySet('fLocation', parsedData.location);
-  trySet('fDeadline', parsedData.deadline);
-  if (parsedData.fee !== null) trySet('fFee', String(parsedData.fee).replace(/[^0-9]/g,'') || '0');
-  if (parsedData.capacity) trySet('fCapacity', String(parsedData.capacity));
+  // オーバーレイ内の編集フィールドから値を読む
+  const activeTypeBtn = document.querySelector('#peEventTypeToggle .pe-toggle-btn.active-selection, #peEventTypeToggle .pe-toggle-btn.active-trial');
+  const eventType   = activeTypeBtn ? activeTypeBtn.dataset.type : (parsedData.eventType || 'selection');
+  const reception   = document.getElementById('peReception').value.trim();
+  const startTime   = document.getElementById('peStart').value.trim();
+  const endTime     = document.getElementById('peEnd').value.trim();
+  const location    = document.getElementById('peLocation').value.trim();
+  const deadline    = document.getElementById('peDeadlineInput').value.trim() || null;
+  const feeRaw      = document.getElementById('peFee').value.trim();
+  // 開始時刻優先、なければ受付時刻
+  const time        = startTime || reception || null;
 
-  // 対象学年チェックボックスを自動チェック
-  if (parsedData.targetGrades.length > 0) {
-    const gradeStr = parsedData.targetGrades.join('');
-    const allGrades = ['小1','小2','小3','小4','小5','小6','中1'];
-    // 範囲パターン（例: 3〜6年生 → 小3〜小6）
-    const rangeM = gradeStr.match(/(?:小)?(\d+)\s*[〜～\-]\s*(?:小)?(\d+)\s*年/);
-    let matchFn;
-    if (rangeM) {
-      const lo = parseInt(rangeM[1]), hi = parseInt(rangeM[2]);
-      matchFn = g => { const n = parseInt(g.replace(/[^\d]/g,'')); return n >= lo && n <= hi; };
-    } else {
-      // 直接一致チェック
-      matchFn = g => gradeStr.includes(g);
-    }
-    document.querySelectorAll('#gradeGroup .checkbox-pill').forEach(el => {
-      const v = el.dataset.val;
-      const hit = matchFn(v);
-      el.classList.toggle('checked', hit);
-      el.querySelector('input').checked = hit;
+  // チーム情報はメインフォームから取得（すでに入力済みの場合）
+  const teamName  = document.getElementById('fTeamName').value.trim();
+  const isPartner = document.getElementById('fIsPartner').checked;
+  const teamId    = isPartner ? (document.getElementById('fTeamId').value || null) : null;
+
+  // 各日程を登録
+  parsedSelectedDates.forEach(date => {
+    selections.push({
+      id: uuid(),
+      teamName: teamName || 'チーム名を入力してください',
+      eventType,
+      isPeriod: false,
+      isAlwaysOpen: false,
+      isPartner,
+      teamId,
+      periodText: null,
+      date,
+      time,
+      location,
+      targetGrades: parsedData.targetGrades || [],
+      capacity: parsedData.capacity || 0,
+      fee: feeRaw || null,
+      deadline,
+      description: '',
+      teamUrl: '',
+      applyUrl: '',
+      tags: [],
     });
-  }
+  });
+
+  saveSelections(selections);
   closeParseOverlay();
+  closeAdmin();
+  refresh();
+
+  const n = parsedSelectedDates.length;
+  const msg = n > 1
+    ? `✅ ${n}件を登録しました！\n一覧の ✏️ ボタンからチーム名・詳細を補足できます。`
+    : `✅ 登録しました！\n一覧の ✏️ ボタンからチーム名・詳細を補足できます。`;
+  alert(msg);
 }
 
 // ══════════════════════════════════
