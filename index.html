@@ -1842,7 +1842,14 @@
 
         <!-- 編集可能フィールド -->
         <div class="pe-section">
-          <div class="pe-section-title">✏️ 内容を確認・修正してから登録</div>
+          <div class="pe-section-title">✏️ 内容を確認・修正してください（この後フォームで保存）</div>
+
+          <!-- チーム名 -->
+          <div class="pe-field">
+            <label class="pe-label">チーム名</label>
+            <input class="pe-input" type="text" id="peTeamName"
+              placeholder="チーム名（未検出の場合は入力してください）">
+          </div>
 
           <!-- 種別 -->
           <div class="pe-field">
@@ -1898,7 +1905,7 @@
         <div id="parseDateSection"></div>
 
         <button class="btn-apply-parsed" id="applyParsedBtn" onclick="applyParsedToForm()">
-          ✅ 登録する
+          ✏️ フォームで確認して保存する
         </button>
       </div>
     </div>
@@ -2744,8 +2751,9 @@ function closeParseOverlay() {
 
 function parseEventText(text) {
   const result = {
+    teamName: null,
     eventType: 'selection',
-    dates: [],           // 開催日のみ（締切日は除外）
+    dates: [],           // 開催日のみ（締切日・予備日は除外）
     deadline: null,      // 申込締切日
     time: null,          // 開始時刻
     receptionTime: null, // 受付開始時刻
@@ -2773,59 +2781,100 @@ function parseEventText(text) {
   }
   const dateRe = /(\d{4}年)?(\d{1,2})月(\d{1,2})日/g;
 
-  // ④ 締切行・締切日を先行抽出（これらの行の日付は開催日に含めない）
-  const deadlineLineIndices = new Set();
-  const deadlineKeyRe = /締切|締め切り|〆切|申込期限|応募期限|期限|申し込み期限|まで.*日|応募締|参加締|締め/;
-  lines.forEach((line, i) => {
-    if (deadlineKeyRe.test(line)) {
-      deadlineLineIndices.add(i);
-      // 締切日を取得
-      const dm = line.match(/(\d{4}年)?(\d{1,2})月(\d{1,2})日/);
-      if (dm && !result.deadline) {
-        result.deadline = extractDateFromMatch(dm);
+  // ③b チーム名の抽出
+  const teamSuffixRe = /FC|SC|SSC|SSS|SFC|ジュニア|Jr|JUNIOR|ユース|YOUTH|クラブ|アカデミー|ACADEMY|フットボール|FOOTBALL|サッカー|スポーツ|SPORTS|フットサル/i;
+  // 優先1: 明示ラベル「チーム名：〇〇」
+  const teamLabelM = text.match(/(?:チーム名|クラブ名)[：:\s　]+([^\n\r]{2,30})/);
+  if (teamLabelM) {
+    result.teamName = teamLabelM[1].trim();
+  } else {
+    // 優先2: 【】《》≪≫などの括弧内
+    const bracketM = text.match(/[【《≪「]([^】》≫」\n\r]{3,30}?)[】》≫」]/);
+    if (bracketM && bracketM[1].trim().length >= 2) {
+      result.teamName = bracketM[1].trim();
+    } else {
+      // 優先3: チーム名キーワードを含む短い行（特にテキスト上部）
+      for (const line of lines.slice(0, 8)) {
+        if (teamSuffixRe.test(line) && line.length <= 35) {
+          // イベント種別ワードを除去してチーム名だけ抽出
+          const cleaned = line
+            .replace(/(?:U-?\d+\s*)?セレクション(?:開催)?(?:のお知らせ)?/g,'')
+            .replace(/練習会(?:開催)?(?:のお知らせ)?/g,'')
+            .replace(/参加者募集|募集(?:のお知らせ)?|開催のお知らせ|お知らせ/g,'')
+            .replace(/^\s*[・●▶︎▸◆■□▲△◇]\s*/, '')
+            .trim();
+          if (cleaned.length >= 2 && teamSuffixRe.test(cleaned)) {
+            result.teamName = cleaned;
+            break;
+          }
+        }
       }
-    }
-  });
-  // 「〇月〇日まで」パターン（行をまたがる場合）
-  if (!result.deadline) {
-    const madeM = text.match(/(\d{4}年)?(\d{1,2})月(\d{1,2})日.*?まで/);
-    if (madeM) {
-      result.deadline = extractDateFromMatch(madeM);
     }
   }
 
-  // ⑤ 開催日の抽出：行ごとに文脈判定
-  const eventDateKeyRe = /[\（\(]?[月火水木金土日][）\)]|受付|開始|集合|試合|開催日|当日|会場|グラウンド|公園|フィールド|スタジアム|FC|SC|\d{1,2}:\d{2}/;
+  // ④ 除外行の先行特定（締切日・予備日の行は開催日に含めない）
+  const deadlineLineIndices = new Set();
+  const reserveLineIndices  = new Set();
+
+  // 締切キーワード
+  const deadlineKeyRe = /締切|締め切り|〆切|申込期限|応募期限|申込み期限|申し込み期限|応募締|参加締/;
+  // 予備日キーワード
+  const reserveKeyRe = /予備日|予備|補欠日|雨天予備|代替日/;
+
+  lines.forEach((line, i) => {
+    if (deadlineKeyRe.test(line)) {
+      deadlineLineIndices.add(i);
+      const dm = line.match(/(\d{4}年)?(\d{1,2})月(\d{1,2})日/);
+      if (dm && !result.deadline) result.deadline = extractDateFromMatch(dm);
+    }
+    if (reserveKeyRe.test(line)) {
+      reserveLineIndices.add(i);
+    }
+  });
+
+  // 「〇月〇日まで」パターン（行をまたがる場合）
+  if (!result.deadline) {
+    const madeM = text.match(/(\d{4}年)?(\d{1,2})月(\d{1,2})日[^\n\r]{0,10}?まで/);
+    if (madeM) result.deadline = extractDateFromMatch(madeM);
+  }
+
+  // ⑤ 開催日の抽出：行ごとに文脈判定（締切行・予備行をスキップ）
+  const eventDateKeyRe = /[\（\(]?[月火水木金土日][）\)]|受付|開始|集合|試合|開催日|当日|会場|グラウンド|公園|フィールド|スタジアム|FC|SC|\d{1,2}[：:]\d{2}/;
   const standaloneExclusions = /チーム|クラブ|問い合わせ|連絡|代表|監督|コーチ|設立|活動|拠点|所属|FAX|TEL|メール|mail|http|URL|料金|参加費|定員|学年|年生|対象|説明|紹介|概要|コンセプト/i;
 
   lines.forEach((line, i) => {
-    if (deadlineLineIndices.has(i)) return; // 締切行はスキップ
+    if (deadlineLineIndices.has(i) || reserveLineIndices.has(i)) return; // 除外行はスキップ
 
     let m;
     const re = /(\d{4}年)?(\d{1,2})月(\d{1,2})日/g;
     while ((m = re.exec(line)) !== null) {
       const ds = extractDateFromMatch(m);
       if (result.dates.includes(ds)) continue;
-      if (result.deadline === ds) continue; // 締切日と同じならスキップ
+      if (result.deadline === ds) continue;
 
-      // 文脈チェック：開催日らしい行か？
       const hasEventContext = eventDateKeyRe.test(line);
-      const hasExclusion = standaloneExclusions.test(line);
+      const hasExclusion    = standaloneExclusions.test(line);
 
-      // 日付だけの短い行・または開催文脈あり → 開催日と判定
-      if (hasEventContext || (!hasExclusion && line.replace(/\s/g,'').length < 40)) {
+      if (hasEventContext || (!hasExclusion && line.replace(/\s/g,'').length < 45)) {
         result.dates.push(ds);
       }
     }
   });
 
-  // 開催日が0件の場合のフォールバック：全日付から締切を除いて追加（行文脈を無視）
+  // フォールバック：全日付から締切・予備日の日付を除いて追加
   if (result.dates.length === 0) {
+    // まず予備日の日付文字列を収集
+    const reserveDates = new Set();
+    reserveLineIndices.forEach(i => {
+      const re = /(\d{4}年)?(\d{1,2})月(\d{1,2})日/g;
+      let m;
+      while ((m = re.exec(lines[i])) !== null) reserveDates.add(extractDateFromMatch(m));
+    });
     const re = /(\d{4}年)?(\d{1,2})月(\d{1,2})日/g;
     let m;
     while ((m = re.exec(text)) !== null) {
       const ds = extractDateFromMatch(m);
-      if (!result.dates.includes(ds) && result.deadline !== ds) {
+      if (!result.dates.includes(ds) && result.deadline !== ds && !reserveDates.has(ds)) {
         result.dates.push(ds);
       }
     }
@@ -2923,14 +2972,19 @@ function executeParse() {
   }
 
   // ── 編集フィールドに解析結果を流し込む ──
-  // 種別
+  document.getElementById('peTeamName').value   = parsedData.teamName || '';
   setPeEventType(parsedData.eventType);
+  document.getElementById('peReception').value  = parsedData.receptionTime || '';
+  document.getElementById('peStart').value      = parsedData.time || '';
+  document.getElementById('peEnd').value        = parsedData.endTime || '';
+  document.getElementById('peLocation').value   = parsedData.location || '';
+  document.getElementById('peFee').value        = parsedData.fee !== null ? String(parsedData.fee) : '';
 
   // 締切日バナー＆フィールド
   const banner = document.getElementById('peDeadlineBanner');
   if (parsedData.deadline) {
     document.getElementById('peDeadlineBannerText').textContent =
-      `申込締切：${fmtDate(parsedData.deadline)}`;
+      `申込締切：${fmtDate(parsedData.deadline)}　← 開催日と分けて検出しました`;
     banner.classList.remove('hidden');
     document.getElementById('peDeadlineInput').value = parsedData.deadline;
   } else {
@@ -2938,48 +2992,48 @@ function executeParse() {
     document.getElementById('peDeadlineInput').value = '';
   }
 
-  // 時刻
-  document.getElementById('peReception').value = parsedData.receptionTime || '';
-  document.getElementById('peStart').value      = parsedData.time || '';
-  document.getElementById('peEnd').value        = parsedData.endTime || '';
-
-  // 会場
-  document.getElementById('peLocation').value = parsedData.location || '';
-
-  // 参加費
-  document.getElementById('peFee').value = parsedData.fee !== null ? String(parsedData.fee) : '';
-
   // ── 日程選択セクション ──
   let dateHtml = '';
-  if (parsedData.dates.length === 0) {
-    dateHtml = `<div class="parse-no-date">⚠️ 開催日程を検出できませんでした。直接フォームに入力してください。</div>`;
+  const n = parsedData.dates.length;
+
+  if (n === 0) {
+    dateHtml = `<div class="parse-no-date">⚠️ 開催日程を検出できませんでした。フォームに直接入力してください。</div>`;
     document.getElementById('applyParsedBtn').classList.add('hidden');
-  } else {
-    document.getElementById('applyParsedBtn').classList.remove('hidden');
-    const title = parsedData.dates.length === 1
-      ? `📅 開催日`
-      : `📅 ${parsedData.dates.length}件の日程（登録する日程を選択）`;
+  } else if (n === 1) {
+    // 1件：そのまま表示
     dateHtml = `
       <div class="parse-date-section-wrap">
-        <div class="parse-date-section-title">${title}</div>
+        <div class="parse-date-section-title">📅 開催日</div>
         <div class="parse-date-list">
-          ${parsedData.dates.map(ds => {
-            const d = new Date(ds+'T00:00:00');
-            const label = `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（${weekdays[d.getDay()]}）`;
-            return `<label class="parse-date-pill selected" data-date="${ds}">
-              <input type="checkbox" checked value="${ds}" onchange="toggleParsedDate('${ds}',this.checked)">
-              <span class="parse-date-pill-label">${label}</span>
-            </label>`;
-          }).join('')}
+          <label class="parse-date-pill selected" data-date="${parsedData.dates[0]}">
+            <input type="checkbox" checked value="${parsedData.dates[0]}"
+              onchange="toggleParsedDate('${parsedData.dates[0]}',this.checked)">
+            <span class="parse-date-pill-label">${fmtDate(parsedData.dates[0])}</span>
+          </label>
         </div>
       </div>`;
-    const n = parsedData.dates.length;
+    document.getElementById('applyParsedBtn').classList.remove('hidden');
+    document.getElementById('applyParsedBtn').textContent = '✏️ フォームで確認して保存する';
+  } else {
+    // 複数件：日程選択
+    dateHtml = `
+      <div class="parse-date-section-wrap">
+        <div class="parse-date-section-title">📅 ${n}件の日程を検出（登録する日程を選択）</div>
+        <div class="parse-date-list">
+          ${parsedData.dates.map(ds => `
+            <label class="parse-date-pill selected" data-date="${ds}">
+              <input type="checkbox" checked value="${ds}" onchange="toggleParsedDate('${ds}',this.checked)">
+              <span class="parse-date-pill-label">${fmtDate(ds)}</span>
+            </label>`).join('')}
+        </div>
+      </div>`;
+    document.getElementById('applyParsedBtn').classList.remove('hidden');
     document.getElementById('applyParsedBtn').textContent =
-      n > 1 ? `✅ ${n}件まとめて登録する` : '✅ 登録する';
+      `✏️ ${n}件まとめて登録 → 1件目を編集する`;
   }
+
   document.getElementById('parseDateSection').innerHTML = dateHtml;
   document.getElementById('parseResultWrap').classList.remove('hidden');
-  // 解析結果エリアまでスクロール
   document.getElementById('parseResultWrap').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
@@ -2990,7 +3044,67 @@ function toggleParsedDate(dateStr, checked) {
   if (pill) pill.classList.toggle('selected', checked);
   const n = parsedSelectedDates.length;
   const btn = document.getElementById('applyParsedBtn');
-  btn.textContent = n > 1 ? `✅ ${n}件まとめて登録する` : '✅ 登録する';
+  if (n === 0) {
+    btn.textContent = '✏️ フォームで確認して保存する';
+  } else if (n === 1) {
+    btn.textContent = '✏️ フォームで確認して保存する';
+  } else {
+    btn.textContent = `✏️ ${n}件まとめて登録 → 1件目を編集する`;
+  }
+}
+
+// オーバーレイの編集フィールドから共通値を読み取るユーティリティ
+function readPeFields() {
+  const activeTypeBtn = document.querySelector(
+    '#peEventTypeToggle .pe-toggle-btn.active-selection, #peEventTypeToggle .pe-toggle-btn.active-trial'
+  );
+  return {
+    teamName  : document.getElementById('peTeamName').value.trim(),
+    eventType : activeTypeBtn ? activeTypeBtn.dataset.type : (parsedData.eventType || 'selection'),
+    reception : document.getElementById('peReception').value.trim(),
+    startTime : document.getElementById('peStart').value.trim(),
+    endTime   : document.getElementById('peEnd').value.trim(),
+    location  : document.getElementById('peLocation').value.trim(),
+    deadline  : document.getElementById('peDeadlineInput').value.trim() || null,
+    fee       : document.getElementById('peFee').value.trim() || null,
+  };
+}
+
+// メインフォームに解析値を反映（保存はしない）
+function fillMainFormFromPe(date) {
+  const f = readPeFields();
+  const time = f.startTime || f.reception || null;
+
+  // 種別・スケジュール種別をセット
+  setFormEventType(f.eventType);
+  setFormScheduleType('date');
+
+  // 各フィールドを埋める
+  if (date)       document.getElementById('fDate').value     = date;
+  if (time)       document.getElementById('fTime').value     = time;
+  if (f.location) document.getElementById('fLocation').value = f.location;
+  if (f.deadline) document.getElementById('fDeadline').value = f.deadline;
+  if (f.fee)      document.getElementById('fFee').value      = f.fee;
+
+  // チーム名（オーバーレイ入力を優先、なければ既存フォーム値を保持）
+  if (f.teamName) document.getElementById('fTeamName').value = f.teamName;
+
+  // 定員
+  if (parsedData.capacity) document.getElementById('fCapacity').value = String(parsedData.capacity);
+
+  // 対象学年チェックボックス
+  if (parsedData.targetGrades && parsedData.targetGrades.length > 0) {
+    const gradeStr = parsedData.targetGrades.join('');
+    const rangeM   = gradeStr.match(/(?:小)?(\d+)\s*[〜～\-]\s*(?:小)?(\d+)\s*年/);
+    const matchFn  = rangeM
+      ? g => { const n = parseInt(g.replace(/[^\d]/g,'')); return n >= parseInt(rangeM[1]) && n <= parseInt(rangeM[2]); }
+      : g => gradeStr.includes(g);
+    document.querySelectorAll('#gradeGroup .checkbox-pill').forEach(el => {
+      const hit = matchFn(el.dataset.val);
+      el.classList.toggle('checked', hit);
+      el.querySelector('input').checked = hit;
+    });
+  }
 }
 
 function applyParsedToForm() {
@@ -3000,58 +3114,51 @@ function applyParsedToForm() {
     return;
   }
 
-  // オーバーレイ内の編集フィールドから値を読む
-  const activeTypeBtn = document.querySelector('#peEventTypeToggle .pe-toggle-btn.active-selection, #peEventTypeToggle .pe-toggle-btn.active-trial');
-  const eventType   = activeTypeBtn ? activeTypeBtn.dataset.type : (parsedData.eventType || 'selection');
-  const reception   = document.getElementById('peReception').value.trim();
-  const startTime   = document.getElementById('peStart').value.trim();
-  const endTime     = document.getElementById('peEnd').value.trim();
-  const location    = document.getElementById('peLocation').value.trim();
-  const deadline    = document.getElementById('peDeadlineInput').value.trim() || null;
-  const feeRaw      = document.getElementById('peFee').value.trim();
-  // 開始時刻優先、なければ受付時刻
-  const time        = startTime || reception || null;
-
-  // チーム情報はメインフォームから取得（すでに入力済みの場合）
-  const teamName  = document.getElementById('fTeamName').value.trim();
-  const isPartner = document.getElementById('fIsPartner').checked;
-  const teamId    = isPartner ? (document.getElementById('fTeamId').value || null) : null;
-
-  // 各日程を登録
-  parsedSelectedDates.forEach(date => {
-    selections.push({
-      id: uuid(),
-      teamName: teamName || 'チーム名を入力してください',
-      eventType,
-      isPeriod: false,
-      isAlwaysOpen: false,
-      isPartner,
-      teamId,
-      periodText: null,
-      date,
-      time,
-      location,
-      targetGrades: parsedData.targetGrades || [],
-      capacity: parsedData.capacity || 0,
-      fee: feeRaw || null,
-      deadline,
-      description: '',
-      teamUrl: '',
-      applyUrl: '',
-      tags: [],
-    });
-  });
-
-  saveSelections(selections);
-  closeParseOverlay();
-  closeAdmin();
-  refresh();
-
   const n = parsedSelectedDates.length;
-  const msg = n > 1
-    ? `✅ ${n}件を登録しました！\n一覧の ✏️ ボタンからチーム名・詳細を補足できます。`
-    : `✅ 登録しました！\n一覧の ✏️ ボタンからチーム名・詳細を補足できます。`;
-  alert(msg);
+
+  if (n === 1) {
+    // ── 単一日程：フォームに反映してそのまま編集 ──
+    fillMainFormFromPe(parsedSelectedDates[0]);
+    closeParseOverlay();
+    // 管理フォームはすでに開いているのでそのまま（ユーザーが内容確認して保存する）
+
+  } else {
+    // ── 複数日程：一括保存 → 1件目の編集フォームへ ──
+    const f    = readPeFields();
+    const time = f.startTime || f.reception || null;
+
+    let firstId = null;
+    parsedSelectedDates.forEach((date, idx) => {
+      const entry = {
+        id: uuid(),
+        teamName  : f.teamName || 'チーム名を入力してください',
+        eventType : f.eventType,
+        isPeriod  : false,
+        isAlwaysOpen: false,
+        isPartner : false,
+        teamId    : null,
+        periodText: null,
+        date, time,
+        location  : f.location,
+        deadline  : f.deadline,
+        fee       : f.fee,
+        targetGrades: parsedData.targetGrades || [],
+        capacity  : parsedData.capacity || 0,
+        description: '', teamUrl: '', applyUrl: '', tags: [],
+      };
+      selections.push(entry);
+      if (idx === 0) firstId = entry.id;
+    });
+
+    saveSelections(selections);
+    refresh();
+    closeParseOverlay();
+
+    // 1件目の編集フォームを自動で開く
+    if (firstId) {
+      setTimeout(() => editSelection(firstId), 120);
+    }
+  }
 }
 
 // ══════════════════════════════════
