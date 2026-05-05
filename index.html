@@ -1613,6 +1613,71 @@
     .form-toggle-btn.active-period { border-color: var(--orange); background: var(--orange-light); color: var(--orange); }
     .form-toggle-btn.active-always { border-color: var(--purple); background: var(--purple-light); color: var(--purple); }
 
+    /* ── カレンダー追加ボタン ── */
+    .btn-add-cal {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 8px 14px; border-radius: var(--r-lg);
+      background: #eff6ff; color: #1d4ed8;
+      border: 1.5px solid #bfdbfe;
+      font-size: 13px; font-weight: 700; cursor: pointer;
+      font-family: inherit; transition: background .15s;
+      width: 100%; justify-content: center; margin-top: 8px;
+    }
+    .btn-add-cal:active { background: #dbeafe; }
+    /* カード内の小さいカレンダーボタン */
+    .card-cal-btn {
+      display: inline-flex; align-items: center; gap: 3px;
+      padding: 5px 9px; border-radius: 20px;
+      background: #eff6ff; color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+      font-size: 11px; font-weight: 700; cursor: pointer;
+      font-family: inherit; flex-shrink: 0;
+    }
+    /* カレンダー選択シート */
+    .cal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 600;
+      display: flex; align-items: flex-end;
+      opacity: 0; pointer-events: none; transition: opacity .2s;
+    }
+    .cal-overlay.open { opacity: 1; pointer-events: all; }
+    .cal-sheet {
+      background: var(--white); width: 100%;
+      border-radius: 24px 24px 0 0;
+      transform: translateY(100%); transition: transform .3s cubic-bezier(.4,0,.2,1);
+      padding: 0 0 32px;
+    }
+    .cal-overlay.open .cal-sheet { transform: translateY(0); }
+    .cal-sheet-handle {
+      width: 36px; height: 4px; background: var(--border2);
+      border-radius: 2px; margin: 12px auto 0;
+    }
+    .cal-sheet-title {
+      font-size: 15px; font-weight: 900;
+      padding: 16px 20px 12px; border-bottom: 1px solid var(--border);
+    }
+    .cal-sheet-event {
+      font-size: 12px; font-weight: 400; color: var(--text-sub); margin-top: 2px;
+    }
+    .cal-options { padding: 12px 16px 0; display: flex; flex-direction: column; gap: 10px; }
+    .cal-option-btn {
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 16px; border-radius: var(--r-lg);
+      border: 1.5px solid var(--border2); background: var(--white);
+      cursor: pointer; font-family: inherit; text-align: left;
+      transition: background .12s;
+    }
+    .cal-option-btn:active { background: var(--bg); }
+    .cal-option-icon { font-size: 24px; flex-shrink: 0; width: 32px; text-align: center; }
+    .cal-option-body {}
+    .cal-option-title { font-size: 14px; font-weight: 800; color: var(--text); }
+    .cal-option-sub   { font-size: 11px; color: var(--text-sub); margin-top: 2px; }
+    .cal-cancel-btn {
+      margin: 10px 16px 0; width: calc(100% - 32px);
+      padding: 13px; border-radius: var(--r-lg);
+      border: none; background: var(--bg); color: var(--text-mute);
+      font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit;
+    }
+
     /* hidden */
     .hidden { display: none !important; }
     .view-section { display: none; }
@@ -1813,6 +1878,36 @@
       <button class="ob-btn-skip" id="obSkipBtn" onclick="closeOnboarding()">スキップ</button>
       <button class="ob-btn-next" id="obNextBtn" onclick="obNext()">次へ →</button>
     </div>
+  </div>
+</div>
+
+<!-- CALENDAR CHOICE SHEET -->
+<div class="cal-overlay" id="calOverlay" onclick="closeCalChoiceOnOverlay(event)">
+  <div class="cal-sheet">
+    <div class="cal-sheet-handle"></div>
+    <div class="cal-sheet-title">
+      📅 カレンダーに追加
+      <div class="cal-sheet-event" id="calSheetEventLabel"></div>
+    </div>
+    <div class="cal-options">
+      <button class="cal-option-btn" onclick="doAddGoogleCal()">
+        <span class="cal-option-icon">
+          <img src="https://www.google.com/favicon.ico" width="24" height="24" style="border-radius:4px;" onerror="this.style.display='none';this.parentNode.textContent='🗓'">
+        </span>
+        <span class="cal-option-body">
+          <div class="cal-option-title">Google カレンダー</div>
+          <div class="cal-option-sub">ブラウザで Google カレンダーを開きます</div>
+        </span>
+      </button>
+      <button class="cal-option-btn" onclick="doDownloadIcs()">
+        <span class="cal-option-icon">📱</span>
+        <span class="cal-option-body">
+          <div class="cal-option-title">Apple カレンダー / Outlook</div>
+          <div class="cal-option-sub">.ics ファイルをダウンロードして追加します</div>
+        </span>
+      </button>
+    </div>
+    <button class="cal-cancel-btn" onclick="closeCalChoice()">キャンセル</button>
   </div>
 </div>
 
@@ -3182,6 +3277,143 @@ function onTeamSelect() {
   if (t) document.getElementById('fTeamName').value = t.name;
 }
 
+// ══════════════════════════════════
+// カレンダー追加
+// ══════════════════════════════════
+let calTargetId = null;
+
+function openCalChoice(id, event) {
+  if (event) event.stopPropagation();
+  const ev = selections.find(s => s.id === id);
+  if (!ev) return;
+  calTargetId = id;
+  // シートのイベントラベルを更新
+  const weekdays = ['日','月','火','水','木','金','土'];
+  const d = new Date(ev.date + 'T00:00:00');
+  const dateStr = `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日（${weekdays[d.getDay()]}）`;
+  const timeStr = ev.time ? ` ${ev.time}〜` : '';
+  document.getElementById('calSheetEventLabel').textContent =
+    `${ev.teamName}　${dateStr}${timeStr}`;
+  document.getElementById('calOverlay').classList.add('open');
+}
+
+function closeCalChoice() {
+  document.getElementById('calOverlay').classList.remove('open');
+  calTargetId = null;
+}
+function closeCalChoiceOnOverlay(e) {
+  if (e.target === document.getElementById('calOverlay')) closeCalChoice();
+}
+
+// カレンダー用データ構築
+function buildCalData(ev) {
+  const teamType = ev.eventType === 'trial' ? '練習会' : 'セレクション';
+  const title    = `${ev.teamName} ${teamType}`;
+
+  // 日時フォーマット（YYYYMMDDTHHmmSS）
+  function toCalDt(dateStr, timeStr, offsetMin) {
+    const [y, mo, d] = dateStr.split('-').map(Number);
+    let hours = 0, mins = 0;
+    if (timeStr) {
+      const [h, m] = timeStr.split(':').map(Number);
+      hours = h; mins = m;
+    }
+    const total = hours * 60 + mins + (offsetMin || 0);
+    const hh = String(Math.floor(total / 60) % 24).padStart(2,'0');
+    const mm = String(total % 60).padStart(2,'0');
+    return `${y}${String(mo).padStart(2,'0')}${String(d).padStart(2,'0')}T${hh}${mm}00`;
+  }
+
+  let dtStart, dtEnd, allDay = false;
+  if (ev.time) {
+    dtStart = toCalDt(ev.date, ev.time, 0);
+    dtEnd   = toCalDt(ev.date, ev.time, 120); // デフォルト2時間
+  } else {
+    // 終日イベント
+    allDay  = true;
+    const [y, mo, d] = ev.date.split('-').map(Number);
+    dtStart = `${y}${String(mo).padStart(2,'0')}${String(d).padStart(2,'0')}`;
+    // 翌日（終日イベントのDTENDは翌日）
+    const next = new Date(y, mo-1, d+1);
+    dtEnd = `${next.getFullYear()}${String(next.getMonth()+1).padStart(2,'0')}${String(next.getDate()).padStart(2,'0')}`;
+  }
+
+  // 説明文
+  const descParts = [];
+  if (ev.targetGrades && ev.targetGrades.length) descParts.push(`対象学年：${ev.targetGrades.join('・')}`);
+  if (ev.fee !== null && ev.fee !== undefined) descParts.push(`参加費：${ev.fee === 0 ? '無料' : ev.fee + '円'}`);
+  if (ev.deadline) {
+    const [dy,dm,dd] = ev.deadline.split('-').map(Number);
+    descParts.push(`申込締切：${dy}年${dm}月${dd}日`);
+  }
+  if (ev.applyUrl) descParts.push(`申込：${ev.applyUrl}`);
+  if (ev.teamUrl)  descParts.push(`公式サイト：${ev.teamUrl}`);
+  descParts.push('KickOffer https://kickoffer.github.io/kickoffer-selection-calendar/');
+  const description = descParts.join('\\n');
+
+  return { title, dtStart, dtEnd, allDay, description, location: ev.location || '' };
+}
+
+function doAddGoogleCal() {
+  const ev = selections.find(s => s.id === calTargetId);
+  if (!ev) return;
+  const c = buildCalData(ev);
+  const dates = c.allDay
+    ? `${c.dtStart}/${c.dtEnd}`
+    : `${c.dtStart}/${c.dtEnd}`;
+  const params = new URLSearchParams({
+    action  : 'TEMPLATE',
+    text    : c.title,
+    dates   : dates,
+    details : c.description.replace(/\\n/g, '\n'),
+    location: c.location,
+  });
+  window.open('https://calendar.google.com/calendar/render?' + params.toString(), '_blank');
+  closeCalChoice();
+}
+
+function doDownloadIcs() {
+  const ev = selections.find(s => s.id === calTargetId);
+  if (!ev) return;
+  const c = buildCalData(ev);
+
+  const dtStartLine = c.allDay
+    ? `DTSTART;VALUE=DATE:${c.dtStart}`
+    : `DTSTART:${c.dtStart}`;
+  const dtEndLine = c.allDay
+    ? `DTEND;VALUE=DATE:${c.dtEnd}`
+    : `DTEND:${c.dtEnd}`;
+
+  // ICS の改行は \r\n が仕様
+  const ics = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//KickOffer//Selection Calendar//JA',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    'BEGIN:VEVENT',
+    dtStartLine,
+    dtEndLine,
+    `SUMMARY:${c.title}`,
+    `DESCRIPTION:${c.description}`,
+    `LOCATION:${c.location}`,
+    `URL:https://kickoffer.github.io/kickoffer-selection-calendar/`,
+    `STATUS:CONFIRMED`,
+    `END:VEVENT`,
+    'END:VCALENDAR',
+  ].join('\r\n');
+
+  const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = `${ev.teamName.replace(/\s+/g,'_')}_${ev.date}.ics`;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 1000);
+  closeCalChoice();
+}
+
 // ══ タイプフィルター ══
 function setTypeFilter(type) {
   filterType = type;
@@ -3355,7 +3587,10 @@ function selectionCardHtml(ev, isPast) {
         ${(ev.tags||[]).slice(0,3).map(t=>`<span class="tag">${escHtml(t)}</span>`).join('')}
         ${ev.fee===0 ? '<span class="tag" style="background:var(--orange-light);color:var(--orange)">無料</span>' : ''}
       </div>
-      <button class="card-detail-btn">詳細を見る ›</button>
+      <div style="display:flex;align-items:center;gap:6px;">
+        ${!isAlways && !ev.isPeriod ? `<button class="card-cal-btn" onclick="openCalChoice('${ev.id}',event)" title="カレンダーに追加">📅</button>` : ''}
+        <button class="card-detail-btn">詳細を見る ›</button>
+      </div>
     </div>
   </div>`;
 }
@@ -3566,6 +3801,10 @@ function openDetail(id) {
   if (ev.applyUrl) linksHtml += `<a href="${escHtml(ev.applyUrl)}" target="_blank" rel="noopener" class="btn-primary">✏️ 申し込む</a>`;
   if (ev.teamUrl) linksHtml += `<a href="${escHtml(ev.teamUrl)}" target="_blank" rel="noopener" class="btn-secondary">🔗 チーム公式サイトへ</a>`;
   if (!ev.applyUrl && !ev.teamUrl && !ev.teamId) linksHtml += `<div style="text-align:center;font-size:13px;color:var(--text-mute);padding:8px 0;">申込先は各チームへお問い合わせください</div>`;
+  // カレンダー追加ボタン（日程確定のエントリのみ）
+  if (!ev.isAlwaysOpen && !ev.isPeriod && ev.date) {
+    linksHtml += `<button class="btn-add-cal" onclick="openCalChoice('${ev.id}')">📅 カレンダーに追加する</button>`;
+  }
   const notifBtn = document.getElementById('modalNotifBtn');
   const favBtn = document.getElementById('modalFavBtn');
   actionsEl.innerHTML = linksHtml;
