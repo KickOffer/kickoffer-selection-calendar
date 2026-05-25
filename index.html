@@ -2633,6 +2633,93 @@ const SAMPLE_DATA = [
     teamUrl: 'https://www.ruire.jp/', applyUrl: '',
     tags: ['練習会のみ', '日野市', '2010年設立'],
   },
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // AZ'86東京青梅（西多摩・青梅市）
+  // 受付17:30〜17:55 / 練習18:00〜19:30 ／ 初回無料・2回目以降500円
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ...['2026-05-25','2026-06-01','2026-06-08','2026-06-15','2026-06-22','2026-06-29',
+      '2026-07-06','2026-07-13','2026-07-16','2026-09-07','2026-09-10'].map((date, i) => ({
+    id: `az86-${i+1}`, teamId: null, eventType: 'trial', isAlwaysOpen: false, isPartner: false,
+    teamName: "AZ'86東京青梅",
+    isPeriod: false, periodText: null,
+    date, time: '18:00',
+    location: "AZ'86東京青梅専用グラウンド（青梅市新町9-804）",
+    targetGrades: ['小6'], capacity: null, fee: null, deadline: null,
+    description: '受付17:30〜17:55 ／ 練習18:00〜19:30\n初回無料、2回目以降500円/回（1人最大3回まで）\nTEL: 0428-25-2401 ／ 担当: 原 080-1302-5560',
+    teamUrl: 'https://az86.com', applyUrl: 'https://az86.com',
+    tags: ['初回無料', '西多摩', '青梅市'],
+  })),
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // S.T.FC / SOLTILO TOKYO FC（北多摩・清瀬市）
+  // 受付18:30〜18:50 / 練習19:00〜21:00 ／ 参加費2,000円
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  {
+    id: 'stfc-1', teamId: null, eventType: 'trial', isAlwaysOpen: false, isPartner: false,
+    teamName: 'S.T.FC / SOLTILO TOKYO FC',
+    isPeriod: false, periodText: null,
+    date: '2026-05-26', time: '19:00',
+    location: '清瀬内山運動公園 人工芝サッカー場B面（清瀬市下宿3-1375）',
+    targetGrades: ['小6'], capacity: null, fee: 2000, deadline: null,
+    description: '受付18:30〜18:50 ／ 練習19:00〜21:00\n参加費2,000円（当日封筒払い）\n※各回1回限り。別日程希望はGoogleフォームで対応。',
+    teamUrl: '', applyUrl: '',
+    tags: ['清瀬市', '北多摩', 'ソルティーロ'],
+  },
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // ノールチシティジュニアユース（23区北部・北区）
+  // 18:15〜20:30 ／ 各回定員80名
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  {
+    id: 'norgec-1', teamId: null, eventType: 'trial', isAlwaysOpen: false, isPartner: false,
+    teamName: 'ノールチシティジュニアユース',
+    isPeriod: false, periodText: null,
+    date: '2026-06-08', time: '18:15',
+    location: '赤羽スポーツの森公園（北区赤羽西5-2-27）',
+    targetGrades: ['小6'], capacity: 80, fee: null, deadline: null,
+    description: '18:15〜20:30\n定員80名 / 申込はGoogleフォーム\nTEL: 080-3156-3235（担当: 手塚）',
+    teamUrl: '', applyUrl: '',
+    tags: ['北区', '23区北部', '定員80名'],
+  },
+  {
+    id: 'norgec-2', teamId: null, eventType: 'trial', isAlwaysOpen: false, isPartner: false,
+    teamName: 'ノールチシティジュニアユース',
+    isPeriod: false, periodText: null,
+    date: '2026-06-22', time: '18:15',
+    location: '豊島北スポーツ多目的広場（北区豊島5-3-13）',
+    targetGrades: ['小6'], capacity: 80, fee: null, deadline: null,
+    description: '18:15〜20:30\n定員80名 / 申込はGoogleフォーム\nTEL: 080-3156-3235（担当: 手塚）',
+    teamUrl: '', applyUrl: '',
+    tags: ['北区', '23区北部', '定員80名'],
+  },
+  {
+    id: 'norgec-3', teamId: null, eventType: 'trial', isAlwaysOpen: false, isPartner: false,
+    teamName: 'ノールチシティジュニアユース',
+    isPeriod: false, periodText: null,
+    date: '2026-06-29', time: '18:15',
+    location: '豊島北スポーツ多目的広場（北区豊島5-3-13）',
+    targetGrades: ['小6'], capacity: 80, fee: null, deadline: null,
+    description: '18:15〜20:30\n定員80名 / 申込はGoogleフォーム\nTEL: 080-3156-3235（担当: 手塚）',
+    teamUrl: '', applyUrl: '',
+    tags: ['北区', '23区北部', '定員80名'],
+  },
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // FC INTERIOR（インテリオール）（23区南部・大田区）
+  // 毎週火・木・金 18:30〜21:00 ／ 随時受付中
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  {
+    id: 'interior-1', teamId: null, eventType: 'trial', isAlwaysOpen: true, isPartner: false,
+    teamName: 'FC INTERIOR（インテリオール）',
+    isPeriod: true, periodText: '毎週火・木・金曜日（随時受付中）',
+    date: '2026-05-01', time: '18:30',
+    location: '昭和島二丁目公園（大田区昭和島2丁目3-1）',
+    targetGrades: ['小6'], capacity: null, fee: null, deadline: null,
+    description: '毎週火・木・金曜日 18:30〜21:00\n随時参加受付中。申込はGoogleフォームから。',
+    teamUrl: '', applyUrl: '',
+    tags: ['大田区', '23区南部', '随時募集'],
+  },
 ];
 
 function getRelativeDate(days) {
@@ -2671,6 +2758,18 @@ function saveFavorites() {
 }
 
 let selections = loadSelections();
+
+// SAMPLE_DATA に新たに追加されたエントリを既存データにマージ
+function seedMissingData() {
+  const existingIds = new Set(selections.map(s => s.id));
+  const toAdd = SAMPLE_DATA.filter(s => !existingIds.has(s.id));
+  if (toAdd.length > 0) {
+    selections.push(...toAdd);
+    saveSelections(selections);
+  }
+}
+seedMissingData();
+
 let favorites  = new Set(loadFavorites());
 
 // ══════════════════════════════════
