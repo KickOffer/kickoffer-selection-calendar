@@ -2672,36 +2672,36 @@ const SAMPLE_DATA = [
   // 18:15〜20:30 ／ 各回定員80名
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   {
-    id: 'norgec-1', teamId: null, eventType: 'trial', isAlwaysOpen: false, isPartner: false,
-    teamName: 'ノールチシティジュニアユース',
+    id: 'norgec-1', teamId: null, eventType: 'selection', isAlwaysOpen: false, isPartner: false,
+    teamName: 'ノールチシティ',
     isPeriod: false, periodText: null,
-    date: '2026-06-08', time: '18:15',
+    date: '2026-06-08', time: '18:00',
     location: '赤羽スポーツの森公園（北区赤羽西5-2-27）',
     targetGrades: ['小6'], capacity: 80, fee: null, deadline: null,
-    description: '18:15〜20:30\n定員80名 / 申込はGoogleフォーム\nTEL: 080-3156-3235（担当: 手塚）',
-    teamUrl: '', applyUrl: '',
+    description: '18:00〜 定員80名\n2027年度に向けた第1期セレクション（1期目の参加は1度のみ）\nTEL: 080-3156-3235（担当: 手塚）',
+    teamUrl: 'https://nortecity.com', applyUrl: 'https://forms.gle/77pFeP1TaDSTzfjV8',
     tags: ['北区', '23区北部', '定員80名'],
   },
   {
-    id: 'norgec-2', teamId: null, eventType: 'trial', isAlwaysOpen: false, isPartner: false,
-    teamName: 'ノールチシティジュニアユース',
+    id: 'norgec-2', teamId: null, eventType: 'selection', isAlwaysOpen: false, isPartner: false,
+    teamName: 'ノールチシティ',
     isPeriod: false, periodText: null,
-    date: '2026-06-22', time: '18:15',
+    date: '2026-06-22', time: '18:00',
     location: '豊島北スポーツ多目的広場（北区豊島5-3-13）',
     targetGrades: ['小6'], capacity: 80, fee: null, deadline: null,
-    description: '18:15〜20:30\n定員80名 / 申込はGoogleフォーム\nTEL: 080-3156-3235（担当: 手塚）',
-    teamUrl: '', applyUrl: '',
+    description: '18:00〜 定員80名\n2027年度に向けた第1期セレクション（1期目の参加は1度のみ）\nTEL: 080-3156-3235（担当: 手塚）',
+    teamUrl: 'https://nortecity.com', applyUrl: 'https://forms.gle/77pFeP1TaDSTzfjV8',
     tags: ['北区', '23区北部', '定員80名'],
   },
   {
-    id: 'norgec-3', teamId: null, eventType: 'trial', isAlwaysOpen: false, isPartner: false,
-    teamName: 'ノールチシティジュニアユース',
+    id: 'norgec-3', teamId: null, eventType: 'selection', isAlwaysOpen: false, isPartner: false,
+    teamName: 'ノールチシティ',
     isPeriod: false, periodText: null,
-    date: '2026-06-29', time: '18:15',
+    date: '2026-06-29', time: '18:00',
     location: '豊島北スポーツ多目的広場（北区豊島5-3-13）',
     targetGrades: ['小6'], capacity: 80, fee: null, deadline: null,
-    description: '18:15〜20:30\n定員80名 / 申込はGoogleフォーム\nTEL: 080-3156-3235（担当: 手塚）',
-    teamUrl: '', applyUrl: '',
+    description: '18:00〜 定員80名\n2027年度に向けた第1期セレクション（1期目の参加は1度のみ）\nTEL: 080-3156-3235（担当: 手塚）',
+    teamUrl: 'https://nortecity.com', applyUrl: 'https://forms.gle/77pFeP1TaDSTzfjV8',
     tags: ['北区', '23区北部', '定員80名'],
   },
 
@@ -2778,14 +2778,27 @@ function saveFavorites() {
 
 let selections = loadSelections();
 
-// SAMPLE_DATA に新たに追加されたエントリを既存データにマージ
+// SAMPLE_DATA のエントリを既存データにマージ・上書き更新
+// idが一致するものはSAMPLE_DATAの内容で上書き（最新化）、新規idは追加
 function seedMissingData() {
-  const existingIds = new Set(selections.map(s => s.id));
-  const toAdd = SAMPLE_DATA.filter(s => !existingIds.has(s.id));
-  if (toAdd.length > 0) {
-    selections.push(...toAdd);
-    saveSelections(selections);
-  }
+  const existingMap = new Map(selections.map(s => [s.id, s]));
+  let changed = false;
+  SAMPLE_DATA.forEach(sample => {
+    const existing = existingMap.get(sample.id);
+    if (!existing) {
+      // 新規エントリを追加
+      selections.push(sample);
+      changed = true;
+    } else {
+      // 既存エントリを最新の SAMPLE_DATA で上書き（内容が変わっている場合）
+      const needsUpdate = JSON.stringify(existing) !== JSON.stringify(sample);
+      if (needsUpdate) {
+        const idx = selections.findIndex(s => s.id === sample.id);
+        if (idx !== -1) { selections[idx] = sample; changed = true; }
+      }
+    }
+  });
+  if (changed) saveSelections(selections);
 }
 seedMissingData();
 
