@@ -2720,6 +2720,25 @@ const SAMPLE_DATA = [
     teamUrl: '', applyUrl: '',
     tags: ['大田区', '23区南部', '随時募集'],
   },
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // SCセリオス ジュニアユース（武蔵野市・西東京市）
+  // 18:00〜21:00の間で90分程度 ／ 定員各回10名
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ...['2026-05-26','2026-05-27','2026-05-29',
+      '2026-06-02','2026-06-03','2026-06-05',
+      '2026-06-09','2026-06-10','2026-06-12',
+      '2026-06-16','2026-06-17'].map((date, i) => ({
+    id: `serios-${i+1}`, teamId: null, eventType: 'trial', isAlwaysOpen: false, isPartner: false,
+    teamName: 'SCセリオス',
+    isPeriod: false, periodText: null,
+    date, time: '18:00',
+    location: '武蔵野市内または西東京市内グラウンド（武蔵境駅〜田無駅周辺）※申込後に詳細連絡',
+    targetGrades: ['小6'], capacity: 10, fee: null, deadline: null,
+    description: '18:00〜21:00の間で90分程度\n定員各回10名（FP:20名／GK:2名 学年定員）\n※練習日によって会場が異なります。申込後に会場詳細をご連絡します。\n2027年度入団対象（現小学6年生）',
+    teamUrl: '', applyUrl: 'https://forms.gle/Z7Yi57AxDeAcuhez8',
+    tags: ['武蔵野市', '西東京市', '定員10名'],
+  })),
 ];
 
 function getRelativeDate(days) {
