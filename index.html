@@ -1613,6 +1613,20 @@
     .form-toggle-btn.active-period { border-color: var(--orange); background: var(--orange-light); color: var(--orange); }
     .form-toggle-btn.active-always { border-color: var(--purple); background: var(--purple-light); color: var(--purple); }
 
+    /* ── エンブレム表示 ── */
+    .card-emblem {
+      width: 40px; height: 40px; border-radius: 50%;
+      object-fit: contain; border: 1.5px solid var(--border2);
+      background: #fff; flex-shrink: 0;
+      box-shadow: 0 1px 4px rgba(0,0,0,.08);
+    }
+    .modal-emblem-wrap { text-align: center; padding: 4px 0 8px; }
+    .modal-emblem {
+      width: 60px; height: 60px; border-radius: 50%;
+      object-fit: contain; border: 2px solid var(--border2);
+      background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,.1);
+    }
+
     /* ── カレンダー追加ボタン ── */
     .btn-add-cal {
       display: inline-flex; align-items: center; gap: 5px;
@@ -1779,6 +1793,7 @@
     <div class="modal-handle"></div>
     <div class="modal-header">
       <button class="modal-close" onclick="closeDetail()">✕</button>
+      <div class="modal-emblem-wrap" id="modalEmblemWrap"></div>
       <div class="modal-cat-row" id="modalCatRow"></div>
       <div class="modal-title" id="modalTitle"></div>
       <div class="modal-subtitle" id="modalSubtitle"></div>
@@ -2782,6 +2797,212 @@ const SAMPLE_DATA = [
     teamUrl: '', applyUrl: '',
     tags: ['説明会', '杉並区', '保護者向け', '進路相談'],
   },
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // FC東京U-15深川（江東区）
+  // 1次セレクション 5/30（土） ／ 東京ガス深川グランド
+  // 参加費4,400円（税込） ／ JリーグID必要
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  {
+    id: 'fctokyo-fukagawa-1', teamId: null, eventType: 'selection', isAlwaysOpen: false, isPartner: false,
+    teamName: 'FC東京U-15深川',
+    isPeriod: false, periodText: null,
+    date: '2026-05-30', time: null,
+    location: '東京ガス深川グランド（江東区）',
+    targetGrades: ['小6'], capacity: null, fee: 4400, deadline: null,
+    description: '2027年度 1次セレクション\n参加費：4,400円（税込）\n申込：JリーグIDが必要（要事前登録）\n公式サイトより申込',
+    teamUrl: 'https://www.fctokyo.co.jp/news/details/333689/', applyUrl: 'https://www.fctokyo.co.jp/news/details/333689/',
+    tags: ['江東区', '23区東部', 'Jユース', 'FC東京'],
+  },
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // エルシエロSC（三鷹市）— Instagram情報
+  // 1次セレクション 6/22（月）18:20〜20:00
+  // 申込開始：5/30 9:00〜 ／ 定員FP70名・GK8名
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  {
+    id: 'elcielo-1', teamId: null, eventType: 'selection', isAlwaysOpen: false, isPartner: false,
+    teamName: 'エルシエロSC',
+    isPeriod: false, periodText: null,
+    date: '2026-06-22', time: '18:20',
+    location: '明星学園高校グラウンド（人工芝・三鷹市）',
+    targetGrades: ['小6'], capacity: 78, fee: null, deadline: null,
+    description: '2027年度 1次セレクション\n18:20〜20:00\n定員：FP70名・GK8名（定員次第受付終了）\n申込開始：5月30日（土）午前9:00〜\nInstagram: @elcielo2009\n※Instagramのみで告知（Webメディア未掲載）',
+    teamUrl: 'https://www.instagram.com/elcielo2009/', applyUrl: '',
+    tags: ['三鷹市', '多摩地域', '1次セレクション', 'Instagram情報'],
+  },
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // 大豆戸FC ジュニアユース（横浜・港北区）
+  // 体験練習会6月〜、セレクション7月予定
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  {
+    id: 'mamedofc-1', teamId: null, eventType: 'selection', isAlwaysOpen: false, isPartner: false,
+    teamName: '大豆戸FC ジュニアユース',
+    isPeriod: true, periodText: '体験練習会6月〜、セレクション7月予定',
+    date: '2026-06-01', time: null,
+    location: '横浜市港北区',
+    targetGrades: ['小6'], capacity: null, fee: null, deadline: null,
+    description: '体験練習会：6月〜開始予定\nセレクション申込：6月〜、実施：7月予定\n詳細は後日HP・SNSにて案内予定\nOBに小川選手・鈴木選手（W杯日本代表）\nTEL: 045-543-6513',
+    teamUrl: 'https://mamedofc.com/', applyUrl: '',
+    tags: ['横浜', '港北区', '体験練習会', '強豪'],
+  },
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // バディーJY横浜（横浜エリア）
+  // 1次選考会: 6/27, 6/28, 7/4 ／ 2次選考会: 7/11
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ...['2026-06-27','2026-06-28','2026-07-04'].map((date, i) => ({
+    id: `buddy-1st-${i+1}`, teamId: null, eventType: 'selection', isAlwaysOpen: false, isPartner: false,
+    teamName: 'バディーJY横浜',
+    isPeriod: false, periodText: null,
+    date, time: null,
+    location: '横浜市内（詳細は公式サイト・SNSへ）',
+    targetGrades: ['小6'], capacity: null, fee: null, deadline: null,
+    description: `2027年度 1次選考会（${i+1}回目）\n詳細は公式SNS・HPをご確認ください`,
+    teamUrl: '', applyUrl: '',
+    tags: ['横浜', '1次選考会'],
+  })),
+  {
+    id: 'buddy-2nd-1', teamId: null, eventType: 'selection', isAlwaysOpen: false, isPartner: false,
+    teamName: 'バディーJY横浜',
+    isPeriod: false, periodText: null,
+    date: '2026-07-11', time: null,
+    location: '横浜市内（詳細は公式サイト・SNSへ）',
+    targetGrades: ['小6'], capacity: null, fee: null, deadline: null,
+    description: '2027年度 2次選考会\n詳細は公式SNS・HPをご確認ください',
+    teamUrl: '', applyUrl: '',
+    tags: ['横浜', '2次選考会'],
+  },
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // プロメテウスEC（世田谷区）
+  // 体験練習会 / 無料 / 小6〜中3・高校生対象
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ...([
+    { id: 'prometheus-1', date: '2026-06-01', time: '18:30', location: '世田谷区立桜丘中学校' },
+    { id: 'prometheus-2', date: '2026-06-08', time: '18:30', location: '世田谷区立桜丘中学校' },
+    { id: 'prometheus-3', date: '2026-06-10', time: '19:00', location: '砧公園小サッカー場' },
+    { id: 'prometheus-4', date: '2026-06-15', time: '18:30', location: '世田谷区立桜丘中学校' },
+    { id: 'prometheus-5', date: '2026-06-29', time: '19:00', location: '世田谷公園' },
+  ].map(d => ({
+    id: d.id, teamId: null, eventType: 'trial', isAlwaysOpen: false, isPartner: false,
+    teamName: 'プロメテウスEC',
+    emblem: 'https://espsp.com/storage/wp/wp-content/themes/original/img/emblem.jpg',
+    isPeriod: false, periodText: null,
+    date: d.date, time: d.time,
+    location: d.location,
+    targetGrades: ['小6'], capacity: null, fee: 0, deadline: null,
+    description: '体験練習会（無料）\n通常練習に参加する形式：基礎練習→パートナー形式トレーニング→部員とのゲーム\nジュニアユース（小6〜中3）・ユース（中3〜高3）対象\n持物：サッカーボール・すね当て・適切なウェア・シューズ',
+    teamUrl: 'https://espsp.com', applyUrl: 'https://espsp.com/tryout',
+    tags: ['世田谷区', '23区南部', '無料', '体験練習会'],
+  }))),
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // FCアンビシオン（国分寺市）
+  // GK練習会・練習会・セレクション / 無料 / 現小6対象
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  {
+    id: 'ambicion-gk1', teamId: null, eventType: 'trial', isAlwaysOpen: false, isPartner: false,
+    teamName: 'FCアンビシオン',
+    emblem: 'https://fc-ambicion.com/wordpress/wp-content/themes/ambicion/images/ClubEmblem.png',
+    isPeriod: false, periodText: null,
+    date: '2026-06-01', time: '18:30',
+    location: 'パラレーゾ国分寺',
+    targetGrades: ['小6'], capacity: null, fee: 0, deadline: null,
+    description: 'GK練習会 第1回（18:30〜20:00）\n2027年度入団対象（現小学6年生）\n参加費：無料',
+    teamUrl: 'https://fc-ambicion.com', applyUrl: 'https://forms.gle/6EbhARPxJUZkQ7Gm6',
+    tags: ['国分寺市', '北多摩', '無料', 'GK'],
+  },
+  {
+    id: 'ambicion-gk2', teamId: null, eventType: 'trial', isAlwaysOpen: false, isPartner: false,
+    teamName: 'FCアンビシオン',
+    emblem: 'https://fc-ambicion.com/wordpress/wp-content/themes/ambicion/images/ClubEmblem.png',
+    isPeriod: false, periodText: null,
+    date: '2026-06-08', time: '18:30',
+    location: 'パラレーゾ国分寺',
+    targetGrades: ['小6'], capacity: null, fee: 0, deadline: null,
+    description: 'GK練習会 第2回（18:30〜20:00）\n2027年度入団対象（現小学6年生）\n参加費：無料',
+    teamUrl: 'https://fc-ambicion.com', applyUrl: 'https://forms.gle/6EbhARPxJUZkQ7Gm6',
+    tags: ['国分寺市', '北多摩', '無料', 'GK'],
+  },
+  {
+    id: 'ambicion-t1', teamId: null, eventType: 'trial', isAlwaysOpen: false, isPartner: false,
+    teamName: 'FCアンビシオン',
+    emblem: 'https://fc-ambicion.com/wordpress/wp-content/themes/ambicion/images/ClubEmblem.png',
+    isPeriod: false, periodText: null,
+    date: '2026-06-15', time: '18:30',
+    location: 'パラレーゾ国分寺',
+    targetGrades: ['小6'], capacity: null, fee: 0, deadline: null,
+    description: '練習会 第1回（18:30〜20:00）\n2027年度入団対象（現小学6年生）\n参加費：無料',
+    teamUrl: 'https://fc-ambicion.com', applyUrl: 'https://forms.gle/6EbhARPxJUZkQ7Gm6',
+    tags: ['国分寺市', '北多摩', '無料'],
+  },
+  {
+    id: 'ambicion-t2a', teamId: null, eventType: 'trial', isAlwaysOpen: false, isPartner: false,
+    teamName: 'FCアンビシオン',
+    emblem: 'https://fc-ambicion.com/wordpress/wp-content/themes/ambicion/images/ClubEmblem.png',
+    isPeriod: false, periodText: null,
+    date: '2026-06-16', time: '16:30',
+    location: 'パラレーゾ国分寺',
+    targetGrades: ['小6'], capacity: null, fee: 0, deadline: null,
+    description: '練習会 第2回（16:30〜18:00）\n2027年度入団対象（現小学6年生）\n参加費：無料',
+    teamUrl: 'https://fc-ambicion.com', applyUrl: 'https://forms.gle/6EbhARPxJUZkQ7Gm6',
+    tags: ['国分寺市', '北多摩', '無料'],
+  },
+  {
+    id: 'ambicion-t2b', teamId: null, eventType: 'trial', isAlwaysOpen: false, isPartner: false,
+    teamName: 'FCアンビシオン',
+    emblem: 'https://fc-ambicion.com/wordpress/wp-content/themes/ambicion/images/ClubEmblem.png',
+    isPeriod: false, periodText: null,
+    date: '2026-06-16', time: '18:45',
+    location: '国分寺市立第四中学校',
+    targetGrades: ['小6'], capacity: null, fee: 0, deadline: null,
+    description: '練習会 第3回（18:45〜20:15）\n2027年度入団対象（現小学6年生）\n参加費：無料',
+    teamUrl: 'https://fc-ambicion.com', applyUrl: 'https://forms.gle/6EbhARPxJUZkQ7Gm6',
+    tags: ['国分寺市', '北多摩', '無料'],
+  },
+  {
+    id: 'ambicion-sel1', teamId: null, eventType: 'selection', isAlwaysOpen: false, isPartner: false,
+    teamName: 'FCアンビシオン',
+    emblem: 'https://fc-ambicion.com/wordpress/wp-content/themes/ambicion/images/ClubEmblem.png',
+    isPeriod: false, periodText: null,
+    date: '2026-06-19', time: '18:30',
+    location: '国分寺市立第四中学校',
+    targetGrades: ['小6'], capacity: 30, fee: 0, deadline: null,
+    description: '2027年度 第1次セレクション（18:30〜20:00）\n定員：30名\n2027年度入団対象（現小学6年生）\n参加費：無料\n複数申込・第1希望宣言も可能',
+    teamUrl: 'https://fc-ambicion.com', applyUrl: 'https://forms.gle/6EbhARPxJUZkQ7Gm6',
+    tags: ['国分寺市', '北多摩', '無料', '定員30名'],
+  },
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // 三鷹CF Jr ユース（三鷹市・大沢総合グラウンド）
+  // セレクション2回 / 参加費1,000円 / 第1希望者対象
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  {
+    id: 'mitakacf-sel1', teamId: null, eventType: 'selection', isAlwaysOpen: false, isPartner: false,
+    teamName: '三鷹CF Jr ユース',
+    emblem: 'https://mitakacf-jryouth.lsv.jp/wp-content/uploads/2023/02/cropped-名称未設定4.002.png',
+    isPeriod: false, periodText: null,
+    date: '2026-08-03', time: '18:45',
+    location: '大沢総合グラウンド（三鷹市）',
+    targetGrades: ['小6'], capacity: null, fee: 1000, deadline: '2026-08-01',
+    description: '2027年度 セレクション 第1回（18:45〜）\n内容：ゲーム・30メートル走など\n参加費：1,000円（銀行振込・期日までに要振込）\n申込締切：8月1日（土）\n振込先：三菱UFJ銀行 三鷹支店 口座0640140\n※三鷹CF入団を「第１希望」としている現小6対象',
+    teamUrl: 'https://mitakacf-jryouth.lsv.jp', applyUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSclFooSAgT2ZzFL8rscd_yyZFBCbhAJtxDkwYt2692aK_IJsQ/viewform',
+    tags: ['三鷹市', '多摩地域', '第1希望者'],
+  },
+  {
+    id: 'mitakacf-sel2', teamId: null, eventType: 'selection', isAlwaysOpen: false, isPartner: false,
+    teamName: '三鷹CF Jr ユース',
+    emblem: 'https://mitakacf-jryouth.lsv.jp/wp-content/uploads/2023/02/cropped-名称未設定4.002.png',
+    isPeriod: false, periodText: null,
+    date: '2026-08-29', time: '18:45',
+    location: '大沢総合グラウンド（三鷹市）',
+    targetGrades: ['小6'], capacity: null, fee: 1000, deadline: '2026-08-27',
+    description: '2027年度 セレクション 第2回（18:45〜）\n内容：ゲーム・30メートル走など\n参加費：1,000円（銀行振込・期日までに要振込）\n申込締切：8月27日（木）\n振込先：三菱UFJ銀行 三鷹支店 口座0640140\n※三鷹CF入団を「第１希望」としている現小6対象',
+    teamUrl: 'https://mitakacf-jryouth.lsv.jp', applyUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSclFooSAgT2ZzFL8rscd_yyZFBCbhAJtxDkwYt2692aK_IJsQ/viewform',
+    tags: ['三鷹市', '多摩地域', '第1希望者'],
+  },
 ];
 
 function getRelativeDate(days) {
@@ -3745,6 +3966,11 @@ function selectionCardHtml(ev, isPast) {
     : `<div class="card-meta-row"><span class="card-meta-icon">🕐</span>${ev.time || '時間未定'}</div>
        <div class="card-meta-row"><span class="card-meta-icon">📍</span>${escHtml(ev.location)}</div>
        ${ev.targetGrades&&ev.targetGrades.length ? `<div class="card-meta-row"><span class="card-meta-icon">🎓</span>${ev.targetGrades.join('・')}</div>` : ''}`;
+  // エンブレム（エントリ直属 or TEAM_PROFILES から）
+  const emblemUrl = ev.emblem || (ev.isPartner && ev.teamId && TEAM_PROFILES[ev.teamId] ? TEAM_PROFILES[ev.teamId].emblem : null);
+  const emblemHtml = emblemUrl
+    ? `<img class="card-emblem" src="${escHtml(emblemUrl)}" alt="${escHtml(ev.teamName)}" onerror="this.style.display='none'">`
+    : '';
   return `
   <div class="selection-card${cardClasses}" onclick="openDetail('${ev.id}')" style="${isPast?'opacity:.6':''}">
     <div class="card-top">
@@ -3753,7 +3979,10 @@ function selectionCardHtml(ev, isPast) {
         ${ev.deadline ? deadlineBadge(ev.deadline) : ''}
         <span style="margin-left:auto">${heartBtnHtml(ev.id)}</span>
       </div>
-      <div class="card-title">${escHtml(ev.teamName)}</div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        ${emblemHtml}
+        <div class="card-title" style="flex:1;">${escHtml(ev.teamName)}</div>
+      </div>
       <div class="card-meta">${metaRows}</div>
     </div>
     <div class="card-bottom">
@@ -3927,6 +4156,14 @@ function openDetail(id) {
   openDetailId = id;
 
   const periodBadgeHtml = ev.isPeriod ? `<span class="period-badge">📅 開催予定</span>` : '';
+  // エンブレム
+  const modalEmblemUrl = ev.emblem || (ev.isPartner && ev.teamId && TEAM_PROFILES[ev.teamId] ? TEAM_PROFILES[ev.teamId].emblem : null);
+  const emblemWrap = document.getElementById('modalEmblemWrap');
+  emblemWrap.innerHTML = modalEmblemUrl
+    ? `<img class="modal-emblem" src="${escHtml(modalEmblemUrl)}" alt="${escHtml(ev.teamName)}" onerror="this.parentNode.style.display='none'">`
+    : '';
+  emblemWrap.style.display = modalEmblemUrl ? '' : 'none';
+
   document.getElementById('modalCatRow').innerHTML = (ev.isPeriod ? periodBadgeHtml : foundedYearBadge(ev.teamId)) + (ev.deadline ? ' ' + deadlineBadge(ev.deadline) : '');
   document.getElementById('modalTitle').textContent = ev.teamName;
   document.getElementById('modalSubtitle').textContent = ev.isPeriod
