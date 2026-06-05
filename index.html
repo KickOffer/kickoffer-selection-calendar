@@ -3069,6 +3069,278 @@ const SAMPLE_DATA = [
     teamUrl: 'https://www.fc.mip-sports.com/', applyUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSfPnp03q8QhXC-WCgBZ5Thgkbx1Q3XajLQn44UUnoxZraR0og/viewform',
     tags: ['世田谷区', '23区南部', '無料', 'T3リーグ'],
   },
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // MIP FC 追加練習会（現6年生対象 6/28）
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  {
+    id: 'mipfc-trial-3', teamId: 'T012', eventType: 'trial', isAlwaysOpen: false, isPartner: true,
+    teamName: 'MIP FC',
+    isPeriod: false, periodText: null,
+    date: '2026-06-28', time: '18:30',
+    location: '佼成女子中高グラウンド（東京都世田谷区給田2-1-1）',
+    targetGrades: ['小6'], capacity: null, fee: 0, deadline: null,
+    description: '【現6年生対象】ジュニアユース入団練習会（第3回・追加募集）\n18:30〜20:30\n参加費：無料\n2027年度入団対象',
+    teamUrl: 'https://www.fc.mip-sports.com/', applyUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSfPnp03q8QhXC-WCgBZ5Thgkbx1Q3XajLQn44UUnoxZraR0og/viewform',
+    tags: ['世田谷区', '23区南部', '無料', 'T3リーグ'],
+  },
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // FCパルピターレ Jrユース（横浜市）
+  // 月・水 17:00〜18:30 弥生台グラウンド
+  // 金 18:00〜20:00 かもめパークサッカーコート
+  // 各回定員6名 ／ 無料
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ...(['2026-06-08','2026-06-10','2026-06-15','2026-06-17',
+       '2026-06-22','2026-06-24','2026-06-29','2026-07-01',
+       '2026-07-06','2026-07-08'].map((date, i) => ({
+    id: `palpitare-mw-${i+1}`, teamId: null, eventType: 'trial', isAlwaysOpen: false, isPartner: false,
+    teamName: 'FCパルピターレ Jrユース',
+    isPeriod: false, periodText: null,
+    date, time: '17:00',
+    location: '弥生台グラウンド（横浜市泉区）',
+    targetGrades: ['小6'], capacity: 6, fee: 0, deadline: null,
+    description: '2027年度入部 練習会（月・水曜日開催）\n17:00〜18:30\n定員：各回6名\n参加費：無料',
+    teamUrl: 'https://www.palpitare.com/', applyUrl: 'https://forms.gle/BYjawHGBR8oTPWWv9',
+    tags: ['横浜市', '神奈川', '無料', '定員6名'],
+  }))),
+  ...(['2026-06-05','2026-06-12','2026-06-19','2026-06-26',
+       '2026-07-03','2026-07-10'].map((date, i) => ({
+    id: `palpitare-fri-${i+1}`, teamId: null, eventType: 'trial', isAlwaysOpen: false, isPartner: false,
+    teamName: 'FCパルピターレ Jrユース',
+    isPeriod: false, periodText: null,
+    date, time: '18:00',
+    location: 'かもめパークサッカーコート（横浜市）',
+    targetGrades: ['小6'], capacity: 6, fee: 0, deadline: null,
+    description: '2027年度入部 練習会（金曜日開催）\n18:00〜20:00\n定員：各回6名\n参加費：無料',
+    teamUrl: 'https://www.palpitare.com/', applyUrl: 'https://forms.gle/BYjawHGBR8oTPWWv9',
+    tags: ['横浜市', '神奈川', '無料', '定員6名'],
+  }))),
+  {
+    id: 'palpitare-sel-1', teamId: null, eventType: 'selection', isAlwaysOpen: false, isPartner: false,
+    teamName: 'FCパルピターレ Jrユース',
+    isPeriod: false, periodText: null,
+    date: '2026-07-12', time: '17:00',
+    location: 'かもめパークフットサルコート（横浜市）',
+    targetGrades: ['小6'], capacity: null, fee: 500, deadline: null,
+    description: '2027年度入部セレクション\n17:00〜19:00\n参加費：500円（当日受付払い）\n申込後に事務局から確認連絡あり\n※セレクション中の怪我はクラブスポーツ保険対象外',
+    teamUrl: 'https://www.palpitare.com/', applyUrl: 'https://forms.gle/FWuzAVB7tDD6fyzT6',
+    tags: ['横浜市', '神奈川', '500円'],
+  },
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // BOBBIT TOKYO FC（練馬区・大田区）
+  // 体験会：6/5・6/9・6/11 18:00〜20:00
+  // サマーセレクション：6/23〜7/31
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ...(['2026-06-05','2026-06-09','2026-06-11'].map((date, i) => ({
+    id: `bobbit-trial-${i+1}`, teamId: null, eventType: 'trial', isAlwaysOpen: false, isPartner: false,
+    teamName: 'BOBBIT TOKYO FC',
+    isPeriod: false, periodText: null,
+    date, time: '18:00',
+    location: '南田中グラウンド（練馬区）または蒲田グラウンド（大田区）',
+    targetGrades: ['小6'], capacity: null, fee: null, deadline: null,
+    description: '2027年度 サマーセレクション 体験会\n18:00〜20:00\n詳細・場所は申込フォームで確認してください',
+    teamUrl: 'https://www.footballnavi.jp/bobbit/', applyUrl: 'https://forms.gle/4rYZf5onA5kfirYG7',
+    tags: ['練馬区', '大田区', '東京'],
+  }))),
+  ...([
+    { date: '2026-06-23', time: '18:00' },
+    { date: '2026-06-25', time: '18:00' },
+    { date: '2026-07-07', time: '18:00' },
+    { date: '2026-07-09', time: '18:00' },
+    { date: '2026-07-10', time: '18:00' },
+    { date: '2026-07-16', time: '18:00' },
+    { date: '2026-07-30', time: '09:00' },
+    { date: '2026-07-31', time: '09:00' },
+  ].map((d, i) => ({
+    id: `bobbit-sel-${i+1}`, teamId: null, eventType: 'selection', isAlwaysOpen: false, isPartner: false,
+    teamName: 'BOBBIT TOKYO FC',
+    isPeriod: false, periodText: null,
+    date: d.date, time: d.time,
+    location: '南田中グラウンド（練馬区）または蒲田グラウンド（大田区）',
+    targetGrades: ['小6'], capacity: null, fee: null, deadline: null,
+    description: d.time === '09:00'
+      ? '2027年度 サマーセレクション\n09:00〜11:30\n詳細・場所は申込フォームで確認してください'
+      : '2027年度 サマーセレクション\n18:00〜20:00\n詳細・場所は申込フォームで確認してください',
+    teamUrl: 'https://www.footballnavi.jp/bobbit/', applyUrl: 'https://forms.gle/4rYZf5onA5kfirYG7',
+    tags: ['練馬区', '大田区', '東京', 'サマーセレクション'],
+  }))),
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // トリプレッタ サッカークラブ（千葉・松戸市/市川市）
+  // 第1回セレクション全6回 各回20名 無料
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ...([
+    { date: '2026-06-21', loc: '松戸市運動公園陸上競技場（人工芝）', end: '20:40' },
+    { date: '2026-06-29', loc: '市川市立東国分中学校', end: '20:30' },
+    { date: '2026-07-06', loc: '松戸市運動公園陸上競技場（人工芝）', end: '20:30' },
+    { date: '2026-07-13', loc: '市川市立東国分中学校', end: '20:30' },
+    { date: '2026-07-17', loc: '松戸市運動公園陸上競技場（人工芝）', end: '20:40' },
+    { date: '2026-07-18', loc: '松戸市運動公園陸上競技場（人工芝）', end: '20:40' },
+  ].map((d, i) => ({
+    id: `tripletta-sel-${i+1}`, teamId: null, eventType: 'selection', isAlwaysOpen: false, isPartner: false,
+    teamName: 'トリプレッタ サッカークラブ',
+    isPeriod: false, periodText: null,
+    date: d.date, time: '19:00',
+    location: d.loc,
+    targetGrades: ['小6'], capacity: 20, fee: 0, deadline: null,
+    description: `2027年度 第1回 新U-13セレクション\n19:00〜${d.end}\n定員：各回20名程度（全体25名・GK2〜3名）\n参加費：無料`,
+    teamUrl: 'https://www.tripletta.jp/', applyUrl: 'https://www.tripletta.jp/selection',
+    tags: ['千葉', '松戸市', '市川市', '無料'],
+  }))),
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // FC市川GUNNERS（千葉・市川市）
+  // 練習体験会：6/6・6/7 1,000円
+  // 1次セレクション：6/21〜7/18 2,000円
+  // 2次セレクション：7/20・7/26
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ...(['2026-06-06','2026-06-07'].map((date, i) => ({
+    id: `gunners-trial-${i+1}`, teamId: null, eventType: 'trial', isAlwaysOpen: false, isPartner: false,
+    teamName: 'FC市川GUNNERS',
+    isPeriod: false, periodText: null,
+    date, time: '17:00',
+    location: 'VISIOフットボールフィールド（市川市柏井町4-294-5）',
+    targetGrades: ['小6'], capacity: 30, fee: 1000, deadline: null,
+    description: '2027年度 U-15チーム 練習体験会\n17:00〜19:00\n開始30分前に保護者向けクラブ説明会あり\n参加費：1,000円（当日現金払い）\n定員：各回30名',
+    teamUrl: 'https://fcichikawagunners.jp/jp/2026-u-15training-selection/', applyUrl: 'https://fcichikawagunners.jp/jp/2026-u-15training-selection/',
+    tags: ['千葉', '市川市', '1000円'],
+  }))),
+  ...(['2026-06-21','2026-06-27','2026-07-05','2026-07-12','2026-07-18'].map((date, i) => ({
+    id: `gunners-sel1-${i+1}`, teamId: null, eventType: 'selection', isAlwaysOpen: false, isPartner: false,
+    teamName: 'FC市川GUNNERS',
+    isPeriod: false, periodText: null,
+    date, time: '19:00',
+    location: 'VISIOフットボールフィールド（市川市柏井町4-294-5）',
+    targetGrades: ['小6'], capacity: 50, fee: 2000, deadline: null,
+    description: '2027年度 U-15チーム 一次セレクション\n19:00〜21:00\n参加費：2,000円（当日現金払い）\n定員：各回50名（FP24名・GK2〜3名確定後終了）',
+    teamUrl: 'https://fcichikawagunners.jp/jp/2026-u-15training-selection/', applyUrl: 'https://fcichikawagunners.jp/jp/2026-u-15training-selection/',
+    tags: ['千葉', '市川市', '2000円', '1次セレクション'],
+  }))),
+  ...(['2026-07-20','2026-07-26'].map((date, i) => ({
+    id: `gunners-sel2-${i+1}`, teamId: null, eventType: 'selection', isAlwaysOpen: false, isPartner: false,
+    teamName: 'FC市川GUNNERS',
+    isPeriod: false, periodText: null,
+    date, time: '19:00',
+    location: 'VISIOフットボールフィールド（市川市柏井町4-294-5）',
+    targetGrades: ['小6'], capacity: null, fee: 2000, deadline: null,
+    description: '2027年度 U-15チーム 二次セレクション\n19:00〜21:00\n参加費：2,000円（当日現金払い）',
+    teamUrl: 'https://fcichikawagunners.jp/jp/2026-u-15training-selection/', applyUrl: 'https://fcichikawagunners.jp/jp/2026-u-15training-selection/',
+    tags: ['千葉', '市川市', '2次セレクション'],
+  }))),
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // ジョカーレフットボールクラブ（千葉・千葉市）
+  // 練習会：6/8 稲毛中学 / 6/14 天戸中学 19:00〜20:30
+  // セレクションではなく気軽に参加可
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ...([
+    { id: 'giocare-1', date: '2026-06-08', loc: '千葉市立稲毛中学校グラウンド（千葉市稲毛区）' },
+    { id: 'giocare-2', date: '2026-06-14', loc: '千葉市立天戸中学校グラウンド（千葉市花見川区）' },
+  ].map(d => ({
+    id: d.id, teamId: null, eventType: 'trial', isAlwaysOpen: false, isPartner: false,
+    teamName: 'ジョカーレフットボールクラブ',
+    isPeriod: false, periodText: null,
+    date: d.date, time: '19:00',
+    location: d.loc,
+    targetGrades: ['小6'], capacity: null, fee: null, deadline: null,
+    description: '2027年度 新U-13 練習会\n受付18:40 開始19:00〜20:30\n※セレクションではないのでお気軽に参加を\n申込後メールで詳細をお知らせします',
+    teamUrl: 'https://www.giocarefc.com/', applyUrl: 'https://forms.gle/7edBWw13GyVy53fM7',
+    tags: ['千葉市', '稲毛区', '花見川区'],
+  }))),
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // SHUGAKU.FC（東京・清瀬市）
+  // 2027年度 現小学6年生対象 練習参加型セレクション
+  // 日程はフォーム・公式サイトで確認
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  {
+    id: 'shugakufc-1', teamId: null, eventType: 'selection', isAlwaysOpen: false, isPartner: false,
+    teamName: 'SHUGAKU.FC（清瀬蹴楽FC）',
+    isPeriod: true, periodText: '詳細日程は公式サイト・申込フォームで確認',
+    date: '2026-06-15', time: null,
+    location: '東京都清瀬市',
+    targetGrades: ['小6'], capacity: null, fee: null, deadline: null,
+    description: '2027年度 新中学1年生（現小学6年生）対象 練習参加型セレクション\n具体的な日程・会場は申込フォームまたは公式サイト（PDF資料あり）でご確認ください',
+    teamUrl: 'https://kiyoseshugakufc.wixsite.com/mysite/blank-10', applyUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSfst7BwspGZpgKyFm0VKuqCFELYsreJUxyudCSI7QgLZHe-3g/viewform',
+    tags: ['清瀬市', '多摩地域', '練習参加型'],
+  },
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // VONDS市原FC ジュニアユース（千葉・市原市）
+  // 6月練習会：6/21 17:30〜 500円 締切6/18
+  // 第1回セレクション：6/28 18:30〜 1,000円 締切6/25
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  {
+    id: 'vonds-trial-1', teamId: null, eventType: 'trial', isAlwaysOpen: false, isPartner: false,
+    teamName: 'VONDS市原FC ジュニアユース',
+    isPeriod: false, periodText: null,
+    date: '2026-06-21', time: '17:30',
+    location: 'VONDSグリーンパーク（市原市喜多890-1）',
+    targetGrades: ['小6'], capacity: 44, fee: 500, deadline: '2026-06-18',
+    description: '2027年度生 6月練習会\n受付17:00〜 / 17:30〜19:00\n参加費：500円（当日現金払い） ※VONDSスクール生無料\n定員：FP40名・GK4名\n申込締切：6月18日（木）23:59\n※GKは専用フォームから: https://forms.gle/Ysr2bAigQ6xpR8t59',
+    teamUrl: 'https://vonds.net/academy/', applyUrl: 'https://forms.gle/HqVNwcTBAwrvT32z5',
+    tags: ['千葉', '市原市', '500円'],
+  },
+  {
+    id: 'vonds-sel-1', teamId: null, eventType: 'selection', isAlwaysOpen: false, isPartner: false,
+    teamName: 'VONDS市原FC ジュニアユース',
+    isPeriod: false, periodText: null,
+    date: '2026-06-28', time: '18:30',
+    location: 'VONDSグリーンパーク（市原市喜多890-1）',
+    targetGrades: ['小6'], capacity: 54, fee: 1000, deadline: '2026-06-25',
+    description: '2027年度生 第一回セレクション\n受付18:00〜 / 18:30〜20:00\n参加費：1,000円（当日現金払い） ※VONDSスクール生無料\n定員：FP48名・GK6名\n申込締切：6月25日（木）23:59\n※GKは専用フォームから: https://forms.gle/unPbzXhV1WwcR4Mm6',
+    teamUrl: 'https://vonds.net/academy/', applyUrl: 'https://forms.gle/PznRHK4EcJAs3M8t8',
+    tags: ['千葉', '市原市', '1000円', '第1回セレクション'],
+  },
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // YTC.フットボールクラブ（新U-13）
+  // 練習会：6/9〜7/14 火曜 18:30〜20:15
+  // 練習兼セレクション：7/28・7/30・7/31
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ...(['2026-06-09','2026-06-16','2026-06-23','2026-06-30',
+       '2026-07-07','2026-07-14'].map((date, i) => ({
+    id: `ytcfc-trial-${i+1}`, teamId: null, eventType: 'trial', isAlwaysOpen: false, isPartner: false,
+    teamName: 'YTC.フットボールクラブ',
+    isPeriod: false, periodText: null,
+    date, time: '18:30',
+    location: 'YTCグランド（詳細は申込フォームで確認）',
+    targetGrades: ['小6'], capacity: null, fee: null, deadline: null,
+    description: '2027年度 新U13 選手練習会（火曜日開催）\n18:30〜20:15\n詳細・場所は申込フォームでご確認ください',
+    teamUrl: 'https://forms.gle/NCpVhoJVHfLRFNur5', applyUrl: 'https://forms.gle/NCpVhoJVHfLRFNur5',
+    tags: ['新U13', '火曜開催'],
+  }))),
+  ...(['2026-07-28','2026-07-30','2026-07-31'].map((date, i) => ({
+    id: `ytcfc-sel-${i+1}`, teamId: null, eventType: 'selection', isAlwaysOpen: false, isPartner: false,
+    teamName: 'YTC.フットボールクラブ',
+    isPeriod: false, periodText: null,
+    date, time: '18:30',
+    location: 'YTCグランド（詳細は申込フォームで確認）',
+    targetGrades: ['小6'], capacity: null, fee: null, deadline: null,
+    description: '2027年度 新U13 練習兼セレクション\n18:30〜20:15\n詳細・場所は申込フォームでご確認ください',
+    teamUrl: 'https://forms.gle/NCpVhoJVHfLRFNur5', applyUrl: 'https://forms.gle/NCpVhoJVHfLRFNur5',
+    tags: ['新U13', '練習兼セレクション'],
+  }))),
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // F.C.WEISSBLITZ白井（千葉・白井市）
+  // 練習参加型個別セレクション 7月 水・土曜
+  // 白井高校グラウンド ／ 現小5・小6対象
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ...(['2026-07-01','2026-07-04','2026-07-08','2026-07-11',
+       '2026-07-15','2026-07-18','2026-07-22','2026-07-25','2026-07-29'].map((date, i) => ({
+    id: `weissblitz-sel-${i+1}`, teamId: null, eventType: 'selection', isAlwaysOpen: false, isPartner: false,
+    teamName: 'F.C.WEISSBLITZ白井',
+    isPeriod: false, periodText: null,
+    date, time: null,
+    location: '白井高校グラウンド（千葉県白井市）',
+    targetGrades: ['小6'], capacity: null, fee: null, deadline: null,
+    description: '2027年度 新U13 練習参加型個別セレクション\n通常練習に参加→選手の能力・姿勢を評価→保護者面談\n対象：現小学5・6年生',
+    teamUrl: 'https://forms.gle/NxbMx9XXX6rqktPm6', applyUrl: 'https://forms.gle/NxbMx9XXX6rqktPm6',
+    tags: ['千葉', '白井市', '練習参加型'],
+  }))),
 ];
 
 function getRelativeDate(days) {
