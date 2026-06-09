@@ -3308,7 +3308,7 @@ const SAMPLE_DATA = [
     date, time: '18:30',
     location: 'YTCグランド（詳細は申込フォームで確認）',
     targetGrades: ['小6'], capacity: null, fee: null, deadline: null,
-    description: '2027年度 新U13 選手練習会（火曜日開催）\n18:30〜20:15\n詳細・場所は申込フォームでご確認ください',
+    description: '2027年度 活動希望選手対象 練習会（毎週火曜日）\n18:30〜20:15 at YTCグランド\n参加後に入会希望の場合はスタッフへ\n雨天中止の場合は開始1時間前にメールで連絡\n火曜以外の曜日希望の場合はご相談ください',
     teamUrl: 'https://forms.gle/NCpVhoJVHfLRFNur5', applyUrl: 'https://forms.gle/NCpVhoJVHfLRFNur5',
     tags: ['新U13', '火曜開催'],
   }))),
@@ -3319,7 +3319,7 @@ const SAMPLE_DATA = [
     date, time: '18:30',
     location: 'YTCグランド（詳細は申込フォームで確認）',
     targetGrades: ['小6'], capacity: null, fee: null, deadline: null,
-    description: '2027年度 新U13 練習兼セレクション\n18:30〜20:15\n詳細・場所は申込フォームでご確認ください',
+    description: '2027年度 新U13 練習兼セレクション\n18:30〜20:15 at YTCグランド\n7/28(火)・7/30(木)・7/31(金)の3日間実施',
     teamUrl: 'https://forms.gle/NCpVhoJVHfLRFNur5', applyUrl: 'https://forms.gle/NCpVhoJVHfLRFNur5',
     tags: ['新U13', '練習兼セレクション'],
   }))),
@@ -3340,6 +3340,26 @@ const SAMPLE_DATA = [
     description: '2027年度 新U13 練習参加型個別セレクション\n通常練習に参加→選手の能力・姿勢を評価→保護者面談\n対象：現小学5・6年生',
     teamUrl: 'https://forms.gle/NxbMx9XXX6rqktPm6', applyUrl: 'https://forms.gle/NxbMx9XXX6rqktPm6',
     tags: ['千葉', '白井市', '練習参加型'],
+  }))),
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // 横浜栄FC ジュニアユース（横浜市）
+  // セレクション：8/23・9/6 17:00〜18:30
+  // 参加費2,200円（事前振込）申込2日前まで
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ...([
+    { date: '2026-08-23', deadline: '2026-08-21' },
+    { date: '2026-09-06', deadline: '2026-09-04' },
+  ].map((d, i) => ({
+    id: `yokohamasakae-sel-${i+1}`, teamId: null, eventType: 'selection', isAlwaysOpen: false, isPartner: false,
+    teamName: '横浜栄FC ジュニアユース',
+    isPeriod: false, periodText: null,
+    date: d.date, time: '17:00',
+    location: '申込後メールにてお知らせ（横浜市）',
+    targetGrades: ['小6'], capacity: null, fee: 2200, deadline: d.deadline,
+    description: `2027年度 セレクション（両日参加が原則・別日調整応相談）\n受付16:30〜16:45 / 17:00〜18:30\n参加費：2,200円（事前振込）\n申込締切：参加2日前まで\n見学可能\n問い合わせ：090-8563-8442 / sakaeselection@gmail.com`,
+    teamUrl: 'https://yokohamasakae-fc.com/', applyUrl: 'https://docs.google.com/forms/d/e/1FAIpQLScfx9hP8N6tDRKMOLAoJF3B6WH7qb04GYY4szvEDqK1GAmX5Q/viewform',
+    tags: ['横浜市', '神奈川', '2200円', '事前振込'],
   }))),
 ];
 
