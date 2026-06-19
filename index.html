@@ -246,11 +246,13 @@
       background: var(--white);
       border-radius: var(--r-sm);
       min-height: 72px;
+      min-width: 0;
       padding: 4px;
       cursor: pointer;
       transition: all .15s;
       border: 1.5px solid transparent;
       position: relative;
+      overflow: hidden;
     }
     .cal-cell:hover { border-color: var(--green-mid); background: var(--green-pale); }
     .cal-cell.today { border-color: var(--green); background: var(--green-pale); }
