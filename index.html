@@ -3079,12 +3079,12 @@ const SAMPLE_DATA = [
     id: 'mipfc-trial-3', teamId: 'T012', eventType: 'trial', isAlwaysOpen: false, isPartner: true,
     teamName: 'MIP FC',
     isPeriod: false, periodText: null,
-    date: '2026-06-28', time: '18:30',
-    location: '佼成女子中高グラウンド（東京都世田谷区給田2-1-1）',
+    date: '2026-06-28', time: '19:00',
+    location: '下高井戸運動場（杉並区下高井戸3丁目26番地）',
     targetGrades: ['小6'], capacity: null, fee: 0, deadline: null,
-    description: '【現6年生対象】ジュニアユース入団練習会（第3回・追加募集）\n18:30〜20:30\n参加費：無料\n2027年度入団対象',
+    description: '【現6年生対象】ジュニアユース入団練習会（第3回・追加募集）\n受付18:30〜 / 19:00〜21:00\n参加費：無料\n⚠️ 時間・会場変更あり（Instagramで告知済）\n2027年度入団対象',
     teamUrl: 'https://www.fc.mip-sports.com/', applyUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSfPnp03q8QhXC-WCgBZ5Thgkbx1Q3XajLQn44UUnoxZraR0og/viewform',
-    tags: ['世田谷区', '23区南部', '無料', 'T3リーグ'],
+    tags: ['杉並区', '23区南部', '無料', 'T3リーグ'],
   },
 
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -3392,6 +3392,146 @@ const SAMPLE_DATA = [
     teamUrl: 'https://fc-regalo.jp/', applyUrl: 'https://docs.google.com/forms/d/1c6anhxydpmQ8JsqIFodwcaSLMNGC2S-RlFU5t-kRaCs/viewform',
     tags: ['東村山市', '多摩地域', '無料'],
   },
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // SHUGAKU.FC（東京・清瀬市）T3リーグ
+  // 練習会：6/24（水）17:15〜19:00（第2回）
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  {
+    id: 'shugakufc-2', teamId: null, eventType: 'trial', isAlwaysOpen: false, isPartner: false,
+    teamName: 'SHUGAKU.FC（清瀬蹴楽FC）',
+    isPeriod: false, periodText: null,
+    date: '2026-06-24', time: '17:15',
+    location: '清瀬内山運動公園サッカー場 A面（清瀬市）',
+    targetGrades: ['小6'], capacity: null, fee: 0, deadline: '2026-06-23',
+    description: '2027年度 新中学1年生（現小学6年生）対象 練習会（第2回）\n受付17:00〜 / 17:15〜19:00\n内容：簡単なトレーニング＋ゲーム形式\n参加費：無料\n申込締切：参加日前日まで\n持物：サッカーできる服装・ボール・すねあて・飲み物\nT3リーグ所属',
+    teamUrl: 'https://kiyoseshugakufc.wixsite.com/mysite/blank-10', applyUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSfst7BwspGZpgKyFm0VKuqCFELYsreJUxyudCSI7QgLZHe-3g/viewform',
+    tags: ['清瀬市', '多摩地域', '無料', 'T3リーグ'],
+  },
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // FC江東 ジュニアユース（東京・江東区）
+  // 練習会：6/26・6/30 19:20〜21:00 500円
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ...(['2026-06-26', '2026-06-30'].map((date, i) => ({
+    id: `fckoto-trial-${i + 1}`, teamId: null, eventType: 'trial', isAlwaysOpen: false, isPartner: false,
+    teamName: 'FC江東 ジュニアユース',
+    isPeriod: false, periodText: null,
+    date, time: '19:20',
+    location: '東京朝鮮第二初級学校（江東区枝川1-11-26）',
+    targetGrades: ['小6'], capacity: 24, fee: 500, deadline: null,
+    description: '2027年度 現小学6年生対象 練習会\n受付19:00〜 / 19:20〜21:00\n定員：FP20名・GK4名\n参加費：500円（当日）\n持物：トレーニングシューズ（スパイク不可）・ボール・飲み物\n負傷は応急処置のみ（スポーツ保険は自己加入）\n悪天候時は17:30までにメールで連絡',
+    teamUrl: null, applyUrl: 'https://forms.gle/zmFT36YfgjXzu44z5',
+    tags: ['江東区', '23区東部', '500円'],
+  }))),
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // MIP FC（東京）追加練習会 7月3日程
+  // 7/3・7/5・7/12 18:30〜20:30 無料
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ...(['2026-07-03', '2026-07-05', '2026-07-12'].map((date, i) => ({
+    id: `mipfc-trial-${i + 4}`, teamId: 'T012', eventType: 'trial', isAlwaysOpen: false, isPartner: true,
+    teamName: 'MIP FC',
+    isPeriod: false, periodText: null,
+    date, time: '18:30',
+    location: '佼成女子中学高等学校グラウンド（東京都世田谷区給田2-1-1）',
+    targetGrades: ['小6'], capacity: null, fee: 0, deadline: null,
+    description: '【現6年生対象】ジュニアユース入団練習会（7月）\n18:30〜20:30\n参加費：無料\n2027年度入団対象（現小学6年生）\n申込はMIP FC公式HP「ニュース」→「入団練習会」より',
+    teamUrl: 'https://www.fc.mip-sports.com/', applyUrl: 'https://www.fc.mip-sports.com/',
+    tags: ['世田谷区', '23区南部', '無料', 'T3リーグ'],
+  }))),
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // 大森FCアカデミー ジュニアユース（東京・品川区）
+  // 練習会：7/6・7/13・7/20（月）19:00〜20:45 1,000円
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ...(['2026-07-06', '2026-07-13', '2026-07-20'].map((date, i) => ({
+    id: `ohmorifc-trial-${i + 1}`, teamId: null, eventType: 'trial', isAlwaysOpen: false, isPartner: false,
+    teamName: '大森FCアカデミー ジュニアユース',
+    isPeriod: false, periodText: null,
+    date, time: '19:00',
+    location: 'こみゅにてぃぷらざ八潮（品川区八潮）',
+    targetGrades: ['小6'], capacity: null, fee: 1000, deadline: null,
+    description: '2027年度 現小学6年生対象 追加練習会\n18:15〜18:55 クラブ説明会\n19:00〜20:45 練習会\n参加費：1,000円/回\n送迎あり\nクラブフィロソフィー：全力本気\n申込はストーリーズハイライトより',
+    teamUrl: null, applyUrl: null,
+    tags: ['品川区', '23区南部', '1000円'],
+  }))),
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // GA Football Club U-15（東京）
+  // セレクション：7/20（×2回）・7/31 2,200円
+  // アミノバイタルフィールド（調布市）
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  {
+    id: 'gafc-sel-1', teamId: null, eventType: 'selection', isAlwaysOpen: false, isPartner: false,
+    teamName: 'GA Football Club U-15',
+    isPeriod: false, periodText: null,
+    date: '2026-07-20', time: '17:30',
+    location: 'アミノバイタルフィールド（調布市）',
+    targetGrades: ['小6'], capacity: 45, fee: 2200, deadline: null,
+    description: '第一希望セレクション\n17:30〜19:00\n定員：FP30〜40名・GK5名程度\n参加費：2,200円（税込）\n持物：トレーニングシューズ・スパイク・水筒・すね当て\n申込はプロフィールリンクのGoogleフォームから',
+    teamUrl: null, applyUrl: null,
+    tags: ['調布市', '多摩地域', '2200円'],
+  },
+  {
+    id: 'gafc-sel-2', teamId: null, eventType: 'selection', isAlwaysOpen: false, isPartner: false,
+    teamName: 'GA Football Club U-15',
+    isPeriod: false, periodText: null,
+    date: '2026-07-20', time: '19:00',
+    location: 'アミノバイタルフィールド（調布市）',
+    targetGrades: ['小6'], capacity: 45, fee: 2200, deadline: null,
+    description: '一般セレクション①\n19:00〜20:30\n定員：FP30〜40名・GK5名程度\n参加費：2,200円（税込）\n持物：トレーニングシューズ・スパイク・水筒・すね当て\n申込はプロフィールリンクのGoogleフォームから',
+    teamUrl: null, applyUrl: null,
+    tags: ['調布市', '多摩地域', '2200円'],
+  },
+  {
+    id: 'gafc-sel-3', teamId: null, eventType: 'selection', isAlwaysOpen: false, isPartner: false,
+    teamName: 'GA Football Club U-15',
+    isPeriod: false, periodText: null,
+    date: '2026-07-31', time: '18:00',
+    location: 'アミノバイタルフィールド（調布市）',
+    targetGrades: ['小6'], capacity: 45, fee: 2200, deadline: null,
+    description: '一般セレクション②\n18:00〜20:00\n定員：FP30〜40名・GK5名程度\n参加費：2,200円（税込）\n持物：トレーニングシューズ・スパイク・水筒・すね当て\n申込はプロフィールリンクのGoogleフォームから',
+    teamUrl: null, applyUrl: null,
+    tags: ['調布市', '多摩地域', '2200円'],
+  },
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // FCアヴィエント ジュニアユース（東京・相模原）
+  // 練習参加型セレクション：7/3・7/10・7/17（金）無料
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ...(['2026-07-03', '2026-07-10', '2026-07-17'].map((date, i) => ({
+    id: `avient-trial-${i + 1}`, teamId: null, eventType: 'trial', isAlwaysOpen: false, isPartner: false,
+    teamName: 'FCアヴィエント ジュニアユース',
+    isPeriod: false, periodText: null,
+    date, time: '18:30',
+    location: '相原中央グラウンド',
+    targetGrades: ['小6'], capacity: 32, fee: 0, deadline: null,
+    description: '2027年度 現小学6年生対象 練習参加型セレクション\n受付18:10〜 / 18:30〜20:00\n定員：FP28名・GK4名\n参加費：無料\n選考：練習での技術・能力・取り組み姿勢を評価し個別打診\n所属チームの承諾が必要\nスパイク可\n申込はクラブHP「選手募集ページ」より',
+    teamUrl: null, applyUrl: null,
+    tags: ['多摩地域', '無料'],
+  }))),
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // ZOTT WASEDA U15（東京・東村山市）フットサル
+  // 練習会：7/31・8/3・8/6 無料
+  // 東村山市民スポーツセンター
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ...([
+    { date: '2026-07-31', time: '14:15', endTime: '15:45' },
+    { date: '2026-08-03', time: '12:30', endTime: '14:00' },
+    { date: '2026-08-06', time: '12:30', endTime: '14:00' },
+  ].map(({ date, time, endTime }, i) => ({
+    id: `zottwaseda-trial-${i + 1}`, teamId: null, eventType: 'trial', isAlwaysOpen: false, isPartner: false,
+    teamName: 'ZOTT WASEDA U15',
+    isPeriod: false, periodText: null,
+    date, time,
+    location: '東村山市民スポーツセンター 第1体育室（東村山市久米川町3-30-5）',
+    targetGrades: ['小6', '中1', '中2'], capacity: null, fee: 0, deadline: null,
+    description: `練習参加型セレクション（フットサル）\n${time}〜${endTime}\n対象：小学6年生〜中学2年生\n参加費：無料\n持物：フットサルシューズ（屋内用）・動ける服装・飲み物\n東京都U15フットサルリーグ1部所属\n2025年東京都U15フットサルフェスティバル優勝\n西武線東村山駅東口より徒歩15分`,
+    teamUrl: null, applyUrl: 'https://forms.gle/hfyVNds4FruGjSTM9',
+    tags: ['東村山市', '多摩地域', '無料', 'フットサル'],
+  }))),
 ];
 
 function getRelativeDate(days) {
