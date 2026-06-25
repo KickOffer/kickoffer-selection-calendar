@@ -3513,6 +3513,34 @@ const SAMPLE_DATA = [
   }))),
 
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // 青梅FCジュニアユース（東京・青梅市）OMEFC
+  // 練習会（振替）：6/25・6/29 17:30〜19:30 TCN永山公園
+  // セレクション練習会：7/6 17:30〜19:30 TCNスポーツパーク永山
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ...(['2026-06-25', '2026-06-29'].map((date, i) => ({
+    id: `omefc-trial-${i + 1}`, teamId: null, eventType: 'trial', isAlwaysOpen: false, isPartner: false,
+    teamName: '青梅FCジュニアユース',
+    isPeriod: false, periodText: null,
+    date, time: '17:30',
+    location: 'TCN永山公園（青梅市）',
+    targetGrades: ['小6'], capacity: null, fee: 0, deadline: null,
+    description: `2027年度 新中学1年生対象 練習会（悪天候中止の振替日程）\n17:30〜19:30\n参加費：記載なし\n担当：前迫 / メール: ofc.yuuto.m@gmail.com\nInstagramアカウント: @omefc_2004_official`,
+    teamUrl: null, applyUrl: null,
+    tags: ['青梅市', '多摩地域'],
+  }))),
+  {
+    id: 'omefc-trial-3', teamId: null, eventType: 'trial', isAlwaysOpen: false, isPartner: false,
+    teamName: '青梅FCジュニアユース',
+    isPeriod: false, periodText: null,
+    date: '2026-07-06', time: '17:30',
+    location: 'TCNスポーツパーク永山（青梅市）',
+    targetGrades: ['小6'], capacity: null, fee: 0, deadline: null,
+    description: '2027年度 新中学1年生（新U-13）対象 練習会\n受付17:15〜 / 17:30〜19:30\n参加費：記載なし\n申込後、詳細を順次送信\n担当：前迫 / メール: ofc.yuuto.m@gmail.com\nInstagramアカウント: @omefc_2004_official',
+    teamUrl: null, applyUrl: null,
+    tags: ['青梅市', '多摩地域'],
+  },
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   // ZOTT WASEDA U15（東京・東村山市）フットサル
   // 練習会：7/31・8/3・8/6 無料
   // 東村山市民スポーツセンター
