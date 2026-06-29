@@ -3513,6 +3513,34 @@ const SAMPLE_DATA = [
   }))),
 
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // BAYSIDE FC YOKOHAMA ジュニアユース（横浜市）
+  // 練習会：7/14・7/16 19:30〜21:00 無料 定員10名
+  // セレクション：7/17 17:30〜19:00 1,500円 定員15名
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ...(['2026-07-14', '2026-07-16'].map((date, i) => ({
+    id: `baysidefc-trial-${i + 1}`, teamId: null, eventType: 'trial', isAlwaysOpen: false, isPartner: false,
+    teamName: 'BAYSIDE FC YOKOHAMA',
+    isPeriod: false, periodText: null,
+    date, time: '19:30',
+    location: 'クーバー・フットボールパーク ジョイナス横浜 Cコート',
+    targetGrades: ['小6'], capacity: 10, fee: 0, deadline: null,
+    description: '2027年度 練習会\n19:30〜21:00\n定員：各回10名\n参加費：無料\n申込は公式案内リンクより',
+    teamUrl: null, applyUrl: null,
+    tags: ['横浜市', '無料'],
+  }))),
+  {
+    id: 'baysidefc-sel-1', teamId: null, eventType: 'selection', isAlwaysOpen: false, isPartner: false,
+    teamName: 'BAYSIDE FC YOKOHAMA',
+    isPeriod: false, periodText: null,
+    date: '2026-07-17', time: '17:30',
+    location: '金沢産業振興センター サブグラウンド（横浜市金沢区）',
+    targetGrades: ['小6'], capacity: 15, fee: 1500, deadline: null,
+    description: 'セレクション\n17:30〜19:00\n定員：15名\n参加費：1,500円（当日現金払い）\n申込は公式案内リンクより',
+    teamUrl: null, applyUrl: null,
+    tags: ['横浜市', '金沢区', '1500円'],
+  },
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   // 青梅FCジュニアユース（東京・青梅市）OMEFC
   // 練習会（振替）：6/25・6/29 17:30〜19:30 TCN永山公園
   // セレクション練習会：7/6 17:30〜19:30 TCNスポーツパーク永山
