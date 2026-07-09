@@ -1705,6 +1705,56 @@
     .hidden { display: none !important; }
     .view-section { display: none; }
     .view-section.active { display: block; }
+
+    /* ── チーム一覧タブ ── */
+    .teams-toolbar {
+      display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+      padding: 10px 12px; background: #fff; border-bottom: 1px solid #e5e7eb;
+      position: sticky; top: 0; z-index: 10;
+    }
+    .teams-search {
+      flex: 1; min-width: 120px; height: 34px; border: 1.5px solid #e5e7eb;
+      border-radius: 8px; padding: 0 10px; font-size: 13px; outline: none;
+      font-family: inherit;
+    }
+    .teams-search:focus { border-color: var(--green); }
+    .teams-area-select {
+      height: 34px; border: 1.5px solid #e5e7eb; border-radius: 8px;
+      padding: 0 8px; font-size: 12px; font-family: inherit; outline: none;
+      background: #fff; color: var(--text); cursor: pointer;
+    }
+    .teams-area-select:focus { border-color: var(--green); }
+    .teams-count {
+      font-size: 12px; color: var(--text-mute); white-space: nowrap;
+    }
+    .teams-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 8px; padding: 10px 12px;
+    }
+    .team-dir-card {
+      background: #fff; border: 1px solid #e5e7eb; border-radius: 10px;
+      padding: 11px 13px; display: flex; flex-direction: column; gap: 6px;
+    }
+    .team-dir-name { font-weight: 700; font-size: 14px; color: var(--text); line-height: 1.3; }
+    .team-dir-meta { display: flex; gap: 5px; flex-wrap: wrap; }
+    .team-dir-badge {
+      font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 50px;
+      background: #f3f4f6; color: #374151;
+    }
+    .team-dir-badge.b-area { background: #e0f2fe; color: #0369a1; }
+    .team-dir-badge.b-league-top { background: #fef3c7; color: #92400e; }
+    .team-dir-badge.b-jclub { background: #f0fdf4; color: #15803d; }
+    .team-dir-badge.b-jyouth { background: #dbeafe; color: #1d4ed8; }
+    .team-dir-link {
+      display: inline-flex; align-items: center; gap: 3px; font-size: 12px;
+      color: var(--green); font-weight: 600; text-decoration: none;
+    }
+    .team-dir-link:hover { text-decoration: underline; }
+    .team-dir-empty {
+      grid-column: 1 / -1; text-align: center; padding: 40px 0;
+      color: var(--text-mute); font-size: 14px;
+    }
   </style>
 </head>
 <body>
@@ -1742,6 +1792,7 @@
     <button class="nav-tab active" id="tabCal" onclick="switchTab('cal')">📅 カレンダー</button>
     <button class="nav-tab" id="tabList" onclick="switchTab('list')">📋 一覧</button>
     <button class="nav-tab" id="tabFav" onclick="switchTab('fav')">❤️ お気に入り</button>
+    <button class="nav-tab" id="tabTeams" onclick="switchTab('teams')">🏟️ チーム</button>
   </div>
 </div>
 
@@ -1794,6 +1845,19 @@
 
 <div id="viewFav" class="view-section">
   <div class="list-container" id="favContainer"></div>
+</div>
+
+<div id="viewTeams" class="view-section">
+  <div class="teams-toolbar">
+    <input class="teams-search" id="teamsSearch" type="search" placeholder="チーム名で検索..." oninput="renderTeams()">
+    <select class="teams-area-select" id="teamsAreaFilter" onchange="renderTeams()">
+      <option value="">エリア：すべて</option>
+      <option value="23区">23区</option>
+      <option value="多摩">多摩地域</option>
+    </select>
+    <span class="teams-count" id="teamsCount"></span>
+  </div>
+  <div class="teams-grid" id="teamsGrid"></div>
 </div>
 
 <!-- DETAIL MODAL -->
@@ -2336,6 +2400,148 @@ function eventTypeBadge(ev) {
 }
 
 // ══ チームプロフィール（Notionより取得）══
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 東京都ジュニアユースチーム一覧（133チーム）
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+const ALL_TEAMS = [
+  { name: '東京シティ', area: '新宿区', league: '都リーグ', type: '街クラブ', url: 'https://tokyo-city-academy.jimdofree.com/' },
+  { name: 'Criacao Shinjuku', area: '新宿区', league: '都リーグ', type: '街クラブ', url: 'https://criacao.co.jp/soccerclub/' },
+  { name: 'FC渋谷', area: '渋谷区', league: '都リーグ', type: '街クラブ', url: 'https://fcshibuya.com/' },
+  { name: 'FCトリプレッタ', area: '渋谷区', league: '関東2部C', type: '街クラブ', url: 'https://www.footballnavi.jp/fctrp/' },
+  { name: 'FC.GIUSTI世田谷', area: '世田谷区', league: '都リーグ', type: '街クラブ', url: 'http://www.fc-giusti.com/' },
+  { name: 'FC駒沢', area: '世田谷区', league: '都リーグ', type: '街クラブ', url: 'http://www.fc-komazawa.jp/' },
+  { name: '世田谷フットボールクラブU-15', area: '世田谷区', league: '都リーグ', type: '街クラブ', url: 'https://www.footballnavi.jp/setagaya-fc/' },
+  { name: 'プロメテウス', area: '世田谷区', league: '都リーグ', type: '街クラブ', url: 'https://espsp.com/' },
+  { name: 'バディSC', area: '世田谷区', league: '都リーグ', type: '街クラブ', url: 'http://www.buddy-sports.co.jp/soccer/jy/jymain.htm' },
+  { name: 'F.TRES FC', area: '世田谷区', league: '都リーグ', type: '街クラブ', url: 'https://ftresfc.wixsite.com/tokyo-setagaya' },
+  { name: 'MIP FC', area: '世田谷区', league: '都リーグ', type: '街クラブ', url: 'https://mipfc3232.wixsite.com/mipfc' },
+  { name: 'FCトッカーノ', area: '世田谷区', league: '都リーグ', type: '街クラブ', url: 'http://www.fc-tucano.com/' },
+  { name: 'FC目黒', area: '目黒区', league: '都リーグ', type: '街クラブ', url: 'http://fc-meguro.tokyo/' },
+  { name: 'FC千代田', area: '千代田区', league: '都リーグ', type: '街クラブ', url: 'https://fcchiyoda.com/' },
+  { name: '青山SC', area: '港区', league: '都リーグ', type: '街クラブ', url: 'http://aoyamasc.net/aoyamasc.html' },
+  { name: 'LOCALS F.C', area: '港区', league: '都リーグ', type: '街クラブ', url: 'https://localsfc.jp/' },
+  { name: 'FC SKY', area: '中央区', league: '都リーグ', type: '街クラブ', url: 'https://www.sky-soccer.net/' },
+  { name: 'FC INTERIOR（インテリオール）', area: '大田区', league: '都リーグ', type: '街クラブ', url: 'http://www.interior-fc.com/' },
+  { name: '大森FC', area: '大田区', league: '都リーグ', type: '街クラブ', url: 'http://ohmori-fc.com/' },
+  { name: 'エリース東京', area: '大田区', league: '都リーグ', type: '街クラブ', url: 'https://sgrum.com/web/aries/' },
+  { name: 'DESEL TOKYO', area: '大田区', league: '都リーグ', type: '街クラブ', url: 'https://desel.tokyo/' },
+  { name: '東京チャンプFC', area: '大田区', league: '都リーグ', type: '街クラブ', url: 'https://tokyochampfc.wixsite.com/tokyochamp' },
+  { name: '東京SC', area: '品川区', league: '都リーグ', type: '街クラブ', url: 'http://tokyoscu15.com/' },
+  { name: 'nexo tokyo FC', area: '品川区', league: '都リーグ', type: '街クラブ', url: 'https://www.nexotokyo.com/' },
+  { name: 'スポルティング品川', area: '品川区', league: '都リーグ', type: '街クラブ', url: 'http://www.sportingclub.jp/shinagawa/' },
+  { name: '石神井マメックス', area: '練馬区', league: '都リーグ', type: '街クラブ', url: 'http://www.mamecs.com/' },
+  { name: 'PELADA FC', area: '練馬区', league: '都リーグ', type: '街クラブ', url: 'https://peladafc.jimdofree.com/' },
+  { name: 'TIRA CALCIO', area: '練馬区', league: '都リーグ', type: '街クラブ', url: 'https://tiracalcio.jimdofree.com/' },
+  { name: 'S-JUEGO', area: '練馬区', league: '都リーグ', type: '街クラブ', url: 'http://s-juego.com/' },
+  { name: '杉並アヤックス', area: '杉並区', league: '都リーグ', type: '街クラブ', url: 'http://suginamiajax.jp/' },
+  { name: '杉並FC', area: '杉並区', league: '都リーグ', type: '街クラブ', url: 'https://www.npo-suginami-fc.com/' },
+  { name: "Forza'02", area: '杉並区', league: '関東2部A', type: '街クラブ', url: 'https://www.forza02.com/' },
+  { name: '杉並ソシオ', area: '杉並区', league: '都リーグ', type: '街クラブ', url: 'https://www.suginami-socio.com/' },
+  { name: 'レガウFC', area: '杉並区', league: '都リーグ', type: '街クラブ', url: 'https://fc-legal.net/' },
+  { name: 'トレーロス', area: '杉並区', league: '都リーグ', type: '街クラブ', url: 'http://www.fctoreros.net/' },
+  { name: '九曜FC', area: '板橋区', league: '都リーグ', type: '街クラブ', url: 'http://www.kuyoh.luflos.co.jp/' },
+  { name: 'リオFC', area: '板橋区', league: '都リーグ', type: '街クラブ', url: 'https://riofc.jimdofree.com/' },
+  { name: 'アミーゴFC', area: '板橋区', league: '都リーグ', type: '街クラブ', url: 'http://amigofc.com/' },
+  { name: 'バジェーナブランカ城北', area: '板橋区', league: '都リーグ', type: '街クラブ', url: 'https://www.ballenablanca.tokyo/' },
+  { name: '東京ユナイテッドソレイユFC', area: '文京区', league: '都リーグ', type: '街クラブ', url: 'https://tusoleil.com/' },
+  { name: '三菱養和SC巣鴨', area: '豊島区', league: '関東1部A', type: '街クラブ', url: 'https://www.yowakai.org/school/junior/soccer_ikusei.html' },
+  { name: 'ボンフィンFC豊島', area: '豊島区', league: '都リーグ', type: '街クラブ', url: 'https://www.bonfim.co.jp/u15/' },
+  { name: 'tfa', area: '北区', league: '都リーグ', type: '街クラブ', url: 'https://wift.jp/teams/tfa/home/' },
+  { name: 'FCプラウド', area: '北区', league: '都リーグ', type: '街クラブ', url: 'https://www.fc-proud.com/' },
+  { name: 'ヴィルトゥス', area: '北区', league: '都リーグ', type: '街クラブ', url: 'https://virtus.co.jp/about-jryouth/' },
+  { name: '西が丘SC', area: '北区', league: '都リーグ', type: '街クラブ', url: 'http://www.junioryouth.nishigaoka.com/' },
+  { name: 'ノールチシティ', area: '北区', league: '都リーグ', type: '街クラブ', url: 'https://nortecity.com/' },
+  { name: 'クリアージュFC', area: '足立区', league: '都リーグ', type: '街クラブ', url: 'https://www.footballnavi.jp/criaju/' },
+  { name: 'ヴェルメリオ', area: '足立区', league: '都リーグ', type: '街クラブ', url: 'https://www.kz-vermelho.com/' },
+  { name: 'GROW FC', area: '足立区', league: '都リーグ', type: '街クラブ', url: 'https://sgrum.com/web/growfootballclub/' },
+  { name: 'FCグラーナ', area: '足立区', league: '都リーグ', type: '街クラブ', url: 'https://glauna.net/pages/fc-glauna/' },
+  { name: 'MTC美松学園FC', area: '足立区', league: '都リーグ', type: '街クラブ', url: 'https://peraichi.com/landing_pages/view/mtcfootballphysical/' },
+  { name: 'ジョガールSC', area: '足立区', league: '都リーグ', type: '街クラブ', url: 'http://jogar-sc.com/' },
+  { name: 'FCオーパスワン', area: '足立区', league: '都リーグ', type: '街クラブ', url: 'https://sgrum.com/web/fc-opusone/' },
+  { name: 'LARGO FC', area: '荒川区', league: '都リーグ', type: '街クラブ', url: 'http://largofc.net/page21' },
+  { name: 'FRIENDLY', area: '江戸川区', league: '都リーグ', type: '街クラブ', url: 'http://www.friendly-club.com/' },
+  { name: 'エスフォルソ', area: '江戸川区', league: '都リーグ', type: '街クラブ', url: 'https://fcesforco.1net.jp/' },
+  { name: 'Juns SC', area: '江戸川区', league: '都リーグ', type: '街クラブ', url: 'http://juns-sc.ip-delta-003.com/' },
+  { name: 'ロッソSC', area: '江戸川区', league: '都リーグ', type: '街クラブ', url: 'https://rossosoccerclub.wift.site/' },
+  { name: 'Visfida SC', area: '江戸川区', league: '都リーグ', type: '街クラブ', url: 'https://www.visfida-sc.com/' },
+  { name: '東京23FC', area: '江戸川区', league: '都リーグ', type: '街クラブ', url: null },
+  { name: 'ノッソFC', area: '葛飾区', league: '都リーグ', type: '街クラブ', url: 'https://nosso-fc.jimdofree.com/' },
+  { name: 'SKオンゼFC', area: '葛飾区', league: '都リーグ', type: '街クラブ', url: 'https://sk-onze-fc.jimdofree.com/' },
+  { name: 'ナサロットFC', area: '葛飾区', league: '都リーグ', type: '街クラブ', url: 'http://www.zd.em-net.ne.jp/~fc-seiwa/NASALOT/nasaindex.html' },
+  { name: 'ジェファFC', area: '葛飾区', league: '関東2部A', type: '街クラブ', url: 'https://jefafc.jimdofree.com/' },
+  { name: 'バルサアカデミー葛飾', area: '葛飾区', league: '都リーグ', type: '街クラブ', url: 'https://katsushika.barcaacademy.com/' },
+  { name: '南葛SC', area: '葛飾区', league: '都リーグ', type: '街クラブ', url: 'http://www.nankatsu-sc.com/' },
+  { name: 'すみだSC', area: '墨田区', league: '都リーグ', type: '街クラブ', url: 'https://sumidasc.com/u-15team/' },
+  { name: '両国FC', area: '墨田区', league: '都リーグ', type: '街クラブ', url: 'https://gold-root.com/ryogoku/' },
+  { name: 'アスコルタFC', area: '墨田区', league: '都リーグ', type: '街クラブ', url: 'http://ascolta-fc.com/' },
+  { name: 'FC東京U-15深川', area: '江東区', league: '関東1部A', type: 'J下部', url: 'https://www.fctokyo.co.jp/academy/u15_fukagawa/' },
+  { name: 'FC江東', area: '江東区', league: '都リーグ', type: '街クラブ', url: 'http://www.sportsite.jp/sc/fc_koto/' },
+  { name: 'FCクレセル', area: '東村山市', league: '都リーグ', type: '街クラブ', url: 'https://vamos-crecer.jimdofree.com/' },
+  { name: 'VEDIALO', area: '東村山市', league: '都リーグ', type: '街クラブ', url: 'https://www.vedialo.com/' },
+  { name: 'FC REGALO', area: '東村山市', league: '都リーグ', type: '街クラブ', url: 'http://regalo2012.web.fc2.com/' },
+  { name: 'FC Consorte（コンソルテ）', area: '清瀬市', league: '都リーグ', type: '街クラブ', url: 'http://refino-consorte.sakura.ne.jp/wp/' },
+  { name: 'STFC', area: '清瀬市', league: '都リーグ', type: '街クラブ', url: 'https://stfc-tokyo.jimdofree.com/' },
+  { name: 'SHUGAKU FC', area: '清瀬市', league: '都リーグ', type: '街クラブ', url: 'https://kiyoseshugakufc.wixsite.com/mysite' },
+  { name: '東京・清瀬VALIANT', area: '清瀬市', league: '都リーグ', type: '街クラブ', url: 'https://www.tokyokiyosevaliant.jp/' },
+  { name: '東京久留米FC', area: '東久留米市', league: '都リーグ', type: '街クラブ', url: 'http://www.aliante2002.com/tkfc/' },
+  { name: 'カフリンガ東久留米', area: '東久留米市', league: '都リーグ', type: '街クラブ', url: 'http://www.cafuringa.com/' },
+  { name: 'AZALEA久留米', area: '東久留米市', league: '都リーグ', type: '街クラブ', url: 'https://www.kurume-azalea.com/' },
+  { name: 'BOBBIT TOKYO FC', area: '小平市', league: '都リーグ', type: '街クラブ', url: 'https://www.footballnavi.jp/bobbit/' },
+  { name: 'プラミーゴ', area: '小平市', league: '都リーグ', type: '街クラブ', url: 'http://japanfc.press/cfpulamigo/' },
+  { name: 'FC GABE', area: '小平市', league: '都リーグ', type: '街クラブ', url: 'http://fcgabe.com/' },
+  { name: 'レッドスター', area: '西東京市', league: '都リーグ', type: '街クラブ', url: 'http://1996redstar.web.fc2.com/' },
+  { name: 'FC東京U-15むさし', area: '小金井市', league: '関東1部A', type: 'J下部', url: 'https://www.fctokyo.co.jp/academy/u15_musashi/' },
+  { name: '三鷹FA', area: '三鷹市', league: '都リーグ', type: '街クラブ', url: 'https://mitakafa2012.wixsite.com/mitakafajryouth/blank-1' },
+  { name: 'エルシエロ', area: '三鷹市', league: '都リーグ', type: '街クラブ', url: 'https://elcielo2009.com/' },
+  { name: 'Weiss Blau MITAKA', area: '三鷹市', league: '都リーグ', type: '街クラブ', url: 'https://neue-knospe.tokyo/jryouth' },
+  { name: 'LSS MITAKA', area: '三鷹市', league: '都リーグ', type: '街クラブ', url: 'http://lss-mitaka.com/youth/' },
+  { name: 'EURO FOOTBALL ACADEMY', area: '三鷹市', league: '都リーグ', type: '街クラブ', url: 'https://www.euro-football-academy.jp/' },
+  { name: '横河武蔵野FC U-15', area: '武蔵野市', league: '関東1部B', type: '街クラブ', url: 'https://fc-academy.yokogawa-musashino.jp/' },
+  { name: '青梅FC', area: '青梅市', league: '都リーグ', type: '街クラブ', url: 'http://ome-fc.com/' },
+  { name: "AZ'86東京青梅", area: '青梅市', league: '都リーグ', type: '街クラブ', url: 'http://www.az86.com/' },
+  { name: 'バリオーレ日の出', area: '日の出町', league: '都リーグ', type: '街クラブ', url: 'http://www.bagliore-hinode.com/' },
+  { name: '武蔵村山FCインデペンデンテ', area: '武蔵村山市', league: '都リーグ', type: '街クラブ', url: 'https://www.facebook.com/p/武蔵村山fcインデペンデンテ-100064005163954/' },
+  { name: 'あきる野FC', area: 'あきる野市', league: '都リーグ', type: '街クラブ', url: 'https://www.asport.jp.net/program/index/10' },
+  { name: '東京五日市FC', area: 'あきる野市', league: '都リーグ', type: '街クラブ', url: 'https://tokyoitsukaichi.com/' },
+  { name: 'Raffle瑞穂FC', area: '瑞穂町', league: '都リーグ', type: '街クラブ', url: 'https://www.raffle-mizuho.com/' },
+  { name: 'GONA', area: '福生市', league: '都リーグ', type: '街クラブ', url: 'https://www.cafgona.com/2-c1dct' },
+  { name: 'FC VIGORE', area: '東大和市', league: '都リーグ', type: '街クラブ', url: 'http://fc-vigore.com/' },
+  { name: 'FC VIDA', area: '立川市', league: '都リーグ', type: '街クラブ', url: 'https://www.fcvida.net/' },
+  { name: 'POMBA立川', area: '立川市', league: '都リーグ', type: '街クラブ', url: 'http://pomba-fc.lomo.jp/' },
+  { name: 'ワンセンス武蔵野', area: '立川市', league: '都リーグ', type: '街クラブ', url: 'https://www.one-sense.jp/' },
+  { name: 'TACサルバトーレ', area: '立川市', league: '都リーグ', type: '街クラブ', url: 'https://www.footballnavi.jp/salvatore/' },
+  { name: 'FCアンビシオン', area: '国分寺市', league: '都リーグ', type: '街クラブ', url: 'https://fc-ambicion.com/' },
+  { name: '国分寺FA', area: '国分寺市', league: '都リーグ', type: '街クラブ', url: 'https://kokubunji-footballacademy.com/' },
+  { name: 'オーレ国立', area: '国立市', league: '都リーグ', type: '街クラブ', url: 'https://www.c-sqr.net/c/fcole/' },
+  { name: '調布FC', area: '調布市', league: '都リーグ', type: '街クラブ', url: 'http://u15.raiz.tokyo/' },
+  { name: '三菱養和SC調布', area: '調布市', league: '関東2部B', type: '街クラブ', url: 'https://www.yowakai.org/school/junior/soccer_ikusei.html' },
+  { name: 'VERDY SS AJUNT', area: '調布市', league: '都リーグ', type: '街クラブ', url: 'https://www.verdyajunt.com/' },
+  { name: 'スクデット', area: '調布市', league: '都リーグ', type: '街クラブ', url: 'https://www.1996scudetto.com/' },
+  { name: 'GA FC', area: '調布市', league: '都リーグ', type: '街クラブ', url: 'https://goal-assist.com/ga15.html' },
+  { name: 'FC府中', area: '府中市', league: '都リーグ', type: '街クラブ', url: 'https://fcfuchu.net/' },
+  { name: '府ロク', area: '府中市', league: '都リーグ', type: '街クラブ', url: 'http://u-15.furoku-tokyo.com/' },
+  { name: 'Peace United FC', area: '府中市', league: '都リーグ', type: '街クラブ', url: 'https://kodomo-sports.jp/' },
+  { name: 'インテルアカデミー', area: '府中市', league: '都リーグ', type: '街クラブ', url: 'https://www.interacademyjapan.info/' },
+  { name: 'FC杉野', area: '日野市', league: '都リーグ', type: '街クラブ', url: 'http://fc-sugino.com/' },
+  { name: 'Branco八王子', area: '八王子市', league: '都リーグ', type: '街クラブ', url: 'https://brancohachioji.jimdofree.com/' },
+  { name: 'FCベルテール', area: '八王子市', league: '都リーグ', type: '街クラブ', url: 'https://belleterre.jimdo.com/' },
+  { name: 'ARTE八王子', area: '八王子市', league: '都リーグ', type: '街クラブ', url: 'http://yohtairen.jp/publics/index/14/' },
+  { name: 'CHUO SPORTS ACADEMY', area: '八王子市', league: '都リーグ', type: '街クラブ', url: null },
+  { name: 'アローレ八王子', area: '八王子市', league: '都リーグ', type: '街クラブ', url: 'https://arawore.jp/' },
+  { name: 'FCアルムンド', area: '八王子市', league: '都リーグ', type: '街クラブ', url: 'https://www.fcalmundo.tokyo/' },
+  { name: 'FC町田ゼルビアU-15', area: '町田市', league: '関東', type: 'J下部', url: 'https://www.zelvia.co.jp/' },
+  { name: '東京・小山FC', area: '町田市', league: '都リーグ', type: '街クラブ', url: 'https://www.footballnavi.jp/oyama-fc/' },
+  { name: '町田JFC', area: '町田市', league: '都リーグ', type: '街クラブ', url: 'https://www.machidajfc.org/' },
+  { name: '緑山SC', area: '町田市', league: '都リーグ', type: '街クラブ', url: 'http://www.midoriyama-sc.com/' },
+  { name: '1FC AVIENTO', area: '町田市', league: '都リーグ', type: '街クラブ', url: 'https://1fc-aviento.com/' },
+  { name: 'コンフィアール町田', area: '町田市', league: '都リーグ', type: '街クラブ', url: 'https://official.confiar-machida.com/' },
+  { name: 'FC GLORIA', area: '多摩市', league: '都リーグ', type: '街クラブ', url: 'https://www.fc-gloria.com/' },
+  { name: 'FC多摩 U-15', area: '多摩市', league: '関東1部B', type: '街クラブ', url: 'https://fctama1994.main.jp/' },
+  { name: 'TAMA CITY UNITED FC', area: '多摩市', league: '都リーグ', type: '街クラブ', url: 'http://www.tcu-fc.com/' },
+  { name: '東京ヴェルディジュニアユース', area: '稲城市', league: '関東1部A', type: 'J下部', url: 'https://www.verdy.co.jp/content/academy/' },
+  { name: 'プログレッソ稲城', area: '狛江市', league: '都リーグ', type: '街クラブ', url: 'https://progresso-tcf.net/' },
+];
+
 const TEAM_PROFILES = {
   'T007': {
     id: 'T007', foundedYear: null,
@@ -5110,9 +5316,13 @@ function switchTab(tab) {
   document.getElementById('tabCal').classList.toggle('active', tab==='cal');
   document.getElementById('tabList').classList.toggle('active', tab==='list');
   document.getElementById('tabFav').classList.toggle('active', tab==='fav');
+  document.getElementById('tabTeams').classList.toggle('active', tab==='teams');
   document.getElementById('viewCal').classList.toggle('active', tab==='cal');
   document.getElementById('viewList').classList.toggle('active', tab==='list');
   document.getElementById('viewFav').classList.toggle('active', tab==='fav');
+  document.getElementById('viewTeams').classList.toggle('active', tab==='teams');
+  document.getElementById('typeFilter').style.display = tab==='teams' ? 'none' : '';
+  document.getElementById('filterBar').style.display = tab==='teams' ? 'none' : '';
   // month nav only relevant on calendar
   document.getElementById('prevMonth').style.visibility = tab==='cal' ? '' : 'hidden';
   document.getElementById('nextMonth').style.visibility = tab==='cal' ? '' : 'hidden';
@@ -5120,6 +5330,50 @@ function switchTab(tab) {
   document.getElementById('monthLabel').style.visibility = tab==='cal' ? '' : 'hidden';
   if (tab==='list') renderList();
   if (tab==='fav') renderFavorites();
+  if (tab==='teams') renderTeams();
+}
+
+function renderTeams() {
+  const q = (document.getElementById('teamsSearch').value || '').trim().toLowerCase();
+  const areaFilter = document.getElementById('teamsAreaFilter').value;
+  const WARD_SUFFIXES = ['区'];
+  const is23ku = a => WARD_SUFFIXES.some(s => a.endsWith(s));
+
+  const filtered = ALL_TEAMS.filter(t => {
+    if (q && !t.name.toLowerCase().includes(q) && !t.area.toLowerCase().includes(q)) return false;
+    if (areaFilter === '23区' && !is23ku(t.area)) return false;
+    if (areaFilter === '多摩' && is23ku(t.area)) return false;
+    return true;
+  });
+
+  document.getElementById('teamsCount').textContent = `${filtered.length}チーム`;
+
+  const leagueBadge = league => {
+    if (league.startsWith('関東1部') || league === '関東') return `<span class="team-dir-badge b-league-top">${league}</span>`;
+    if (league.startsWith('関東2部')) return `<span class="team-dir-badge b-league-top">${league}</span>`;
+    return `<span class="team-dir-badge">${league}</span>`;
+  };
+  const typeBadge = type =>
+    type === 'J下部'
+      ? `<span class="team-dir-badge b-jyouth">J下部</span>`
+      : `<span class="team-dir-badge b-jclub">街クラブ</span>`;
+
+  const grid = document.getElementById('teamsGrid');
+  if (!filtered.length) {
+    grid.innerHTML = `<div class="team-dir-empty">該当チームが見つかりません</div>`;
+    return;
+  }
+  grid.innerHTML = filtered.map(t => `
+    <div class="team-dir-card">
+      <div class="team-dir-name">${t.name}</div>
+      <div class="team-dir-meta">
+        <span class="team-dir-badge b-area">${t.area}</span>
+        ${leagueBadge(t.league)}
+        ${typeBadge(t.type)}
+      </div>
+      ${t.url ? `<a class="team-dir-link" href="${t.url}" target="_blank" rel="noopener">🔗 公式サイト</a>` : `<span style="font-size:12px;color:var(--text-mute)">サイトなし</span>`}
+    </div>
+  `).join('');
 }
 document.getElementById('prevMonth').onclick = () => {
   currentMonth--;
