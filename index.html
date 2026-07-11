@@ -1746,6 +1746,7 @@
     .team-dir-badge.b-league-top { background: #fef3c7; color: #92400e; }
     .team-dir-badge.b-jclub { background: #f0fdf4; color: #15803d; }
     .team-dir-badge.b-jyouth { background: #dbeafe; color: #1d4ed8; }
+    .team-dir-badge.b-pref { background: #fce7f3; color: #be185d; font-weight: 800; }
     .team-dir-link {
       display: inline-flex; align-items: center; gap: 3px; font-size: 12px;
       color: var(--green); font-weight: 600; text-decoration: none;
@@ -1852,8 +1853,11 @@
     <input class="teams-search" id="teamsSearch" type="search" placeholder="チーム名で検索..." oninput="renderTeams()">
     <select class="teams-area-select" id="teamsAreaFilter" onchange="renderTeams()">
       <option value="">エリア：すべて</option>
-      <option value="23区">23区</option>
-      <option value="多摩">多摩地域</option>
+      <option value="23区">東京23区</option>
+      <option value="多摩">東京多摩</option>
+      <option value="埼玉">埼玉</option>
+      <option value="千葉">千葉</option>
+      <option value="神奈川">神奈川</option>
     </select>
     <span class="teams-count" id="teamsCount"></span>
   </div>
@@ -2540,6 +2544,37 @@ const ALL_TEAMS = [
   { name: 'TAMA CITY UNITED FC', area: '多摩市', league: '都リーグ', type: '街クラブ', url: 'http://www.tcu-fc.com/' },
   { name: '東京ヴェルディジュニアユース', area: '稲城市', league: '関東1部A', type: 'J下部', url: 'https://www.verdy.co.jp/content/academy/' },
   { name: 'プログレッソ稲城', area: '狛江市', league: '都リーグ', type: '街クラブ', url: 'https://progresso-tcf.net/' },
+  // ── 1都3県DB追加（2026-07-11） ──
+  // 東京（新規分）
+  { name: 'MPFC', area: '練馬区・中野区', league: '', type: '街クラブ', url: 'https://mpfc-jry.studio.site/', pref: '東京' },
+  { name: 'Dalpa SC', area: '世田谷区', league: '', type: '街クラブ', url: 'https://dalpa-soccer.com/', pref: '東京' },
+  { name: 'S.T.FC（SOLTILO TOKYO FC）', area: '', league: '', type: '街クラブ', url: null, pref: '東京' },
+  // 埼玉
+  { name: '坂戸ディプロマッツFC', area: '坂戸市', league: '', type: '街クラブ', url: 'http://www.diplomats-fc.com/', pref: '埼玉' },
+  { name: 'プレジールSC', area: '入間市・所沢市', league: '', type: '街クラブ', url: 'https://jryouth.plaisir-sc.com/', pref: '埼玉' },
+  { name: '武南ジュニアユースFC', area: 'さいたま市', league: '', type: '街クラブ', url: 'https://www.footballnavi.jp/bunan-junior/', pref: '埼玉' },
+  { name: 'Ala FA', area: '宮代町', league: '', type: '街クラブ', url: null, pref: '埼玉' },
+  { name: '東松山ペレーニア', area: '東松山市', league: '', type: '街クラブ', url: null, pref: '埼玉' },
+  { name: '1FC川越水上公園', area: '川越市', league: '', type: '街クラブ', url: null, pref: '埼玉' },
+  { name: 'クマガヤSC', area: '熊谷市', league: '', type: '街クラブ', url: null, pref: '埼玉' },
+  { name: '成立ゼブラFC', area: '', league: '', type: '街クラブ', url: null, pref: '埼玉' },
+  { name: '三郷ジュニアユースFC', area: '三郷市', league: '', type: '街クラブ', url: null, pref: '埼玉' },
+  { name: 'Reste football team（戸田）', area: '戸田市', league: '', type: '街クラブ', url: 'https://www.restefutsalcitytoda.jp/jy-selection', pref: '埼玉' },
+  // 千葉
+  { name: 'SOLTILO CHIBA FC', area: '千葉市', league: '', type: '街クラブ', url: 'https://soltilo-fc.com/soltilo-chiba-fc', pref: '千葉' },
+  { name: 'クラブ・アストーレ', area: '柏市', league: '', type: '街クラブ', url: 'https://www.club-astore.com/', pref: '千葉' },
+  { name: 'FC市川GUNNERS', area: '市川市', league: '', type: '街クラブ', url: 'https://fcichikawagunners.jp/', pref: '千葉' },
+  { name: 'ACカラクテル', area: '大網白里市', league: '', type: '街クラブ', url: 'https://ac-caracter.com/', pref: '千葉' },
+  // 神奈川
+  { name: '横浜FC鶴見', area: '横浜市鶴見区', league: '', type: 'J下部', url: 'https://yokohamafc.tsurumi1.com/', pref: '神奈川' },
+  { name: 'FC Notus', area: '横浜市南区', league: '', type: '街クラブ', url: 'https://minami-football.com/', pref: '神奈川' },
+  { name: 'Fスタジオ', area: '横浜市栄区', league: '', type: '街クラブ', url: 'http://fstudio2012.com/', pref: '神奈川' },
+  { name: 'カルペソール湘南', area: '茅ヶ崎市', league: '', type: '街クラブ', url: 'https://carpesol.jp/', pref: '神奈川' },
+  { name: 'クラブテアトロbulbo（ブルボ）', area: '', league: '', type: '街クラブ', url: null, pref: '神奈川' },
+  { name: '横須賀シーガルズFC（男子）', area: '横須賀市', league: '', type: '街クラブ', url: null, pref: '神奈川' },
+  { name: '足柄FC', area: '小田原市', league: '', type: '街クラブ', url: 'https://ashigarafc.wixsite.com/ashigara-fc', pref: '神奈川' },
+  { name: '横浜栄FC', area: '横浜市栄区', league: '', type: '街クラブ', url: null, pref: '神奈川' },
+  { name: 'FCヴィアージャ', area: '', league: '', type: '街クラブ', url: null, pref: '神奈川' },
 ];
 
 const TEAM_PROFILES = {
@@ -5332,6 +5367,80 @@ const SAMPLE_DATA = [
     teamUrl: null, applyUrl: 'https://forms.gle/daVAi8UU4N7jAmoc8',
     tags: ['北区', '23区', '無料'],
   },
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // 1都3県DB追加（埼玉・千葉／公式HP調査 2026-07-11）
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // ── プレジールSC（埼玉・入間市/所沢市）練習会4回＋セレクション2回 ──
+  ...(['2026-08-02', '2026-08-16', '2026-08-30', '2026-09-06'].map((date, i) => ({
+    id: `plaisir-trial-${i + 1}`, teamId: null, eventType: 'trial', isAlwaysOpen: false, isPartner: false,
+    teamName: 'プレジールSC',
+    isPeriod: false, periodText: null,
+    date, time: '19:00',
+    location: 'オエステエススポーツパーク・ドリームピッチ（人工芝／入間市）',
+    targetGrades: ['小6'], capacity: null, fee: 0, deadline: null,
+    description: `2027年度 練習会（第${i + 1}回）\n受付18:30〜 / 19:00〜20:30\n参加費：無料\n対象：現小学6年生（2027年度新中1）`,
+    teamUrl: 'https://jryouth.plaisir-sc.com/', applyUrl: 'https://forms.gle/ftTELrLAQYfX6abe7',
+    tags: ['埼玉', '入間市', '無料'],
+  }))),
+  ...(['2026-09-13', '2026-09-27'].map((date, i) => ({
+    id: `plaisir-sel-${i + 1}`, teamId: null, eventType: 'selection', isAlwaysOpen: false, isPartner: false,
+    teamName: 'プレジールSC',
+    isPeriod: false, periodText: null,
+    date, time: '19:00',
+    location: 'オエステエススポーツパーク・ドリームピッチ（人工芝／入間市）',
+    targetGrades: ['小6'], capacity: null, fee: 0, deadline: null,
+    description: `2027年度 セレクション（第${i + 1}回）\n受付18:30〜 / 19:00〜20:30\n参加費：無料\n対象：現小学6年生（2027年度新中1）`,
+    teamUrl: 'https://jryouth.plaisir-sc.com/', applyUrl: 'https://forms.gle/ftTELrLAQYfX6abe7',
+    tags: ['埼玉', '入間市', '無料'],
+  }))),
+  // ── Reste football team（埼玉・戸田市）セレクション7/12・7/13 ──
+  {
+    id: 'reste-sel-1', teamId: null, eventType: 'selection', isAlwaysOpen: false, isPartner: false,
+    teamName: 'Reste football team',
+    isPeriod: false, periodText: null,
+    date: '2026-07-12', time: '19:15',
+    location: '川口市立芝中学校（クレー／埼玉県川口市芝6330）',
+    targetGrades: ['小6'], capacity: 25, fee: 0, deadline: '2026-07-11',
+    description: '2027年度 セレクション\n19:15〜20:45\n定員：25名\n参加費：無料\n内容：技術力チェック＋ゲーム\n持物：スパイク・すね当て等\n申込締切：前日まで',
+    teamUrl: 'https://www.restefutsalcitytoda.jp/jy-selection', applyUrl: 'https://yoyaku.labola.jp/r/shop/2002/event/show/2831355/',
+    tags: ['埼玉', '戸田市', '無料'],
+  },
+  {
+    id: 'reste-sel-2', teamId: null, eventType: 'selection', isAlwaysOpen: false, isPartner: false,
+    teamName: 'Reste football team',
+    isPeriod: false, periodText: null,
+    date: '2026-07-13', time: '19:15',
+    location: '川口市立芝中学校（クレー／埼玉県川口市芝6330）',
+    targetGrades: ['小6'], capacity: 25, fee: 0, deadline: '2026-07-12',
+    description: '2027年度 セレクション\n19:15〜20:45\n定員：25名\n参加費：無料\n内容：技術力チェック＋ゲーム\n持物：スパイク・すね当て等\n申込締切：前日まで',
+    teamUrl: 'https://www.restefutsalcitytoda.jp/jy-selection', applyUrl: 'https://yoyaku.labola.jp/r/shop/2002/event/show/2831356/',
+    tags: ['埼玉', '戸田市', '無料'],
+  },
+  // ── クラブ・アストーレ（千葉・柏市）追加セレクション7/22 ──
+  {
+    id: 'astore-sel-1', teamId: null, eventType: 'selection', isAlwaysOpen: false, isPartner: false,
+    teamName: 'クラブ・アストーレ',
+    isPeriod: false, periodText: null,
+    date: '2026-07-22', time: '18:30',
+    location: '流山スポーツフィールド（千葉県流山市）',
+    targetGrades: ['小6'], capacity: 40, fee: null, deadline: null,
+    description: '2027年度 セレクション（追加日程）\n受付18:00〜 / 18:30開始\n定員：40名\n対象：現小学6年生（2027年度新中1）\n※6/27・6/28・7/11は定員締切',
+    teamUrl: 'https://www.club-astore.com/', applyUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSejLpGDPnLSd-ounl8dE08E15AAKBkgyg_K9_78LIm1VBuaKg/viewform',
+    tags: ['千葉', '柏市'],
+  },
+  // ── 坂戸ディプロマッツFC（埼玉・坂戸市）練習会7/12 ※CSV備考より ──
+  {
+    id: 'diplomats-trial-1', teamId: null, eventType: 'trial', isAlwaysOpen: false, isPartner: false,
+    teamName: '坂戸ディプロマッツFC',
+    isPeriod: false, periodText: null,
+    date: '2026-07-12', time: '',
+    location: '公式HP・Instagramを確認（坂戸市）',
+    targetGrades: ['小6'], capacity: null, fee: null, deadline: null,
+    description: '2027年度 練習会\n詳細（時間・会場）は公式HP/Instagram（@diplomats_1999）をご確認ください\nJリーガー輩出 埼玉県内2位の街クラブ',
+    teamUrl: 'http://www.diplomats-fc.com/', applyUrl: null,
+    tags: ['埼玉', '坂戸市'],
+  },
 ];
 
 function getRelativeDate(days) {
@@ -6858,19 +6967,23 @@ function switchTab(tab) {
 function renderTeams() {
   const q = (document.getElementById('teamsSearch').value || '').trim().toLowerCase();
   const areaFilter = document.getElementById('teamsAreaFilter').value;
-  const WARD_SUFFIXES = ['区'];
-  const is23ku = a => WARD_SUFFIXES.some(s => a.endsWith(s));
+  const is23ku = a => a.endsWith('区');
 
   const filtered = ALL_TEAMS.filter(t => {
+    const pref = t.pref || '東京';
     if (q && !t.name.toLowerCase().includes(q) && !t.area.toLowerCase().includes(q)) return false;
-    if (areaFilter === '23区' && !is23ku(t.area)) return false;
-    if (areaFilter === '多摩' && is23ku(t.area)) return false;
+    if (areaFilter === '23区'  && !(pref === '東京' && is23ku(t.area))) return false;
+    if (areaFilter === '多摩'  && !(pref === '東京' && !is23ku(t.area))) return false;
+    if (areaFilter === '埼玉'  && pref !== '埼玉') return false;
+    if (areaFilter === '千葉'  && pref !== '千葉') return false;
+    if (areaFilter === '神奈川' && pref !== '神奈川') return false;
     return true;
   });
 
   document.getElementById('teamsCount').textContent = `${filtered.length}チーム`;
 
   const leagueBadge = league => {
+    if (!league || league === '—') return '';
     if (league.startsWith('関東1部') || league === '関東') return `<span class="team-dir-badge b-league-top">${league}</span>`;
     if (league.startsWith('関東2部')) return `<span class="team-dir-badge b-league-top">${league}</span>`;
     return `<span class="team-dir-badge">${league}</span>`;
@@ -6879,6 +6992,8 @@ function renderTeams() {
     type === 'J下部'
       ? `<span class="team-dir-badge b-jyouth">J下部</span>`
       : `<span class="team-dir-badge b-jclub">街クラブ</span>`;
+  const prefBadge = pref =>
+    (!pref || pref === '東京') ? '' : `<span class="team-dir-badge b-pref">${pref}</span>`;
 
   const grid = document.getElementById('teamsGrid');
   if (!filtered.length) {
@@ -6889,7 +7004,8 @@ function renderTeams() {
     <div class="team-dir-card">
       <div class="team-dir-name">${t.name}</div>
       <div class="team-dir-meta">
-        <span class="team-dir-badge b-area">${t.area}</span>
+        ${prefBadge(t.pref)}
+        <span class="team-dir-badge b-area">${t.area || '拠点未記載'}</span>
         ${leagueBadge(t.league)}
         ${typeBadge(t.type)}
       </div>
