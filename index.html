@@ -2565,6 +2565,8 @@ const ALL_TEAMS = [
   { name: 'クラブ・アストーレ', area: '柏市', league: '', type: '街クラブ', url: 'https://www.club-astore.com/', pref: '千葉' },
   { name: 'FC市川GUNNERS', area: '市川市', league: '', type: '街クラブ', url: 'https://fcichikawagunners.jp/', pref: '千葉' },
   { name: 'ACカラクテル', area: '大網白里市', league: '', type: '街クラブ', url: 'https://ac-caracter.com/', pref: '千葉' },
+  { name: 'JFC FUTURO', area: '', league: '', type: '街クラブ', url: 'https://www.jfutsalclub-futuro.com/', pref: '千葉' },
+  { name: '浦和レッズジュニアユース', area: 'さいたま市', league: '', type: 'J下部', url: 'https://www.urawa-reds.co.jp/', pref: '埼玉' },
   // 神奈川
   { name: '横浜FC鶴見', area: '横浜市鶴見区', league: '', type: 'J下部', url: 'https://yokohamafc.tsurumi1.com/', pref: '神奈川' },
   { name: 'FC Notus', area: '横浜市南区', league: '', type: '街クラブ', url: 'https://minami-football.com/', pref: '神奈川' },
@@ -5441,6 +5443,44 @@ const SAMPLE_DATA = [
     teamUrl: 'http://www.diplomats-fc.com/', applyUrl: null,
     tags: ['埼玉', '坂戸市'],
   },
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // 1都3県DB追加②（千葉・神奈川／公式HP+検索 2026-07-16）
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // ── SOLTILO CHIBA FC（千葉市美浜区）1次4日程＋2次2日程 ──
+  ...([
+    { date: '2026-07-18', time: '18:00', tail: '18:00〜20:00', ji: '1次' },
+    { date: '2026-07-19', time: '19:00', tail: '19:00〜21:00', ji: '1次' },
+    { date: '2026-07-20', time: '19:00', tail: '19:00〜21:00', ji: '1次' },
+    { date: '2026-07-25', time: '18:00', tail: '18:00〜20:00', ji: '1次' },
+    { date: '2026-08-02', time: '', tail: '時間は公式案内', ji: '2次' },
+    { date: '2026-08-04', time: '', tail: '時間は公式案内', ji: '2次' },
+  ].map((d, i) => ({
+    id: `soltilochiba-sel-${i + 1}`, teamId: null, eventType: 'selection', isAlwaysOpen: false, isPartner: false,
+    teamName: 'SOLTILO CHIBA FC',
+    isPeriod: false, periodText: null,
+    date: d.date, time: d.time,
+    location: 'SMBC FIELD HONDA FOOTBALL AREA（千葉市美浜区若葉3-2-17）',
+    targetGrades: ['小6'], capacity: 47, fee: 3000, deadline: null,
+    description: `2027年度 新中学1年生対象 セレクション（${d.ji}）\n${d.tail}\n募集：FP42名・GK5名\n参加費：3,000円\n申込はInstagramストーリー【JYセレクション情報】より`,
+    teamUrl: 'https://soltilo-fc.com/soltilo-chiba-fc/selection', applyUrl: null,
+    tags: ['千葉', '千葉市', '3000円'],
+  }))),
+  // ── 横浜FC鶴見ジュニアユース（横浜市保土ケ谷区）1次7/18・2次7/25 ──
+  ...([
+    { date: '2026-07-18', time: '17:00', tail: '17:00〜21:00', ji: '1次' },
+    { date: '2026-07-25', time: '18:00', tail: '18:00〜21:00', ji: '2次' },
+  ].map((d, i) => ({
+    id: `yokohamafctsurumi-sel-${i + 1}`, teamId: null, eventType: 'selection', isAlwaysOpen: false, isPartner: false,
+    teamName: '横浜FC鶴見ジュニアユース',
+    isPeriod: false, periodText: null,
+    date: d.date, time: d.time,
+    location: '横浜FC・LEOCトレーニングセンター（横浜市保土ケ谷区川島町522-3）',
+    targetGrades: ['小6'], capacity: null, fee: 5000, deadline: '2026-07-12',
+    description: `2027年度 セレクション（一般・${d.ji}）\n${d.tail}\n参加費：5,000円（税込）※1次・2次共通\n対象：現小6でJ下部系列 横浜FC鶴見を第一志望とする選手\n所属チームの承諾書提出が必要\n⚠️ 申込締切7/12は終了。参加可否は公式へ要確認`,
+    teamUrl: 'https://yokohamafc.tsurumi1.com/', applyUrl: 'https://forms.gle/rpvVMWmYgZaFRJBc7',
+    tags: ['神奈川', '横浜市', 'J下部', '5000円'],
+  }))),
 ];
 
 function getRelativeDate(days) {
