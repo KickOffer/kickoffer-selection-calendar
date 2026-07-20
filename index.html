@@ -2567,6 +2567,9 @@ const ALL_TEAMS = [
   { name: 'ACカラクテル', area: '大網白里市', league: '', type: '街クラブ', url: 'https://ac-caracter.com/', pref: '千葉' },
   { name: 'JFC FUTURO', area: '', league: '', type: '街クラブ', url: 'https://www.jfutsalclub-futuro.com/', pref: '千葉' },
   { name: '浦和レッズジュニアユース', area: 'さいたま市', league: '', type: 'J下部', url: 'https://www.urawa-reds.co.jp/', pref: '埼玉' },
+  { name: 'F.C. フトゥーラス エストレージャス U-15', area: '松戸市', league: '', type: '街クラブ', url: 'https://www.fcf-estrellas.com/', pref: '千葉' },
+  { name: 'FCコルージャ', area: '児玉郡・深谷市', league: '', type: '街クラブ', url: 'https://gold-root.com/', pref: '埼玉' },
+  { name: '熊谷リリーズJYカサブランカ（女子）', area: '熊谷市', league: '', type: '街クラブ', url: 'https://kumagaya-lilies.org/', pref: '埼玉' },
   // 神奈川
   { name: '横浜FC鶴見', area: '横浜市鶴見区', league: '', type: 'J下部', url: 'https://yokohamafc.tsurumi1.com/', pref: '神奈川' },
   { name: 'FC Notus', area: '横浜市南区', league: '', type: '街クラブ', url: 'https://minami-football.com/', pref: '神奈川' },
@@ -5480,6 +5483,80 @@ const SAMPLE_DATA = [
     description: `2027年度 セレクション（一般・${d.ji}）\n${d.tail}\n参加費：5,000円（税込）※1次・2次共通\n対象：現小6でJ下部系列 横浜FC鶴見を第一志望とする選手\n所属チームの承諾書提出が必要\n⚠️ 申込締切7/12は終了。参加可否は公式へ要確認`,
     teamUrl: 'https://yokohamafc.tsurumi1.com/', applyUrl: 'https://forms.gle/rpvVMWmYgZaFRJBc7',
     tags: ['神奈川', '横浜市', 'J下部', '5000円'],
+  }))),
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // 週次まとめ 2026-07-19（Green Card等）
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // ── MPFC（練馬区・中野区／2027年4月新設 第1期生募集）──
+  ...(['2026-07-22', '2026-07-25'].map((date, i) => ({
+    id: `mpfc-trial-${i + 1}`, teamId: null, eventType: 'trial', isAlwaysOpen: false, isPartner: false,
+    teamName: 'MPFC',
+    isPeriod: false, periodText: null,
+    date, time: '',
+    location: '豊玉中学校／豊玉南小学校（練馬区）',
+    targetGrades: ['小6'], capacity: null, fee: 0, deadline: null,
+    description: '2027年度 体験練習会兼セレクション\n参加費：無料\n2027年4月新設クラブ（練馬区・中野区）の第1期生募集\n各回定員あり・8月以降も開催予定\n時間は申込フォーム/Instagram（@mpfc.2027）で確認',
+    teamUrl: 'https://mpfc-jry.studio.site/', applyUrl: null,
+    tags: ['練馬区', '23区', '無料', '新設クラブ'],
+  }))),
+  // ── FCコルージャ（埼玉・児玉郡／深谷市）──
+  {
+    id: 'coruja-trial-1', teamId: null, eventType: 'trial', isAlwaysOpen: false, isPartner: false,
+    teamName: 'FCコルージャ',
+    isPeriod: false, periodText: null,
+    date: '2026-08-26', time: '',
+    location: '埼玉工業大学ほか（児玉郡・深谷市）',
+    targetGrades: ['小6'], capacity: null, fee: null, deadline: '2026-08-25',
+    description: '2027年度 全体練習会\n申込：実施日の前日まで\n※個別練習会は9/17まで随時対応\n時間は申込フォーム/Instagram（@npogoldroot）で確認',
+    teamUrl: 'https://gold-root.com/', applyUrl: null,
+    tags: ['埼玉', '深谷市'],
+  },
+  {
+    id: 'coruja-trial-2', teamId: null, eventType: 'trial', isAlwaysOpen: false, isPartner: false,
+    teamName: 'FCコルージャ',
+    isPeriod: true, periodText: '〜9/17（個別調整）',
+    date: '2026-09-17', time: '',
+    location: '埼玉工業大学ほか（児玉郡・深谷市）',
+    targetGrades: ['小6'], capacity: null, fee: null, deadline: null,
+    description: '2027年度 個別練習会（9/17まで随時）\n日程は個別調整\n申込：実施日の前日まで\n詳細はInstagram（@npogoldroot）／公式HPで確認',
+    teamUrl: 'https://gold-root.com/', applyUrl: null,
+    tags: ['埼玉', '深谷市', '随時'],
+  },
+  {
+    id: 'coruja-sel-1', teamId: null, eventType: 'selection', isAlwaysOpen: false, isPartner: false,
+    teamName: 'FCコルージャ',
+    isPeriod: false, periodText: null,
+    date: '2026-09-28', time: '',
+    location: '埼玉工業大学ほか（児玉郡・深谷市）',
+    targetGrades: ['小6'], capacity: null, fee: null, deadline: '2026-09-27',
+    description: '2027年度 セレクション\n予備日：10/5\n申込：実施日の前日まで\n時間は申込フォーム/Instagram（@npogoldroot）で確認',
+    teamUrl: 'https://gold-root.com/', applyUrl: null,
+    tags: ['埼玉', '深谷市'],
+  },
+  // ── 熊谷リリーズJYカサブランカ（埼玉・熊谷市／女子）──
+  {
+    id: 'kumagaya-lilies-trial-1', teamId: null, eventType: 'trial', isAlwaysOpen: false, isPartner: false,
+    teamName: '熊谷リリーズJYカサブランカ（女子）',
+    isPeriod: false, periodText: null,
+    date: '2026-07-21', time: '19:00',
+    location: 'くまぴあ 人工芝グラウンド（熊谷市）',
+    targetGrades: ['小6'], capacity: 20, fee: 0, deadline: null,
+    description: '2027年度 練習会兼セレクション【女子対象】\n受付18:30〜 / 19:00〜\n募集：約20名\n参加費：無料\n定員になり次第締切（7/7回は実施済み）',
+    teamUrl: 'https://kumagaya-lilies.org/', applyUrl: null,
+    tags: ['埼玉', '熊谷市', '女子', '無料'],
+  },
+  // ── F.C. フトゥーラス エストレージャス U-15（千葉・松戸市）──
+  ...(['2026-07-21', '2026-07-29'].map((date, i) => ({
+    id: `fcf-estrellas-trial-${i + 1}`, teamId: null, eventType: 'trial', isAlwaysOpen: false, isPartner: false,
+    teamName: 'F.C. フトゥーラス エストレージャス U-15',
+    isPeriod: false, periodText: null,
+    date, time: '19:15',
+    location: '小金中学校（松戸市）',
+    targetGrades: ['小6'], capacity: null, fee: null, deadline: null,
+    description: '2027年度 体験練習会\n19:15〜21:00\n2027年度募集：6〜10名（少数精鋭）\nスペイン流指導\n申込：公式HP／公式LINE @821txdxl（早めの申込推奨）',
+    teamUrl: 'https://www.fcf-estrellas.com/', applyUrl: null,
+    tags: ['千葉', '松戸市'],
   }))),
 ];
 
