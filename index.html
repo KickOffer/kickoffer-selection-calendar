@@ -5558,6 +5558,19 @@ const SAMPLE_DATA = [
     teamUrl: 'https://www.fcf-estrellas.com/', applyUrl: null,
     tags: ['千葉', '松戸市'],
   }))),
+
+  // ── 青梅FCジュニアユース 2027年度 練習参加型セレクション（8月5日程）──
+  ...(['2026-08-03', '2026-08-06', '2026-08-07', '2026-08-21', '2026-08-27'].map((date, i) => ({
+    id: `omefc-ptsel-${i + 1}`, teamId: null, eventType: 'trial', isAlwaysOpen: false, isPartner: false,
+    teamName: '青梅FCジュニアユース',
+    isPeriod: false, periodText: null,
+    date, time: '',
+    location: '申込後にメールでご案内（青梅市）',
+    targetGrades: ['小6'], capacity: null, fee: 0, deadline: null,
+    description: '2027年度 練習参加型セレクション\n通常練習に参加し、チームの雰囲気・トレーニングを体験。スタッフが総合評価する形式\n参加費：無料\n5日程（8/3・8/6・8/7・8/21・8/27）から選択\n※夏休み中は変則日程のため、申込後のメールで会場・時間を確定案内',
+    teamUrl: null, applyUrl: 'https://forms.gle/u6XXt4kxn2VJHATo7',
+    tags: ['青梅市', '多摩地域', '無料'],
+  }))),
 ];
 
 function getRelativeDate(days) {
